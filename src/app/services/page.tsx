@@ -38,7 +38,7 @@ const services = [
     title: "Crisis Management",
     description: "Immediate, decisive action to contain threats and manage the fallout from a security breach.",
     details: "In the critical hours following a scam or breach, our team provides rapid response support. We guide you through securing remaining assets, preserving evidence, and communicating with stakeholders. Our goal is to minimize damage and stabilize the situation swiftly.",
-    image: { src:https://placehold.co/500x400.png", hint: "emergency plan" },
+    image: { src: "https://placehold.co/500x400.png", hint: "emergency plan" },
   },
   {
     id: "future-planning",
