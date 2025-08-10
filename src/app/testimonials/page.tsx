@@ -1,0 +1,98 @@
+import Image from "next/image";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+
+const caseStudies = [
+  {
+    image: { src: "https://placehold.co/600x400.png", hint: "crypto chart" },
+    headline: "Recovered $120K from Crypto Investment Scam",
+    quote: "I thought my retirement savings were gone forever. DemandHub's forensic team traced the transactions and recovered almost everything.",
+    tags: ["Crypto", "Forensics"],
+  },
+  {
+    image: { src: "https://placehold.co/600x400.png", hint: "business meeting" },
+    headline: "Saved a Small Business from Ransomware Attack",
+    quote: "Our operations were halted. DemandHub not only helped us regain access without paying the ransom but also fortified our systems.",
+    tags: ["Ransomware", "Cybersecurity"],
+  },
+  {
+    image: { src: "https://placehold.co/600x400.png", hint: "email inbox" },
+    headline: "Intercepted Fraudulent Wire Transfer of $500K",
+    quote: "Their rapid response team worked with banks to freeze the wire transfer mid-transit. It was incredible.",
+    tags: ["Wire Fraud", "Crisis Management"],
+  },
+  {
+    image: { src: "https://placehold.co/600x400.png", hint: "online shopping" },
+    headline: "Uncovered an E-commerce Phishing Ring",
+    quote: "We were losing customer trust. They identified the source of the phishing attacks and helped us secure our platform.",
+    tags: ["Phishing", "E-commerce"],
+  },
+  {
+    image: { src: "https://placehold.co/600x400.png", hint: "real estate" },
+    headline: "Recovered a Down Payment from Real Estate Scam",
+    quote: "A sophisticated scam nearly cost us our dream home. DemandHub's expertise made all the difference.",
+    tags: ["Real Estate", "Individual Recovery"],
+  },
+  {
+    image: { src: "https://placehold.co/600x400.png", hint: "nft art" },
+    headline: "Traced and Recovered Stolen NFT Collection",
+    quote: "My valuable digital art was stolen from my wallet. Their on-chain analysis was key to getting it back.",
+    tags: ["NFT", "Blockchain"],
+  },
+];
+
+export default function TestimonialsPage() {
+  return (
+    <>
+      <section className="py-20 md:py-32 bg-primary/5">
+        <div className="container max-w-7xl text-center">
+          <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">Client Success Stories</h1>
+          <p className="mt-6 max-w-3xl mx-auto text-lg text-muted-foreground md:text-xl">
+            Real-world examples of how we've helped individuals and businesses recover their digital assets and find justice.
+          </p>
+        </div>
+      </section>
+      
+      <div className="relative">
+        <div 
+          className="absolute inset-0 h-full w-full bg-cover bg-fixed bg-center opacity-10" 
+          style={{backgroundImage: "url('https://placehold.co/1920x1080.png')"}}
+          data-ai-hint="abstract geometric pattern"
+        ></div>
+        <section className="relative py-20 md:py-28 bg-transparent">
+          <div className="container max-w-7xl">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {caseStudies.map((study, index) => (
+                <Card key={index} className="flex flex-col shadow-lg hover:shadow-xl transition-shadow duration-300">
+                  <CardHeader>
+                    <div className="relative h-48 w-full mb-4">
+                      <Image
+                        src={study.image.src}
+                        alt={study.headline}
+                        layout="fill"
+                        objectFit="cover"
+                        className="rounded-t-lg"
+                        data-ai-hint={study.image.hint}
+                      />
+                    </div>
+                    <CardTitle>{study.headline}</CardTitle>
+                    <div className="flex gap-2 pt-2">
+                        {study.tags.map(tag => <Badge key={tag} variant="secondary">{tag}</Badge>)}
+                    </div>
+                  </CardHeader>
+                  <CardContent className="flex-grow">
+                    <CardDescription className="italic">"{study.quote}"</CardDescription>
+                  </CardContent>
+                  <div className="p-6 pt-0">
+                    <Button variant="link" className="p-0">Read Full Story &rarr;</Button>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </section>
+      </div>
+    </>
+  );
+}
