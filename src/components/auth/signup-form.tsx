@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
-import React from "react";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button"
 import {
@@ -15,16 +15,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
-import { useAuth } from "@/context/auth-context"
 
 const formSchema = z.object({
   fullName: z.string().min(2, {
@@ -33,50 +24,44 @@ const formSchema = z.object({
   email: z.string().email({
     message: "Please enter a valid email address.",
   }),
-  subject: z.string({
-    required_error: "Please select a subject.",
-  }),
-  message: z.string().min(10, {
-    message: "Message must be at least 10 characters.",
-  }),
+  password: z.string().min(8, { message: "Password must be at least 8 characters."}),
+  confirmPassword: z.string(),
   honeypot: z.string().optional(),
-})
+}).refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+});
 
-export function ContactForm() {
+export function SignUpForm() {
   const { toast } = useToast()
-  const { user } = useAuth();
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       fullName: "",
       email: "",
-      message: "",
+      password: "",
+      confirmPassword: ""
     },
   })
-
-  React.useEffect(() => {
-    if (user) {
-        form.setValue('fullName', user.name);
-        form.setValue('email', user.email);
-    }
-  }, [user, form]);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     if (values.honeypot) {
       return;
     }
     console.log(values)
+    // Here you would typically call your auth provider (e.g., Firebase)
     toast({
-      title: "Message Sent!",
-      description: "Thank you for contacting us. We will get back to you shortly.",
+      title: "Account Created!",
+      description: "We've sent a verification link to your email.",
     })
-    form.reset();
+    router.push('/verify-email');
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
           control={form.control}
           name="fullName"
@@ -97,7 +82,7 @@ export function ContactForm() {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder="you@example.com" {...field} />
+                <Input type="email" placeholder="you@example.com" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -105,39 +90,25 @@ export function ContactForm() {
         />
         <FormField
           control={form.control}
-          name="subject"
+          name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Subject</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a service" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="risk-management">Risk Management</SelectItem>
-                  <SelectItem value="claim-assessment">Claim Assessment</SelectItem>
-                  <SelectItem value="intelligence-gathering">Intelligence Gathering</SelectItem>
-                  <SelectItem value="general-inquiry">General Inquiry</SelectItem>
-                </SelectContent>
-              </Select>
+              <FormLabel>Password</FormLabel>
+              <FormControl>
+                <Input type="password" placeholder="********" {...field} />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <FormField
+         <FormField
           control={form.control}
-          name="message"
+          name="confirmPassword"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Message</FormLabel>
+              <FormLabel>Confirm Password</FormLabel>
               <FormControl>
-                <Textarea
-                  placeholder="Tell us a little bit about your situation"
-                  className="resize-none"
-                  {...field}
-                />
+                <Input type="password" placeholder="********" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -155,10 +126,10 @@ export function ContactForm() {
             </FormItem>
           )}
         />
-        <div className="text-xs text-muted-foreground">
-            A placeholder for reCAPTCHA widget can go here.
+        <div className="text-xs text-muted-foreground pt-2">
+            This site is protected by reCAPTCHA and the Google Privacy Policy and Terms of Service apply.
         </div>
-        <Button type="submit" className="w-full">Send Message</Button>
+        <Button type="submit" className="w-full">Create Account</Button>
       </form>
     </Form>
   )

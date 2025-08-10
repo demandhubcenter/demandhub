@@ -36,15 +36,17 @@ export function Footer() {
               <li><Link href="/about" className="text-sm text-muted-foreground hover:text-primary">About Us</Link></li>
               <li><Link href="/services" className="text-sm text-muted-foreground hover:text-primary">Services</Link></li>
               <li><Link href="/testimonials" className="text-sm text-muted-foreground hover:text-primary">Testimonials</Link></li>
+               <li><Link href="/blog" className="text-sm text-muted-foreground hover:text-primary">Blog</Link></li>
               <li><Link href="/contact" className="text-sm text-muted-foreground hover:text-primary">Contact</Link></li>
             </ul>
           </div>
 
           <div>
-            <h4 className="mb-4 font-semibold">Legal</h4>
+            <h4 className="mb-4 font-semibold">Support</h4>
             <ul className="space-y-2">
-              <li><Link href="#" className="text-sm text-muted-foreground hover:text-primary">Privacy Policy</Link></li>
-              <li><Link href="#" className="text-sm text-muted-foreground hover:text-primary">Terms of Service</Link></li>
+               <li><Link href="/dashboard" className="text-sm text-muted-foreground hover:text-primary">File a Complaint</Link></li>
+               <li><Link href="/signup" className="text-sm text-muted-foreground hover:text-primary">Join Us Now</Link></li>
+               <li><a href="#" className="text-sm text-muted-foreground hover:text-primary">Legacy Support Portal</a></li>
             </ul>
           </div>
 

@@ -4,7 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, ShieldCheck, X } from "lucide-react";
-
+import { useAuth } from "@/context/auth-context";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
@@ -13,6 +13,7 @@ const navItems = [
   { name: "About", href: "/about" },
   { name: "Services", href: "/services" },
   { name: "Testimonials", href: "/testimonials" },
+  { name: "Blog", href: "/blog" },
   { name: "FAQ", href: "/faq" },
   { name: "Contact", href: "/contact" },
 ];
@@ -20,6 +21,7 @@ const navItems = [
 export function Header() {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+  const { user } = useAuth();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -44,12 +46,29 @@ export function Header() {
               {item.name}
             </Link>
           ))}
+           {user && (
+            <Link
+              href="/dashboard"
+              className={cn(
+                "text-sm font-medium transition-colors hover:text-primary",
+                pathname.startsWith('/dashboard') ? "text-primary" : "text-muted-foreground"
+              )}
+            >
+              Dashboard
+            </Link>
+          )}
         </nav>
 
         <div className="flex items-center gap-4">
-            <Button asChild>
-                <Link href="/contact">Get Free Assessment</Link>
-            </Button>
+            {user ? (
+               <Button asChild>
+                 <Link href="/dashboard">Go to Dashboard</Link>
+               </Button>
+            ) : (
+              <Button asChild>
+                  <Link href="/signin">Sign In</Link>
+              </Button>
+            )}
             <Button
                 variant="ghost"
                 size="icon"
@@ -80,6 +99,20 @@ export function Header() {
                 {item.name}
               </Link>
             ))}
+             {user && (
+              <Link
+                href="/dashboard"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={cn(
+                  "block rounded-md px-3 py-2 text-base font-medium",
+                  pathname.startsWith('/dashboard')
+                    ? "bg-accent text-accent-foreground"
+                    : "text-muted-foreground hover:bg-accent/50"
+                )}
+              >
+                Dashboard
+              </Link>
+            )}
           </div>
         </div>
       )}
