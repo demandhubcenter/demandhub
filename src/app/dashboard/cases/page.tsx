@@ -20,21 +20,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Filter } from "lucide-react";
-
-const allCases = [
-  { id: "CASE-001", title: "Crypto Investment Scam", status: "Open", date: "2023-10-15" },
-  { id: "CASE-002", title: "Ransomware Attack", status: "Closed", date: "2023-09-20" },
-  { id: "CASE-003", title: "Wire Transfer Fraud", status: "Open", date: "2023-10-28" },
-  { id: "CASE-004", title: "E-commerce Phishing", status: "Closed", date: "2023-08-05" },
-  { id: "CASE-005", title: "Social Media Account Hack", status: "Closed", date: "2023-07-12" },
-  { id: "CASE-006", title: "Fake Invoice Scam", status: "Open", date: "2023-11-01" },
-];
+import { useCases } from "@/context/case-context";
 
 
 export default function CasesPage() {
     const [filter, setFilter] = useState("All");
+    const { cases } = useCases();
 
-    const filteredCases = allCases.filter(caseItem => {
+    const filteredCases = cases.filter(caseItem => {
         if (filter === "All") return true;
         return caseItem.status === filter;
     })
@@ -94,7 +87,7 @@ export default function CasesPage() {
                         <TableCell>{caseItem.date}</TableCell>
                         <TableCell className="text-right">
                             <Button variant="outline" size="sm" asChild>
-                                <Link href={`/dashboard/case/${caseItem.id}`}>View Case</Link>
+                                <Link href={`/dashboard/case/${caseItem.id.replace('CASE-','')}`}>View Case</Link>
                             </Button>
                         </TableCell>
                         </TableRow>

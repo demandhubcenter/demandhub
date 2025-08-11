@@ -1,4 +1,6 @@
 
+"use client";
+
 import Link from "next/link";
 import { AnimatedCounter } from "@/components/shared/animated-counter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,28 +14,22 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Filter, ArrowRight } from "lucide-react";
-
-const stats = [
-  { value: 2, label: "Open Cases" },
-  { value: 18, label: "Resolved Cases" },
-  { value: 2, label: "Days Since Last Activity", suffix: " days" },
-];
-
-const cases = [
-  { id: "CASE-001", title: "Crypto Investment Scam", status: "Open", date: "2023-10-15" },
-  { id: "CASE-003", title: "Wire Transfer Fraud", status: "Open", date: "2023-10-28" },
-  { id: "CASE-002", title: "Ransomware Attack", status: "Closed", date: "2023-09-20" },
-  { id: "CASE-004", title: "E-commerce Phishing", status: "Closed", date: "2023-08-05" },
-];
+import { ArrowRight } from "lucide-react";
+import { useCases } from "@/context/case-context";
+import { useMemo } from "react";
 
 export default function DashboardPage() {
+  const { cases } = useCases();
+
+  const openCases = useMemo(() => cases.filter(c => c.status === 'Open'), [cases]);
+  const resolvedCases = useMemo(() => cases.filter(c => c.status === 'Closed'), [cases]);
+
+  const stats = [
+    { value: openCases.length, label: "Open Cases" },
+    { value: resolvedCases.length, label: "Resolved Cases" },
+    { value: 2, label: "Days Since Last Activity", suffix: " days" },
+  ];
+
   return (
     <div className="space-y-8">
       <div>
@@ -86,7 +82,7 @@ export default function DashboardPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {cases.slice(0,4).map((caseItem) => (
+              {[...cases].reverse().slice(0,4).map((caseItem) => (
                 <TableRow key={caseItem.id}>
                   <TableCell className="font-medium">{caseItem.id}</TableCell>
                   <TableCell>{caseItem.title}</TableCell>

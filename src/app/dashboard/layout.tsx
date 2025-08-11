@@ -1,4 +1,5 @@
 import { DashboardSidebar } from "@/components/dashboard/sidebar";
+import { CaseProvider } from "@/context/case-context";
 
 // This is a mock authentication check. In a real app, use middleware or a server-side check.
 const isAuthenticated = true; 
@@ -19,11 +20,13 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="flex min-h-screen">
-      <DashboardSidebar />
-      <main className="flex-1 p-8 bg-primary/5">
-        {children}
-      </main>
-    </div>
+    <CaseProvider>
+      <div className="flex min-h-screen">
+        <DashboardSidebar />
+        <main className="flex-1 p-8 bg-primary/5">
+          {children}
+        </main>
+      </div>
+    </CaseProvider>
   );
 }

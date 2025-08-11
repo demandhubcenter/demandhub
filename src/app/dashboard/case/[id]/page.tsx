@@ -47,7 +47,7 @@ export default function CaseDetailPage({ params }: { params: { id: string } }) {
             <h1 className="text-3xl font-bold">{caseDetails.title}</h1>
             <Badge variant={caseDetails.status === 'Open' ? 'destructive' : 'secondary'}>{caseDetails.status}</Badge>
         </div>
-        <p className="text-muted-foreground">Case ID: {caseDetails.id} | Opened: {caseDetails.dateOpened}</p>
+        <p className="text-muted-foreground">Case ID: {params.id} | Opened: {caseDetails.dateOpened}</p>
       </div>
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

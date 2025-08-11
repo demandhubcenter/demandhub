@@ -1,3 +1,4 @@
+
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -34,6 +35,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { useCases } from "@/context/case-context"
 
 const formSchema = z.object({
   title: z.string().min(5, "Title must be at least 5 characters."),
@@ -45,7 +47,9 @@ const formSchema = z.object({
 export function NewCaseForm() {
   const { toast } = useToast()
   const router = useRouter();
+  const { addCase, cases } = useCases();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newCaseId, setNewCaseId] = useState("");
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -57,6 +61,18 @@ export function NewCaseForm() {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values)
+    const nextId = cases.length > 0 ? Math.max(...cases.map(c => parseInt(c.id.split('-')[1]))) + 1 : 1;
+    const formattedId = `CASE-${String(nextId).padStart(3, '0')}`;
+    setNewCaseId(formattedId);
+
+    const newCase = {
+        id: formattedId,
+        title: values.title,
+        status: "Open" as const,
+        date: new Date().toISOString().split('T')[0],
+    };
+    addCase(newCase);
+    
     // Here you would upload the file and submit the case to your backend
     setIsModalOpen(true);
   }
@@ -66,9 +82,9 @@ export function NewCaseForm() {
     form.reset();
     toast({
         title: "Case Submitted",
-        description: "You will receive an email notification shortly. Your new case ID is CASE-005."
+        description: `You will receive an email notification shortly. Your new case ID is ${newCaseId}.`
     })
-    router.push('/dashboard');
+    router.push('/dashboard/cases');
   }
 
   return (
@@ -151,7 +167,7 @@ export function NewCaseForm() {
             <AlertDialogHeader>
             <AlertDialogTitle>Case Submitted Successfully</AlertDialogTitle>
             <AlertDialogDescription>
-                We have received your case details and will begin our initial assessment. You will receive a confirmation email shortly, and a case manager will be in touch within 24 hours. Your case ID is CASE-005.
+                We have received your case details and will begin our initial assessment. You will receive a confirmation email shortly, and a case manager will be in touch within 24 hours. Your case ID is {newCaseId}.
             </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
