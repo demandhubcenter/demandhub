@@ -1,6 +1,8 @@
+
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Draggable from 'react-draggable';
 import { MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,7 +11,6 @@ import {
   SheetDescription,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
   SheetFooter,
 } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
@@ -73,17 +74,19 @@ export function LiveChatButton() {
 
   return (
     <Sheet>
-      <SheetTrigger asChild>
-        <div className="fixed bottom-4 right-4 z-50">
-          <Button
-            size="icon"
-            className="rounded-full shadow-lg h-14 w-14 animate-pulse hover:animate-none"
-          >
-            <MessageSquare className="h-7 w-7" />
-            <span className="sr-only">Open Live Chat</span>
-          </Button>
-        </div>
-      </SheetTrigger>
+        <Draggable>
+          <div className="fixed bottom-4 right-4 z-50 cursor-move">
+            <SheetTrigger asChild>
+                <Button
+                    size="icon"
+                    className="rounded-full shadow-lg h-14 w-14 animate-pulse hover:animate-none"
+                >
+                    <MessageSquare className="h-7 w-7" />
+                    <span className="sr-only">Open Live Chat</span>
+                </Button>
+            </SheetTrigger>
+          </div>
+        </Draggable>
       <SheetContent className="flex flex-col">
         <SheetHeader>
           <SheetTitle>Live Chat Support</SheetTitle>
