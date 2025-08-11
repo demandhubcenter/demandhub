@@ -7,6 +7,7 @@ import { Menu, ShieldCheck, X } from "lucide-react";
 import { useAuth } from "@/context/auth-context";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/shared/theme-toggle";
 
 const navItems = [
   { name: "Home", href: "/" },
@@ -59,7 +60,8 @@ export function Header() {
           )}
         </nav>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
+            <ThemeToggle />
             {user ? (
                <Button asChild>
                  <Link href="/dashboard">Go to Dashboard</Link>
