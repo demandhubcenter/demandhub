@@ -11,11 +11,11 @@ export function Hero() {
       ></div>
        <Image
         src="https://placehold.co/1920x1080.png"
-        alt="Financial network illustration"
+        alt="A person at a desk working on asset recovery"
         layout="fill"
         objectFit="cover"
         className="absolute inset-0 -z-10 opacity-5"
-        data-ai-hint="financial network"
+        data-ai-hint="person working"
       />
       <div className="container max-w-7xl text-center">
         <div className="mx-auto max-w-3xl">
