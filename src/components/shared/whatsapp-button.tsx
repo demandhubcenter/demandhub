@@ -4,6 +4,7 @@
 import Link from "next/link";
 import Draggable from 'react-draggable';
 import { Button } from "@/components/ui/button";
+import { useRef } from "react";
 
 const WhatsAppIcon = () => (
     <svg
@@ -18,9 +19,10 @@ const WhatsAppIcon = () => (
 
 
 export function WhatsAppButton() {
+  const nodeRef = useRef(null);
   return (
-    <Draggable>
-        <div className="fixed bottom-4 left-4 z-50 cursor-move">
+    <Draggable nodeRef={nodeRef}>
+        <div ref={nodeRef} className="fixed bottom-4 left-4 z-50 cursor-move">
         <Button
             asChild
             size="icon"

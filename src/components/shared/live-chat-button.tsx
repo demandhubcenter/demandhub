@@ -36,6 +36,7 @@ export function LiveChatButton() {
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const nodeRef = useRef(null);
 
   useEffect(() => {
     // Scroll to the bottom whenever messages change
@@ -75,8 +76,8 @@ export function LiveChatButton() {
 
   return (
     <Sheet>
-        <Draggable>
-          <div className="fixed bottom-4 right-4 z-50 cursor-move">
+        <Draggable nodeRef={nodeRef}>
+          <div ref={nodeRef} className="fixed bottom-4 right-4 z-50 cursor-move">
             <SheetTrigger asChild>
                 <Button
                     size="icon"
