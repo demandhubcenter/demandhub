@@ -3,6 +3,8 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import Draggable from 'react-draggable';
+import { useRef } from 'react';
 
 const WhatsAppIcon = () => (
     <svg
@@ -17,19 +19,22 @@ const WhatsAppIcon = () => (
 
 
 export function WhatsAppButton() {
+  const nodeRef = useRef(null);
   return (
-    <div className="fixed bottom-4 left-4 z-50">
-      <Button
-          asChild
-          size="icon"
-          className="rounded-full shadow-lg h-14 w-14 bg-[#25D366] hover:bg-[#1EBE57]"
-      >
-          {/* Replace the number with your actual WhatsApp business number */}
-          <Link href="https://wa.me/15551234567" target="_blank" rel="noopener noreferrer">
-          <WhatsAppIcon />
-          <span className="sr-only">Chat on WhatsApp</span>
-          </Link>
-      </Button>
-    </div>
+    <Draggable nodeRef={nodeRef}>
+        <div ref={nodeRef} className="fixed bottom-4 left-4 z-50 cursor-move">
+        <Button
+            asChild
+            size="icon"
+            className="rounded-full shadow-lg h-14 w-14 bg-[#25D366] hover:bg-[#1EBE57]"
+        >
+            {/* Replace the number with your actual WhatsApp business number */}
+            <Link href="https://wa.me/15551234567" target="_blank" rel="noopener noreferrer">
+            <WhatsAppIcon />
+            <span className="sr-only">Chat on WhatsApp</span>
+            </Link>
+        </Button>
+        </div>
+    </Draggable>
   );
 }
