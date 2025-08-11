@@ -2,7 +2,6 @@ import Link from "next/link";
 import { ShieldCheck, Linkedin, Twitter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { LiveChatButton } from "../shared/live-chat-button";
 import { WhatsAppButton } from "../shared/whatsapp-button";
 
 export function Footer() {
@@ -67,7 +66,6 @@ export function Footer() {
         </div>
       </div>
       <WhatsAppButton />
-      <LiveChatButton />
     </footer>
   );
 }
