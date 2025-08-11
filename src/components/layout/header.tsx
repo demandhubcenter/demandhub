@@ -24,6 +24,14 @@ export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
   const { user } = useAuth();
 
+  React.useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+  }, [isMobileMenuOpen]);
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 max-w-7xl items-center justify-between">
@@ -62,15 +70,17 @@ export function Header() {
 
         <div className="flex items-center gap-2">
             <ThemeToggle />
-            {user ? (
-               <Button asChild>
-                 <Link href="/dashboard">Go to Dashboard</Link>
-               </Button>
-            ) : (
-              <Button asChild>
-                  <Link href="/signin">Sign In</Link>
-              </Button>
-            )}
+            <div className="hidden sm:flex">
+              {user ? (
+                <Button asChild>
+                  <Link href="/dashboard">Go to Dashboard</Link>
+                </Button>
+              ) : (
+                <Button asChild>
+                    <Link href="/signin">Sign In</Link>
+                </Button>
+              )}
+            </div>
             <Button
                 variant="ghost"
                 size="icon"
@@ -84,8 +94,8 @@ export function Header() {
       </div>
 
       {isMobileMenuOpen && (
-        <div className="md:hidden">
-          <div className="container flex flex-col gap-4 pb-4">
+        <div className="md:hidden absolute top-16 inset-x-0 h-[calc(100vh-4rem)] bg-background z-50">
+          <div className="container flex flex-col gap-4 pt-4 pb-4">
             {navItems.map((item) => (
               <Link
                 key={item.name}
@@ -115,6 +125,17 @@ export function Header() {
                 Dashboard
               </Link>
             )}
+             <div className="mt-4 border-t pt-4">
+                {user ? (
+                  <Button asChild className="w-full">
+                    <Link href="/dashboard" onClick={() => setIsMobileMenuOpen(false)}>Go to Dashboard</Link>
+                  </Button>
+                ) : (
+                  <Button asChild className="w-full">
+                      <Link href="/signin" onClick={() => setIsMobileMenuOpen(false)}>Sign In</Link>
+                  </Button>
+                )}
+            </div>
           </div>
         </div>
       )}

@@ -34,7 +34,7 @@ export default function CasesPage() {
 
     return (
         <div className="space-y-8">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-3xl font-bold">My Cases</h1>
                     <p className="text-muted-foreground">Review and manage all your cases here.</p>
@@ -46,14 +46,14 @@ export default function CasesPage() {
 
              <Card>
                 <CardHeader>
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                         <div>
                             <CardTitle>All Submitted Cases</CardTitle>
                             <CardDescription>A complete history of your recovery cases with DemandHub.</CardDescription>
                         </div>
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Button variant="outline" size="sm" className="gap-2">
+                                <Button variant="outline" size="sm" className="gap-2 w-full sm:w-auto">
                                     <Filter className="h-4 w-4" /> Filter ({filter})
                                 </Button>
                             </DropdownMenuTrigger>
@@ -66,34 +66,36 @@ export default function CasesPage() {
                     </div>
                 </CardHeader>
                 <CardContent>
-                <Table>
-                    <TableHeader>
-                    <TableRow>
-                        <TableHead>Case ID</TableHead>
-                        <TableHead>Title</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Date Opened</TableHead>
-                        <TableHead></TableHead>
-                    </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                    {filteredCases.map((caseItem) => (
-                        <TableRow key={caseItem.id}>
-                        <TableCell className="font-medium">{caseItem.id}</TableCell>
-                        <TableCell>{caseItem.title}</TableCell>
-                        <TableCell>
-                            <Badge variant={caseItem.status === 'Open' ? 'destructive' : 'secondary'}>{caseItem.status}</Badge>
-                        </TableCell>
-                        <TableCell>{caseItem.date}</TableCell>
-                        <TableCell className="text-right">
-                            <Button variant="outline" size="sm" asChild>
-                                <Link href={`/dashboard/case/${caseItem.id.replace('CASE-','')}`}>View Case</Link>
-                            </Button>
-                        </TableCell>
+                <div className="overflow-x-auto">
+                    <Table>
+                        <TableHeader>
+                        <TableRow>
+                            <TableHead>Case ID</TableHead>
+                            <TableHead>Title</TableHead>
+                            <TableHead>Status</TableHead>
+                            <TableHead>Date Opened</TableHead>
+                            <TableHead></TableHead>
                         </TableRow>
-                    ))}
-                    </TableBody>
-                </Table>
+                        </TableHeader>
+                        <TableBody>
+                        {filteredCases.map((caseItem) => (
+                            <TableRow key={caseItem.id}>
+                            <TableCell className="font-medium">{caseItem.id}</TableCell>
+                            <TableCell>{caseItem.title}</TableCell>
+                            <TableCell>
+                                <Badge variant={caseItem.status === 'Open' ? 'destructive' : 'secondary'}>{caseItem.status}</Badge>
+                            </TableCell>
+                            <TableCell>{caseItem.date}</TableCell>
+                            <TableCell className="text-right">
+                                <Button variant="outline" size="sm" asChild>
+                                    <Link href={`/dashboard/case/${caseItem.id.replace('CASE-','')}`}>View Case</Link>
+                                </Button>
+                            </TableCell>
+                            </TableRow>
+                        ))}
+                        </TableBody>
+                    </Table>
+                </div>
                 </CardContent>
             </Card>
         </div>

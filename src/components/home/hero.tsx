@@ -26,9 +26,12 @@ export function Hero() {
             Rapid, reliable fund recovery for individuals & enterprises. We combine cutting-edge technology with expert analysis to reclaim what's yours.
           </p>
         </div>
-        <div className="mt-10">
+        <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
           <Button size="lg" asChild>
             <Link href="/contact">Get a Free Assessment</Link>
+          </Button>
+           <Button size="lg" variant="outline" asChild>
+            <Link href="/services">Learn More</Link>
           </Button>
         </div>
       </div>

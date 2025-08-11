@@ -7,8 +7,8 @@ export function Footer() {
   return (
     <footer className="border-t border-border/40 bg-background/95">
       <div className="container max-w-7xl py-12">
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
-          <div className="flex flex-col gap-4">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
+          <div className="flex flex-col gap-4 md:col-span-2 lg:col-span-1">
             <Link href="/" className="flex items-center gap-2">
               <ShieldCheck className="h-8 w-8 text-primary" />
               <span className="text-xl font-bold">DemandHub</span>
@@ -38,25 +38,26 @@ export function Footer() {
               <li><Link href="/testimonials" className="text-sm text-muted-foreground hover:text-primary">Testimonials</Link></li>
                <li><Link href="/blog" className="text-sm text-muted-foreground hover:text-primary">Blog</Link></li>
               <li><Link href="/contact" className="text-sm text-muted-foreground hover:text-primary">Contact</Link></li>
+              <li><Link href="/faq" className="text-sm text-muted-foreground hover:text-primary">FAQ</Link></li>
             </ul>
           </div>
 
           <div>
             <h4 className="mb-4 font-semibold">Support</h4>
             <ul className="space-y-2">
-               <li><Link href="/dashboard" className="text-sm text-muted-foreground hover:text-primary">File a Complaint</Link></li>
-               <li><Link href="/signup" className="text-sm text-muted-foreground hover:text-primary">Join Us Now</Link></li>
-               <li><a href="#" className="text-sm text-muted-foreground hover:text-primary">Legacy Support Portal</a></li>
+               <li><Link href="/dashboard/new-case" className="text-sm text-muted-foreground hover:text-primary">File a Case</Link></li>
+               <li><Link href="/signup" className="text-sm text-muted-foreground hover:text-primary">Create Account</Link></li>
+               <li><a href="/signin" className="text-sm text-muted-foreground hover:text-primary">Client Sign In</a></li>
             </ul>
           </div>
 
-          <div>
+          <div className="md:col-span-2 lg:col-span-1">
             <h4 className="mb-4 font-semibold">Stay Updated</h4>
             <p className="mb-2 text-sm text-muted-foreground">Subscribe to our newsletter for scam alerts and recovery tips.</p>
-            <div className="flex w-full max-w-sm items-center space-x-2">
-                <Input type="email" placeholder="Email" />
-                <Button type="submit">Subscribe</Button>
-            </div>
+            <form className="flex w-full max-w-sm flex-col sm:flex-row items-center gap-2">
+                <Input type="email" placeholder="Email" className="flex-1"/>
+                <Button type="submit" className="w-full sm:w-auto">Subscribe</Button>
+            </form>
           </div>
         </div>
 

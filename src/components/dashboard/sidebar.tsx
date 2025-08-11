@@ -24,7 +24,7 @@ export function DashboardSidebar() {
   }
 
   return (
-    <aside className="w-64 flex-shrink-0 border-r bg-background p-6 flex flex-col">
+    <aside className="w-64 flex-shrink-0 border-r bg-background p-6 flex flex-col h-full">
       <Link href="/" className="flex items-center gap-2 mb-10">
           <ShieldCheck className="h-8 w-8 text-primary" />
           <span className="text-xl font-bold tracking-tight text-foreground">
