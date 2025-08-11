@@ -56,6 +56,7 @@ export function NewCaseForm() {
     defaultValues: {
         title: "",
         description: "",
+        evidence: undefined,
     },
   })
 
@@ -152,7 +153,7 @@ export function NewCaseForm() {
                 <FormItem>
                     <FormLabel>Upload Evidence</FormLabel>
                     <FormControl>
-                        <Input type="file" {...field} />
+                        <Input type="file" {...field} value={field.value?.fileName} />
                     </FormControl>
                     <FormMessage />
                 </FormItem>
