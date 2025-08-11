@@ -2,12 +2,33 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
 import { MailCheck } from "lucide-react";
+import { resendVerificationEmail } from "@/ai/flows/resend-verification-flow";
+import { useState } from "react";
 
 export default function VerifyEmailPage() {
-  const handleResend = () => {
-    // Logic to resend verification email
-    console.log("Resending verification email...");
+    const { toast } = useToast();
+    const [isLoading, setIsLoading] = useState(false);
+
+  const handleResend = async () => {
+    setIsLoading(true);
+    try {
+        // In a real app, you might get the user's email from the session or context
+        await resendVerificationEmail({ email: 'user@example.com' });
+        toast({
+            title: "Link Sent",
+            description: "A new verification link has been sent to your email address.",
+        });
+    } catch (error) {
+        toast({
+            title: "Error",
+            description: "Failed to resend verification link. Please try again later.",
+            variant: "destructive",
+        });
+    } finally {
+        setIsLoading(false);
+    }
   };
 
   return (
@@ -26,8 +47,8 @@ export default function VerifyEmailPage() {
           <p className="text-sm text-muted-foreground">
             Didn't receive the email?
           </p>
-          <Button variant="link" onClick={handleResend} className="mt-2">
-            Resend Verification Link
+          <Button variant="link" onClick={handleResend} className="mt-2" disabled={isLoading}>
+            {isLoading ? "Sending..." : "Resend Verification Link"}
           </Button>
         </CardContent>
       </Card>
