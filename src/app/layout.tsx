@@ -5,6 +5,7 @@ import { Footer } from '@/components/layout/footer';
 import { Toaster } from "@/components/ui/toaster"
 import { AuthProvider } from '@/context/auth-context';
 import Script from 'next/script';
+import { WhatsAppButton } from '@/components/shared/whatsapp-button';
 
 export const metadata: Metadata = {
   title: 'DemandHub - Digital Asset Recovery',
@@ -29,6 +30,7 @@ export default function RootLayout({
           <main className="flex-1">{children}</main>
           <Footer />
           <Toaster />
+          <WhatsAppButton />
         </AuthProvider>
         <Script id="tawk-to-script" strategy="lazyOnload">
         {`
