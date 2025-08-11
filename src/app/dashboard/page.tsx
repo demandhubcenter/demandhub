@@ -1,3 +1,4 @@
+
 import Link from "next/link";
 import { AnimatedCounter } from "@/components/shared/animated-counter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,7 +18,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Filter } from "lucide-react";
+import { Filter, ArrowRight } from "lucide-react";
 
 const stats = [
   { value: 2, label: "Open Cases" },
@@ -27,8 +28,8 @@ const stats = [
 
 const cases = [
   { id: "CASE-001", title: "Crypto Investment Scam", status: "Open", date: "2023-10-15" },
-  { id: "CASE-002", title: "Ransomware Attack", status: "Closed", date: "2023-09-20" },
   { id: "CASE-003", title: "Wire Transfer Fraud", status: "Open", date: "2023-10-28" },
+  { id: "CASE-002", title: "Ransomware Attack", status: "Closed", date: "2023-09-20" },
   { id: "CASE-004", title: "E-commerce Phishing", status: "Closed", date: "2023-08-05" },
 ];
 
@@ -59,22 +60,15 @@ export default function DashboardPage() {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
             <div>
-                 <CardTitle>My Cases</CardTitle>
-                 <p className="text-sm text-muted-foreground">A list of all your recovery cases.</p>
+                 <CardTitle>Recent Cases</CardTitle>
+                 <p className="text-sm text-muted-foreground">A snapshot of your most recent cases.</p>
             </div>
             <div className="flex items-center gap-2">
-                 <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="outline" size="sm" className="gap-2">
-                            <Filter className="h-4 w-4" /> Filter
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                        <DropdownMenuItem>All</DropdownMenuItem>
-                        <DropdownMenuItem>Open</DropdownMenuItem>
-                        <DropdownMenuItem>Closed</DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                 <Button variant="ghost" size="sm" asChild>
+                    <Link href="/dashboard/cases">
+                        View All Cases <ArrowRight className="ml-2 h-4 w-4"/>
+                    </Link>
+                 </Button>
                 <Button asChild>
                     <Link href="/dashboard/new-case">File New Case</Link>
                 </Button>
@@ -92,7 +86,7 @@ export default function DashboardPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {cases.map((caseItem) => (
+              {cases.slice(0,4).map((caseItem) => (
                 <TableRow key={caseItem.id}>
                   <TableCell className="font-medium">{caseItem.id}</TableCell>
                   <TableCell>{caseItem.title}</TableCell>
