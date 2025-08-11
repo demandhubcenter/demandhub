@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ShieldCheck, Linkedin, Twitter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { LiveChatButton } from "../shared/live-chat-button";
 
 export function Footer() {
   return (
@@ -64,6 +65,7 @@ export function Footer() {
           <p>&copy; {new Date().getFullYear()} DemandHub. All rights reserved.</p>
         </div>
       </div>
+      <LiveChatButton />
     </footer>
   );
 }

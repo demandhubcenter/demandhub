@@ -1,7 +1,6 @@
 import Image from "next/image";
-import { Mail, Phone, MapPin, MessageSquare } from "lucide-react";
+import { Mail, Phone, MapPin } from "lucide-react";
 import { ContactForm } from "@/components/contact-form";
-import { Button } from "@/components/ui/button";
 
 export default function ContactPage() {
   return (
@@ -56,13 +55,6 @@ export default function ContactPage() {
           </div>
         </div>
       </section>
-
-       <div className="fixed bottom-4 right-4 z-50">
-          <Button size="lg" className="rounded-full shadow-lg">
-            <MessageSquare className="mr-2 h-5 w-5" />
-            Live Chat
-          </Button>
-        </div>
     </>
   );
 }
