@@ -1,5 +1,4 @@
 
-"use client";
 
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
@@ -162,5 +161,6 @@ function CaseDetailContent() {
 // The default export remains a simple component that renders the client-side content.
 // This structure satisfies the Next.js static export requirements.
 export default function CaseDetailPage() {
+    "use client";
     return <CaseDetailContent />;
 }
