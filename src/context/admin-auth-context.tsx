@@ -6,7 +6,7 @@ import { useAuth } from './auth-context';
 
 // IMPORTANT: Replace this with your actual Firebase User ID (UID)
 // You can find your UID in the Firebase Console -> Authentication -> Users table.
-const ADMIN_UID = 'REPLACE_WITH_YOUR_FIREBASE_ADMIN_UID';
+const ADMIN_UID = '4xl5731bmdX5S7XwA8ynwfBJayF2';
 
 interface AdminAuthContextType {
   isAdmin: boolean;
