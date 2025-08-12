@@ -38,7 +38,7 @@ export function WhyUs() {
           </div>
           <div className="relative h-96 w-full">
             <Image 
-                src="https://placehold.co/600x400.png"
+                src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600&h=400&q=80"
                 alt="Team working on recovery"
                 layout="fill"
                 objectFit="cover"
