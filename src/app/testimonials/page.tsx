@@ -35,7 +35,7 @@ const caseStudies = [
     tags: ["Real Estate", "Individual Recovery"],
   },
   {
-    image: { src: "https://images.unsplash.com/photo-1639755294522-a982b52414b2?w=600&h=400&q=80", hint: "digital art" },
+    image: { src: "https://images.unsplash.com/photo-1622737133809-d95047b9e673?w=600&h=400&q=80", hint: "digital art" },
     headline: "Traced and Recovered Stolen NFT Collection",
     quote: "My valuable digital art was stolen from my wallet. Their on-chain analysis was key to getting it back.",
     tags: ["NFT", "Blockchain"],
