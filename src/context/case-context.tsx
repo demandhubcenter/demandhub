@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
 export interface CaseConversation {
     author: { name: string; role: 'Client' | 'Support Agent'; avatar: string };
@@ -35,12 +35,30 @@ interface CaseContextType {
 
 const CaseContext = createContext<CaseContextType | undefined>(undefined);
 
-// Start with an empty array. No more mock data.
 const initialCases: Case[] = [];
 
 export const CaseProvider = ({ children }: { children: ReactNode }) => {
-  const [cases, setCases] = useState<Case[]>(initialCases);
+  const [cases, setCases] = useState<Case[]>(() => {
+    // On initial load, try to get cases from localStorage
+    try {
+        const item = window.localStorage.getItem('cases');
+        return item ? JSON.parse(item) : initialCases;
+    } catch (error) {
+        console.warn("Could not parse cases from localStorage", error);
+        return initialCases;
+    }
+  });
+
   const [selectedCase, setSelectedCase] = useState<Case | null>(null);
+
+  // When cases change, save them to localStorage
+  useEffect(() => {
+    try {
+        window.localStorage.setItem('cases', JSON.stringify(cases));
+    } catch (error) {
+        console.error("Could not save cases to localStorage", error);
+    }
+  }, [cases]);
 
   const addCase = (newCase: Case) => {
     setCases(prevCases => [...prevCases, newCase]);
