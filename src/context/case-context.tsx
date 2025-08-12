@@ -42,17 +42,16 @@ export const CaseProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const getCaseById = (id: string) => {
-    // The ID from the URL might be just '001', but stored as 'CASE-001'.
-    // We should handle both formats for robustness.
-    const formattedId = id.startsWith('CASE-') ? id : `CASE-${id.padStart(3, '0')}`;
-    return cases.find(c => c.id === formattedId);
+    return cases.find(c => c.id === id || c.id.replace('CASE-', '') === id);
   }
 
   const addCommentToCase = (caseId: string, comment: CaseConversation) => {
     setCases(prevCases => 
         prevCases.map(c => {
-            if (c.id === caseId) {
-                return { ...c, conversation: [...c.conversation, comment] };
+            const caseIdentifier = c.id.replace('CASE-', '');
+            if (c.id === caseId || caseIdentifier === caseId) {
+                const updatedConversation = [...c.conversation, comment];
+                return { ...c, conversation: updatedConversation };
             }
             return c;
         })

@@ -9,51 +9,53 @@ import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useCases } from "@/context/case-context";
-import { notFound } from "next/navigation";
+import { notFound, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { type Case, type CaseConversation } from "@/context/case-context";
 import { useAuth } from "@/context/auth-context";
 
-export default function CaseDetailPage({ params }: { params: { id: string } }) {
+// This is the actual component that renders the page content.
+// It uses client-side hooks to fetch and display data.
+function CaseDetailContent() {
+  const params = useParams();
+  const id = params.id as string;
   const { getCaseById, addCommentToCase } = useCases();
   const { user } = useAuth();
   const [caseDetails, setCaseDetails] = useState<Case | null | undefined>(undefined);
   const [newComment, setNewComment] = useState("");
   
-  // This useEffect is to handle client-side data fetching for a static export build
   useEffect(() => {
-    const details = getCaseById(params.id);
-    setCaseDetails(details);
-  }, [params.id, getCaseById]);
+    if (id) {
+      const details = getCaseById(id);
+      setCaseDetails(details);
+    }
+  }, [id, getCaseById, cases]); // Rerun when cases context updates
+
+  const { cases } = useCases();
 
   if (caseDetails === undefined) {
-    // Loading state
     return <div>Loading case details...</div>;
   }
   
   if (!caseDetails) {
-    // If after loading, case is not found
     return notFound();
   }
   
   const handleAddComment = () => {
-    if (!newComment.trim() || !user) return;
+    if (!newComment.trim() || !user || !id) return;
     
     const comment: CaseConversation = {
       author: {
         name: user.name || "Client",
         role: "Client",
-        avatar: "" // User avatar URL would go here
+        avatar: ""
       },
       timestamp: new Date().toLocaleString(),
       text: newComment,
     };
     
-    const formattedId = params.id.startsWith('CASE-') ? params.id : `CASE-${params.id.padStart(3, '0')}`;
-    addCommentToCase(formattedId, comment);
-    // Refresh case details from context to show new comment
-    setCaseDetails(getCaseById(params.id));
-    setNewComment(""); // Clear the textarea
+    addCommentToCase(id, comment);
+    setNewComment("");
   }
 
   return (
@@ -90,7 +92,6 @@ export default function CaseDetailPage({ params }: { params: { id: string } }) {
                              </div>
                               {entry.author.role === 'Client' && (
                                 <Avatar>
-                                     {/* In a real app, you'd have user avatar URLs */}
                                     <AvatarImage src="" /> 
                                     <AvatarFallback>{user?.name?.charAt(0) || 'U'}</AvatarFallback>
                                 </Avatar>
@@ -149,4 +150,11 @@ export default function CaseDetailPage({ params }: { params: { id: string } }) {
       </div>
     </div>
   );
+}
+
+
+// The default export remains a simple component that renders the client-side content.
+// This structure satisfies the Next.js static export requirements.
+export default function CaseDetailPage() {
+    return <CaseDetailContent />;
 }
