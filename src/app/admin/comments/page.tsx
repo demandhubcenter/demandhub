@@ -158,6 +158,7 @@ export default function AdminCommentsPage() {
 
             {commentToEdit && (
                 <EditCommentDialog 
+                    key={commentToEdit.id}
                     comment={commentToEdit}
                     isOpen={!!commentToEdit}
                     onClose={() => setCommentToEdit(null)}
