@@ -35,7 +35,7 @@ const caseStudies = [
     tags: ["Real Estate", "Individual Recovery"],
   },
   {
-    image: { src: "https://images.unsplash.com/photo-1629838035251-716c6d091a13?w=600&h=400&q=80&fit=crop", hint: "digital art" },
+    image: { src: "https://images.unsplash.com/photo-1639762681057-408e52192e50?w=600&h=400&q=80&fit=crop", hint: "digital art" },
     headline: "Traced and Recovered Stolen NFT Collection",
     quote: "My valuable digital art was stolen from my wallet. Their on-chain analysis was key to getting it back.",
     tags: ["NFT", "Blockchain"],
@@ -57,8 +57,8 @@ export default function TestimonialsPage() {
       <div className="relative">
         <div 
           className="absolute inset-0 h-full w-full bg-cover bg-fixed bg-center opacity-10" 
-          style={{backgroundImage: "url('https://images.unsplash.com/photo-1519681393784-d120267933ba?w=1920&h=1080&q=80&fit=crop')"}}
-          data-ai-hint="abstract background"
+          style={{backgroundImage: "url('https://images.unsplash.com/photo-1502472584811-0a2f2feb8968?w=1920&h=1080&q=80&fit=crop')"}}
+          data-ai-hint="abstract texture"
         ></div>
         <section className="relative py-20 md:py-28 bg-transparent">
           <div className="container max-w-7xl">
