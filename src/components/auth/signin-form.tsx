@@ -20,6 +20,7 @@ import { Input } from "@/components/ui/input"
 import { useAuth } from "@/context/auth-context";
 import { useToast } from "@/hooks/use-toast"
 import { useState } from "react"
+import { auth } from "@/lib/firebase"
 
 const formSchema = z.object({
   email: z.string().email({
@@ -45,21 +46,35 @@ export function SignInForm() {
  async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     try {
-      const user = await signIn(values.email, values.password);
-      if (!user.emailVerified) {
+      const userCredential = await signIn(values.email, values.password);
+
+      // It's crucial to check for email verification AFTER a successful sign-in
+      // because Firebase might need to refresh the user's state.
+      // We reload the user state to get the latest emailVerified status.
+      await auth.currentUser?.reload();
+      const currentUser = auth.currentUser;
+
+      if (currentUser && !currentUser.emailVerified) {
         toast({
           title: "Email Not Verified",
           description: "Please check your email and click the verification link before signing in.",
           variant: "destructive",
         });
+        // We log the user out to prevent them from accessing protected routes
+        // and redirect them to the verification page.
+        await auth.signOut();
         router.push('/verify-email');
       } else {
         router.push('/dashboard');
       }
     } catch (error: any) {
+        let errorMessage = "An error occurred during sign in. Please check your credentials.";
+        if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
+            errorMessage = "Invalid email or password. Please try again.";
+        }
         toast({
             title: "Sign In Failed",
-            description: error.message || "An error occurred during sign in. Please check your credentials.",
+            description: errorMessage,
             variant: "destructive",
         })
     } finally {

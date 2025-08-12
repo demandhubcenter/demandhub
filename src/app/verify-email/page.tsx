@@ -7,37 +7,46 @@ import { useToast } from "@/hooks/use-toast";
 import { MailCheck } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/context/auth-context";
-import { sendEmailVerification } from "firebase/auth";
+import { resendVerificationEmail } from "@/ai/flows/resend-verification-flow";
 import { auth } from "@/lib/firebase";
 
 export default function VerifyEmailPage() {
     const { toast } = useToast();
     const [isLoading, setIsLoading] = useState(false);
-    const { user } = useAuth();
+    // Even if user is null from context, auth.currentUser might exist briefly after signup.
+    const currentUser = auth.currentUser;
 
   const handleResend = async () => {
     setIsLoading(true);
-    // use auth.currentUser instead of user from context because it might not be updated yet
-    const currentUser = auth.currentUser;
-    if (!currentUser) {
+    
+    if (!currentUser?.email) {
         toast({
             title: "Error",
-            description: "No user is signed in to resend verification for.",
+            description: "Could not find an email address to send verification to. Please try signing in again.",
             variant: "destructive",
         });
         setIsLoading(false);
         return;
     }
+
     try {
-        await sendEmailVerification(currentUser);
-        toast({
-            title: "Link Sent",
-            description: "A new verification link has been sent to your email address.",
-        });
+        const result = await resendVerificationEmail({ email: currentUser.email });
+        if (result.success) {
+             toast({
+                title: "Link Sent",
+                description: result.message,
+            });
+        } else {
+            toast({
+                title: "Error",
+                description: result.message || "Failed to resend verification link.",
+                variant: "destructive",
+            });
+        }
     } catch (error: any) {
         toast({
             title: "Error",
-            description: error.message || "Failed to resend verification link. Please try again later.",
+            description: error.message || "An unexpected error occurred. Please try again later.",
             variant: "destructive",
         });
     } finally {

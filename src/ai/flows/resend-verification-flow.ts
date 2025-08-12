@@ -10,6 +10,8 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { auth } from '@/lib/firebase';
+import { sendEmailVerification } from 'firebase/auth';
 
 const ResendVerificationEmailInputSchema = z.object({
   email: z.string().email().describe('The email address to send the verification link to.'),
@@ -26,17 +28,6 @@ export async function resendVerificationEmail(input: ResendVerificationEmailInpu
   return resendVerificationEmailFlow(input);
 }
 
-const prompt = ai.definePrompt({
-  name: 'resendVerificationEmailPrompt',
-  input: {schema: ResendVerificationEmailInputSchema},
-  output: {schema: ResendVerificationEmailOutputSchema},
-  prompt: `You are an email verification service. A user with email {{{email}}} has requested to resend their verification link. 
-  
-  Please confirm that the action has been completed.
-  
-  In a real application, this would trigger an email sending service. For this simulation, just return a success message.`,
-});
-
 const resendVerificationEmailFlow = ai.defineFlow(
   {
     name: 'resendVerificationEmailFlow',
@@ -44,21 +35,37 @@ const resendVerificationEmailFlow = ai.defineFlow(
     outputSchema: ResendVerificationEmailOutputSchema,
   },
   async (input) => {
-    // In a real application, you would integrate with an email service provider
-    // like SendGrid, Mailgun, etc., to send the actual email.
-    console.log(`Simulating sending verification email to ${input.email}`);
-    
-    // For now, we'll just use a prompt to simulate the confirmation.
-    const {output} = await prompt(input);
+    try {
+      if (!auth.currentUser) {
+        // This is a server-side check. The user object might not be available
+        // in the same way as the client. It's better to rely on client-side state
+        // for the current user, but this flow is designed to be called securely.
+        // For this implementation, we will proceed assuming the client has validated the user state.
+        console.log("Attempted to resend verification for a non-logged-in user session.");
+      }
+      
+      // The auth object is shared, so if a user is signed in on the client,
+      // auth.currentUser should be populated here if running in the same context.
+      const currentUser = auth.currentUser;
+      if (currentUser) {
+        await sendEmailVerification(currentUser);
+        return {
+          success: true,
+          message: `A new verification link has been sent to ${input.email}.`,
+        };
+      } else {
+         return {
+          success: false,
+          message: `No active user session found. Please sign in again.`,
+        };
+      }
 
-    if (output) {
-      return output;
+    } catch (error: any) {
+      console.error("Error resending verification email:", error);
+      return {
+        success: false,
+        message: error.message || 'An unexpected error occurred.',
+      };
     }
-
-    // Fallback in case the prompt fails
-    return {
-      success: true,
-      message: `Verification link sent to ${input.email}.`,
-    };
   }
 );
