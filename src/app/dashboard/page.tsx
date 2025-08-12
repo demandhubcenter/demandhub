@@ -34,7 +34,9 @@ export default function DashboardPage() {
       return 0;
     }
     const mostRecentCase = [...cases].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
-    return differenceInDays(new Date(), parseISO(mostRecentCase.date));
+    const parsedDate = parseISO(mostRecentCase.date);
+    if(isNaN(parsedDate.getTime())) return 0;
+    return differenceInDays(new Date(), parsedDate);
   }, [cases]);
 
   const stats = [
