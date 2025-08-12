@@ -42,7 +42,7 @@ const formSchema = z.object({
   title: z.string().min(5, "Title must be at least 5 characters."),
   category: z.string({ required_error: "Please select a category." }),
   description: z.string().min(20, "Please provide a detailed description of at least 20 characters."),
-  evidence: z.instanceof(File).optional(),
+  evidence: z.instanceof(FileList).optional(),
 })
 
 export function NewCaseForm() {
@@ -66,6 +66,8 @@ export function NewCaseForm() {
     const nextId = cases.length > 0 ? Math.max(...cases.map(c => parseInt(c.id.split('-')[1]))) + 1 : 1;
     const formattedId = `CASE-${String(nextId).padStart(3, '0')}`;
     setNewCaseId(formattedId);
+    
+    const submittedFile = values.evidence?.[0];
 
     const newCase = {
         id: formattedId,
@@ -74,7 +76,7 @@ export function NewCaseForm() {
         date: new Date().toISOString().split('T')[0],
         category: values.category,
         description: values.description,
-        evidence: values.evidence ? { name: values.evidence.name, url: URL.createObjectURL(values.evidence) } : undefined,
+        evidence: submittedFile ? { name: submittedFile.name, url: URL.createObjectURL(submittedFile) } : undefined,
         conversation: [
             {
                 author: { name: user?.name || "Client", role: 'Client' as const, avatar: "" },
