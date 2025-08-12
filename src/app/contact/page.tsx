@@ -39,18 +39,6 @@ export default function ContactPage() {
                   </div>
                 </div>
               </div>
-              <div>
-                 <h2 className="text-2xl font-bold mb-4">Office Location</h2>
-                 <div className="relative h-64 w-full rounded-lg overflow-hidden shadow-md">
-                     <Image
-                        src="https://placehold.co/600x400.png"
-                        alt="Map to office"
-                        layout="fill"
-                        objectFit="cover"
-                        data-ai-hint="city map"
-                     />
-                 </div>
-              </div>
             </div>
           </div>
         </div>
