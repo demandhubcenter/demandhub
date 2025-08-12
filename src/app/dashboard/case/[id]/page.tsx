@@ -11,14 +11,16 @@ import { Button } from "@/components/ui/button";
 import { useCases } from "@/context/case-context";
 import { notFound } from "next/navigation";
 import { useEffect, useState } from "react";
-import { type Case } from "@/context/case-context";
+import { type Case, type CaseConversation } from "@/context/case-context";
 import { useAuth } from "@/context/auth-context";
 
 export default function CaseDetailPage({ params }: { params: { id: string } }) {
-  const { getCaseById } = useCases();
+  const { getCaseById, addCommentToCase } = useCases();
   const { user } = useAuth();
   const [caseDetails, setCaseDetails] = useState<Case | null | undefined>(undefined);
+  const [newComment, setNewComment] = useState("");
   
+  // This useEffect is to handle client-side data fetching for a static export build
   useEffect(() => {
     const details = getCaseById(params.id);
     setCaseDetails(details);
@@ -32,6 +34,26 @@ export default function CaseDetailPage({ params }: { params: { id: string } }) {
   if (!caseDetails) {
     // If after loading, case is not found
     return notFound();
+  }
+  
+  const handleAddComment = () => {
+    if (!newComment.trim() || !user) return;
+    
+    const comment: CaseConversation = {
+      author: {
+        name: user.name || "Client",
+        role: "Client",
+        avatar: "" // User avatar URL would go here
+      },
+      timestamp: new Date().toLocaleString(),
+      text: newComment,
+    };
+    
+    const formattedId = params.id.startsWith('CASE-') ? params.id : `CASE-${params.id.padStart(3, '0')}`;
+    addCommentToCase(formattedId, comment);
+    // Refresh case details from context to show new comment
+    setCaseDetails(getCaseById(params.id));
+    setNewComment(""); // Clear the textarea
   }
 
   return (
@@ -77,8 +99,13 @@ export default function CaseDetailPage({ params }: { params: { id: string } }) {
                     ))}
                     <Separator />
                     <div>
-                        <Textarea placeholder="Add a comment or update..." className="mb-2" />
-                        <Button>Add Comment</Button>
+                        <Textarea 
+                          placeholder="Add a comment or update..." 
+                          className="mb-2"
+                          value={newComment}
+                          onChange={(e) => setNewComment(e.target.value)}
+                         />
+                        <Button onClick={handleAddComment}>Add Comment</Button>
                     </div>
                 </CardContent>
             </Card>
@@ -90,6 +117,14 @@ export default function CaseDetailPage({ params }: { params: { id: string } }) {
                 </CardHeader>
                 <CardContent>
                     <p className="text-muted-foreground">{caseDetails.description}</p>
+                </CardContent>
+            </Card>
+            <Card>
+                <CardHeader>
+                    <CardTitle>Case Category</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <p className="text-muted-foreground">{caseDetails.category}</p>
                 </CardContent>
             </Card>
             <Card>

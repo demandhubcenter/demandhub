@@ -3,7 +3,7 @@
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
-interface CaseConversation {
+export interface CaseConversation {
     author: { name: string; role: 'Client' | 'Support Agent'; avatar: string };
     timestamp: string;
     text: string;
@@ -27,6 +27,7 @@ interface CaseContextType {
   cases: Case[];
   addCase: (newCase: Case) => void;
   getCaseById: (id: string) => Case | undefined;
+  addCommentToCase: (caseId: string, comment: CaseConversation) => void;
 }
 
 const CaseContext = createContext<CaseContextType | undefined>(undefined);
@@ -47,8 +48,19 @@ export const CaseProvider = ({ children }: { children: ReactNode }) => {
     return cases.find(c => c.id === formattedId);
   }
 
+  const addCommentToCase = (caseId: string, comment: CaseConversation) => {
+    setCases(prevCases => 
+        prevCases.map(c => {
+            if (c.id === caseId) {
+                return { ...c, conversation: [...c.conversation, comment] };
+            }
+            return c;
+        })
+    )
+  }
+
   return (
-    <CaseContext.Provider value={{ cases, addCase, getCaseById }}>
+    <CaseContext.Provider value={{ cases, addCase, getCaseById, addCommentToCase }}>
       {children}
     </CaseContext.Provider>
   );
