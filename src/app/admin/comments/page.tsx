@@ -11,8 +11,8 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Trash2 } from "lucide-react";
-import { useBlog } from "@/context/blog-context";
+import { Trash2, Edit } from "lucide-react";
+import { useBlog, type PostComment } from "@/context/blog-context";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -27,14 +27,22 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
+import { EditCommentDialog } from "@/components/admin/edit-comment-dialog";
 
+// Combine PostComment with post context for the table
+export type CommentWithContext = PostComment & {
+  postTitle: string;
+  postSlug: string;
+};
 
 export default function AdminCommentsPage() {
-    const { posts, deleteCommentFromPost } = useBlog();
+    const { posts, deleteCommentFromPost, updateCommentInPost } = useBlog();
     const { toast } = useToast();
+    const [commentToEdit, setCommentToEdit] = useState<CommentWithContext | null>(null);
 
     // Flatten comments from all posts
-    const allComments = posts.flatMap(post => 
+    const allComments: CommentWithContext[] = posts.flatMap(post => 
         post.comments.map(comment => ({
             ...comment,
             postTitle: post.title,
@@ -49,6 +57,15 @@ export default function AdminCommentsPage() {
             title: "Comment Deleted",
             description: "The comment has been successfully removed.",
         })
+    }
+
+    const handleSaveComment = (slug: string, commentId: string, newText: string, newDate: string) => {
+        updateCommentInPost(slug, commentId, { text: newText, date: newDate });
+        toast({
+            title: "Comment Updated",
+            description: "The comment has been successfully updated.",
+        });
+        setCommentToEdit(null);
     }
 
     return (
@@ -95,6 +112,14 @@ export default function AdminCommentsPage() {
                                 </TableCell>
                                 <TableCell>{new Date(comment.date).toLocaleDateString()}</TableCell>
                                 <TableCell className="text-right space-x-2">
+                                     <Button 
+                                        variant="outline" 
+                                        size="icon"
+                                        className="h-9 w-9"
+                                        onClick={() => setCommentToEdit(comment)}
+                                    >
+                                        <Edit className="h-4 w-4" />
+                                    </Button>
                                     <AlertDialog>
                                         <AlertDialogTrigger asChild>
                                             <Button variant="destructive" size="icon" className="h-9 w-9">
@@ -130,6 +155,15 @@ export default function AdminCommentsPage() {
                 </div>
                 </CardContent>
             </Card>
+
+            {commentToEdit && (
+                <EditCommentDialog 
+                    comment={commentToEdit}
+                    isOpen={!!commentToEdit}
+                    onClose={() => setCommentToEdit(null)}
+                    onSave={handleSaveComment}
+                />
+            )}
         </div>
     )
 }

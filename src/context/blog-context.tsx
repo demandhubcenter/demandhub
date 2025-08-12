@@ -39,6 +39,7 @@ interface BlogContextType {
     deletePost: (slug: string) => void;
     addCommentToPost: (slug: string, comment: Omit<PostComment, 'id' | 'date'>) => void;
     deleteCommentFromPost: (slug: string, commentId: string) => void;
+    updateCommentInPost: (slug: string, commentId: string, commentData: Partial<PostComment>) => void;
 }
 
 const BlogContext = createContext<BlogContextType | undefined>(undefined);
@@ -199,7 +200,21 @@ export const BlogProvider = ({ children }: { children: ReactNode }) => {
     );
   }
 
-  const value = { posts, getPostBySlug, addPost, updatePost, deletePost, addCommentToPost, deleteCommentFromPost };
+  const updateCommentInPost = (slug: string, commentId: string, commentData: Partial<PostComment>) => {
+      setPosts(prevPosts =>
+          prevPosts.map(p => {
+              if (p.slug === slug) {
+                  const updatedComments = p.comments.map(c => 
+                      c.id === commentId ? { ...c, ...commentData } : c
+                  );
+                  return { ...p, comments: updatedComments };
+              }
+              return p;
+          })
+      );
+  }
+
+  const value = { posts, getPostBySlug, addPost, updatePost, deletePost, addCommentToPost, deleteCommentFromPost, updateCommentInPost };
 
   return <BlogContext.Provider value={value}>{children}</BlogContext.Provider>;
 };
