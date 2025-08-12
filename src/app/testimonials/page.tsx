@@ -1,3 +1,4 @@
+
 import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -57,8 +58,8 @@ export default function TestimonialsPage() {
       <div className="relative">
         <div 
           className="absolute inset-0 h-full w-full bg-cover bg-fixed bg-center opacity-10" 
-          style={{backgroundImage: "url('https://images.unsplash.com/photo-1502472584811-0a2f2feb8968?w=1920&h=1080&q=80&fit=crop')"}}
-          data-ai-hint="abstract texture"
+          style={{backgroundImage: "url('https://images.unsplash.com/photo-1519681393784-d120267933ba?w=1920&h=1080&q=80&fit=crop')"}}
+          data-ai-hint="abstract mountain"
         ></div>
         <section className="relative py-20 md:py-28 bg-transparent">
           <div className="container max-w-7xl">
