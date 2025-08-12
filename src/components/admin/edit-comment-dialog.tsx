@@ -13,37 +13,30 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useState, useEffect } from "react";
-import { type CommentWithContext } from "@/app/admin/comments/page";
 
 interface EditCommentDialogProps {
-  comment: CommentWithContext | null;
   isOpen: boolean;
   onClose: () => void;
-  onSave: (slug: string, commentId: string, newText: string, newDate: string) => void;
+  onSave: () => void;
+  text: string;
+  date: string;
+  onTextChange: (value: string) => void;
+  onDateChange: (value: string) => void;
 }
 
-export function EditCommentDialog({ comment, isOpen, onClose, onSave }: EditCommentDialogProps) {
-  const [text, setText] = useState("");
-  const [date, setDate] = useState("");
-
-  useEffect(() => {
-    if (comment) {
-      setText(comment.text);
-      // Format date for the input type="datetime-local"
-      const localDate = new Date(comment.date);
-      const year = localDate.getFullYear();
-      const month = String(localDate.getMonth() + 1).padStart(2, '0');
-      const day = String(localDate.getDate()).padStart(2, '0');
-      const hours = String(localDate.getHours()).padStart(2, '0');
-      const minutes = String(localDate.getMinutes()).padStart(2, '0');
-      setDate(`${year}-${month}-${day}T${hours}:${minutes}`);
-    }
-  }, [comment]);
+export function EditCommentDialog({ 
+    isOpen, 
+    onClose, 
+    onSave,
+    text,
+    date,
+    onTextChange,
+    onDateChange,
+}: EditCommentDialogProps) {
 
   const handleSave = () => {
-    if (comment && text.trim()) {
-      onSave(comment.postSlug, comment.id, text, new Date(date).toISOString());
+    if (text.trim()) {
+      onSave();
     }
   };
 
@@ -62,7 +55,7 @@ export function EditCommentDialog({ comment, isOpen, onClose, onSave }: EditComm
             <Textarea
               id="comment-text"
               value={text}
-              onChange={(e) => setText(e.target.value)}
+              onChange={(e) => onTextChange(e.target.value)}
               className="min-h-[120px]"
             />
           </div>
@@ -72,7 +65,7 @@ export function EditCommentDialog({ comment, isOpen, onClose, onSave }: EditComm
               id="comment-date"
               type="datetime-local"
               value={date}
-              onChange={(e) => setDate(e.target.value)}
+              onChange={(e) => onDateChange(e.target.value)}
             />
           </div>
         </div>

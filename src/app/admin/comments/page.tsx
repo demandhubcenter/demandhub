@@ -40,6 +40,8 @@ export default function AdminCommentsPage() {
     const { posts, deleteCommentFromPost, updateCommentInPost } = useBlog();
     const { toast } = useToast();
     const [commentToEdit, setCommentToEdit] = useState<CommentWithContext | null>(null);
+    const [editingText, setEditingText] = useState("");
+    const [editingDate, setEditingDate] = useState("");
 
     // Flatten comments from all posts
     const allComments: CommentWithContext[] = posts.flatMap(post => 
@@ -58,15 +60,34 @@ export default function AdminCommentsPage() {
             description: "The comment has been successfully removed.",
         })
     }
+    
+    const handleOpenEditDialog = (comment: CommentWithContext) => {
+        setCommentToEdit(comment);
+        setEditingText(comment.text);
+        const localDate = new Date(comment.date);
+        const year = localDate.getFullYear();
+        const month = String(localDate.getMonth() + 1).padStart(2, '0');
+        const day = String(localDate.getDate()).padStart(2, '0');
+        const hours = String(localDate.getHours()).padStart(2, '0');
+        const minutes = String(localDate.getMinutes()).padStart(2, '0');
+        setEditingDate(`${year}-${month}-${day}T${hours}:${minutes}`);
+    }
 
-    const handleSaveComment = (slug: string, commentId: string, newText: string, newDate: string) => {
-        updateCommentInPost(slug, commentId, { text: newText, date: newDate });
+    const handleSaveComment = () => {
+        if (!commentToEdit) return;
+
+        updateCommentInPost(commentToEdit.postSlug, commentToEdit.id, { text: editingText, date: new Date(editingDate).toISOString() });
         toast({
             title: "Comment Updated",
             description: "The comment has been successfully updated.",
         });
         setCommentToEdit(null);
     }
+    
+    const handleCloseDialog = () => {
+        setCommentToEdit(null);
+    }
+
 
     return (
         <div className="space-y-8">
@@ -116,7 +137,7 @@ export default function AdminCommentsPage() {
                                         variant="outline" 
                                         size="icon"
                                         className="h-9 w-9"
-                                        onClick={() => setCommentToEdit(comment)}
+                                        onClick={() => handleOpenEditDialog(comment)}
                                     >
                                         <Edit className="h-4 w-4" />
                                     </Button>
@@ -157,12 +178,14 @@ export default function AdminCommentsPage() {
             </Card>
 
             {commentToEdit && (
-                <EditCommentDialog 
-                    key={commentToEdit.id}
-                    comment={commentToEdit}
+                <EditCommentDialog
                     isOpen={!!commentToEdit}
-                    onClose={() => setCommentToEdit(null)}
+                    onClose={handleCloseDialog}
                     onSave={handleSaveComment}
+                    text={editingText}
+                    date={editingDate}
+                    onTextChange={setEditingText}
+                    onDateChange={setEditingDate}
                 />
             )}
         </div>
