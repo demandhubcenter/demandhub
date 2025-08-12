@@ -147,7 +147,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
 
             <div className="space-y-8">
                 {post.comments.map((comment, index) => (
-                    <div key={comment.id} className="flex gap-4">
+                    <div key={`${comment.id}-${index}`} className="flex gap-4">
                         <Avatar>
                             <AvatarImage src={comment.author.avatar} alt={comment.author.name} data-ai-hint={comment.author.hint}/>
                             <AvatarFallback>{comment.author.name.charAt(0)}</AvatarFallback>
