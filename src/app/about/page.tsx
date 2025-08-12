@@ -3,10 +3,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Linkedin, Target, Eye, Gem } from "lucide-react";
 
 const teamMembers = [
-  { name: "Alice Johnson", title: "Founder & CEO", avatar: "https://placehold.co/200x200.png", hint: "woman portrait" },
-  { name: "Bob Williams", title: "Head of Forensics", avatar: "https://placehold.co/200x200.png", hint: "man portrait" },
-  { name: "Charlie Brown", title: "Lead Investigator", avatar: "https://placehold.co/200x200.png", hint: "person portrait" },
-  { name: "Diana Prince", title: "Client Relations", avatar: "https://placehold.co/200x200.png", hint: "woman portrait" },
+  { name: "Alice Johnson", title: "Founder & CEO", avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&q=80&fit=crop", hint: "woman portrait" },
+  { name: "Bob Williams", title: "Head of Forensics", avatar: "https://images.unsplash.com/photo-1557862921-37829c790f19?w=200&h=200&q=80&fit=crop", hint: "man portrait" },
+  { name: "Charlie Brown", title: "Lead Investigator", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&q=80&fit=crop", hint: "person portrait" },
+  { name: "Diana Prince", title: "Client Relations", avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&q=80&fit=crop", hint: "woman portrait" },
 ];
 
 const timelineEvents = [
@@ -28,7 +28,7 @@ export default function AboutPage() {
     <>
       <section className="relative py-20 md:py-32 bg-primary/5">
         <Image
-          src="https://placehold.co/1920x600.png"
+          src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1920&h=600&q=80&fit=crop"
           alt="Office background"
           layout="fill"
           objectFit="cover"
