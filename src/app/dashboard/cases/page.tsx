@@ -1,6 +1,7 @@
 
 "use client"
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import {
   Table,
@@ -26,11 +27,16 @@ import { useCases } from "@/context/case-context";
 export default function CasesPage() {
     const [filter, setFilter] = useState("All");
     const { cases } = useCases();
+    const router = useRouter();
 
     const filteredCases = cases.filter(caseItem => {
         if (filter === "All") return true;
         return caseItem.status === filter;
     })
+
+    const handleViewCase = (caseId: string) => {
+      router.push(`/dashboard/case/${caseId.replace('CASE-','')}`);
+    }
 
     return (
         <div className="space-y-8">
@@ -87,8 +93,8 @@ export default function CasesPage() {
                             </TableCell>
                             <TableCell>{caseItem.date}</TableCell>
                             <TableCell className="text-right">
-                                <Button variant="outline" size="sm" asChild>
-                                    <Link href={`/dashboard/case/${caseItem.id.replace('CASE-','')}`}>View Case</Link>
+                                <Button variant="outline" size="sm" onClick={() => handleViewCase(caseItem.id)}>
+                                    View Case
                                 </Button>
                             </TableCell>
                             </TableRow>

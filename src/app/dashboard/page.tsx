@@ -2,6 +2,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { AnimatedCounter } from "@/components/shared/animated-counter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -23,6 +24,7 @@ import { differenceInDays, parseISO } from "date-fns";
 export default function DashboardPage() {
   const { cases } = useCases();
   const { user } = useAuth();
+  const router = useRouter();
 
   const openCases = useMemo(() => cases.filter(c => c.status === 'Open'), [cases]);
   const resolvedCases = useMemo(() => cases.filter(c => c.status === 'Closed'), [cases]);
@@ -40,6 +42,10 @@ export default function DashboardPage() {
     { value: resolvedCases.length, label: "Resolved Cases" },
     { value: daysSinceLastActivity, label: "Days Since Last Activity", suffix: " days" },
   ];
+
+  const handleViewCase = (caseId: string) => {
+    router.push(`/dashboard/case/${caseId.replace('CASE-','')}`);
+  }
 
   return (
     <div className="space-y-8">
@@ -102,8 +108,8 @@ export default function DashboardPage() {
                   </TableCell>
                   <TableCell>{caseItem.date}</TableCell>
                   <TableCell className="text-right">
-                    <Button variant="outline" size="sm" asChild>
-                        <Link href={`/dashboard/case/${caseItem.id.replace('CASE-','')}`}>View Case</Link>
+                    <Button variant="outline" size="sm" onClick={() => handleViewCase(caseItem.id)}>
+                        View Case
                     </Button>
                   </TableCell>
                 </TableRow>
