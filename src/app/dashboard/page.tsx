@@ -43,10 +43,6 @@ export default function DashboardPage() {
     { value: daysSinceLastActivity, label: "Days Since Last Activity", suffix: " days" },
   ];
 
-  const handleViewCase = (caseId: string) => {
-    router.push(`/dashboard/case/${caseId.replace('CASE-','')}`);
-  }
-
   return (
     <div className="space-y-8">
       <div>
@@ -108,8 +104,10 @@ export default function DashboardPage() {
                   </TableCell>
                   <TableCell>{caseItem.date}</TableCell>
                   <TableCell className="text-right">
-                    <Button variant="outline" size="sm" onClick={() => handleViewCase(caseItem.id)}>
-                        View Case
+                    <Button variant="outline" size="sm" asChild>
+                        <Link href={`/dashboard/case/${caseItem.id.replace('CASE-','')}`}>
+                            View Case
+                        </Link>
                     </Button>
                   </TableCell>
                 </TableRow>

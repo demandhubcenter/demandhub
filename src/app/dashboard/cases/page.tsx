@@ -34,10 +34,6 @@ export default function CasesPage() {
         return caseItem.status === filter;
     })
 
-    const handleViewCase = (caseId: string) => {
-      router.push(`/dashboard/case/${caseId.replace('CASE-','')}`);
-    }
-
     return (
         <div className="space-y-8">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -93,8 +89,10 @@ export default function CasesPage() {
                             </TableCell>
                             <TableCell>{caseItem.date}</TableCell>
                             <TableCell className="text-right">
-                                <Button variant="outline" size="sm" onClick={() => handleViewCase(caseItem.id)}>
-                                    View Case
+                                <Button variant="outline" size="sm" asChild>
+                                    <Link href={`/dashboard/case/${caseItem.id.replace('CASE-','')}`}>
+                                        View Case
+                                    </Link>
                                 </Button>
                             </TableCell>
                             </TableRow>
