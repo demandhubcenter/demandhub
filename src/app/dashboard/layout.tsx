@@ -1,16 +1,17 @@
 
 "use client";
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useMediaQuery } from 'react-responsive';
+import { useRouter } from 'next/navigation';
 import { DashboardSidebar } from "@/components/dashboard/sidebar";
 import { CaseProvider } from "@/context/case-context";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from '@/components/ui/button';
 import { Menu } from 'lucide-react';
+import { useAuth } from '@/context/auth-context';
+import { Skeleton } from '@/components/ui/skeleton';
 
-// This is a mock authentication check. In a real app, use middleware or a server-side check.
-const isAuthenticated = true; 
 
 export default function DashboardLayout({
   children,
@@ -18,13 +19,41 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const isDesktop = useMediaQuery({ query: '(min-width: 768px)' });
+  const { user, loading } = useAuth();
+  const router = useRouter();
 
-  if (!isAuthenticated) {
-    // In a real app with Next.js middleware, you would redirect.
-    // For this example, we'll just show a message.
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/signin');
+    }
+  }, [user, loading, router]);
+
+
+  if (loading || !user) {
     return (
-      <div className="flex h-screen items-center justify-center">
-        <p>You must be signed in to view this page. Redirecting...</p>
+       <div className="flex min-h-screen">
+          {isDesktop && (
+            <aside className="w-64 flex-shrink-0 border-r bg-background p-6 flex flex-col h-full">
+               <Skeleton className="h-8 w-32 mb-10" />
+               <div className="space-y-2">
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-10 w-full" />
+               </div>
+            </aside>
+          )}
+          <main className="flex-1 p-4 sm:p-8 bg-primary/5">
+             <div className="md:hidden h-12"></div>
+             <div className="space-y-8">
+                <Skeleton className="h-10 w-64" />
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <Skeleton className="h-32 w-full" />
+                    <Skeleton className="h-32 w-full" />
+                    <Skeleton className="h-32 w-full" />
+                </div>
+                 <Skeleton className="h-64 w-full" />
+             </div>
+          </main>
       </div>
     );
   }
@@ -46,7 +75,7 @@ export default function DashboardLayout({
             </SheetContent>
           </Sheet>
         )}
-        <main className="flex-1 p-4 sm:p-8 bg-primary/5 md:pl-8">
+        <main className="flex-1 p-4 sm:p-8 bg-primary/5">
            {/* Add padding for the mobile menu button */}
            <div className="md:hidden h-12"></div>
           {children}
