@@ -18,6 +18,7 @@ import { ArrowRight } from "lucide-react";
 import { useCases } from "@/context/case-context";
 import { useMemo } from "react";
 import { useAuth } from "@/context/auth-context";
+import { differenceInDays, parseISO } from "date-fns";
 
 export default function DashboardPage() {
   const { cases } = useCases();
@@ -26,10 +27,18 @@ export default function DashboardPage() {
   const openCases = useMemo(() => cases.filter(c => c.status === 'Open'), [cases]);
   const resolvedCases = useMemo(() => cases.filter(c => c.status === 'Closed'), [cases]);
 
+  const daysSinceLastActivity = useMemo(() => {
+    if (cases.length === 0) {
+      return 0;
+    }
+    const mostRecentCase = [...cases].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
+    return differenceInDays(new Date(), parseISO(mostRecentCase.date));
+  }, [cases]);
+
   const stats = [
     { value: openCases.length, label: "Open Cases" },
     { value: resolvedCases.length, label: "Resolved Cases" },
-    { value: 2, label: "Days Since Last Activity", suffix: " days" },
+    { value: daysSinceLastActivity, label: "Days Since Last Activity", suffix: " days" },
   ];
 
   return (
