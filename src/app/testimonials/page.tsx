@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 
 const caseStudies = [
   {
-    image: { src: "https://images.unsplash.com/photo-1614036751039-07495367673a?w=600&h=400&q=80", hint: "relieved person computer" },
+    image: { src: "https://images.unsplash.com/photo-1639322537228-f710d846310a?w=600&h=400&q=80", hint: "relieved person computer" },
     headline: "Recovered $120K from Crypto Investment Scam",
     quote: "I thought my retirement savings were gone forever. DemandHub's forensic team traced the transactions and recovered almost everything.",
     tags: ["Crypto", "Forensics"],
@@ -35,7 +35,7 @@ const caseStudies = [
     tags: ["Real Estate", "Individual Recovery"],
   },
   {
-    image: { src: "https://images.unsplash.com/photo-1639322537228-f710d846310a?w=600&h=400&q=80", hint: "digital art" },
+    image: { src: "https://images.unsplash.com/photo-1642158832127-94a5c5d03a7d?w=600&h=400&q=80", hint: "digital art" },
     headline: "Traced and Recovered Stolen NFT Collection",
     quote: "My valuable digital art was stolen from my wallet. Their on-chain analysis was key to getting it back.",
     tags: ["NFT", "Blockchain"],
@@ -57,7 +57,7 @@ export default function TestimonialsPage() {
       <div className="relative">
         <div 
           className="absolute inset-0 h-full w-full bg-cover bg-fixed bg-center opacity-10" 
-          style={{backgroundImage: "url('https://images.unsplash.com/photo-1554147090-e1221a04a025?w=1920&h=1080&q=80&fit=crop')"}}
+          style={{backgroundImage: "url('https://images.unsplash.com/photo-1519681393784-d120267933ba?w=1920&h=1080&q=80&fit=crop')"}}
           data-ai-hint="abstract background"
         ></div>
         <section className="relative py-20 md:py-28 bg-transparent">
