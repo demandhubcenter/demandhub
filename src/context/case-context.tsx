@@ -26,7 +26,7 @@ export interface Case {
 interface CaseContextType {
   cases: Case[];
   addCase: (newCase: Case) => void;
-  getCaseById: (id: string) => Case | undefined;
+  getCaseById: (id: string) => Case | null | undefined;
   addCommentToCase: (caseId: string, comment: CaseConversation) => void;
 }
 
@@ -42,7 +42,8 @@ export const CaseProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const getCaseById = (id: string) => {
-    return cases.find(c => c.id === id || c.id.replace('CASE-', '') === id);
+    const foundCase = cases.find(c => c.id === id || c.id.replace('CASE-', '') === id);
+    return foundCase || null;
   }
 
   const addCommentToCase = (caseId: string, comment: CaseConversation) => {

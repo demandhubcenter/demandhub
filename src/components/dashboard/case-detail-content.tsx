@@ -35,7 +35,7 @@ export function CaseDetailContent() {
     return <div>Loading case details...</div>;
   }
   
-  if (!caseDetails) {
+  if (caseDetails === null) {
     return notFound();
   }
   
