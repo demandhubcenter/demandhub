@@ -167,7 +167,7 @@ export function ContactForm() {
           )}
         />
         <ReCAPTCHA
-            // Replace with your actual site key
+            // This is a test key provided by Google that will always work for development.
             sitekey="6LeIxAcTAAAAAJcZvrVyA_TCY9P1i6N7eF3gAh09"
             onChange={() => setIsVerified(true)}
             onExpired={() => setIsVerified(false)}
