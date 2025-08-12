@@ -20,7 +20,6 @@ import { Input } from "@/components/ui/input"
 import { useAuth } from "@/context/auth-context";
 import { useToast } from "@/hooks/use-toast"
 import { useState } from "react"
-import { auth } from "@/lib/firebase"
 
 const formSchema = z.object({
   email: z.string().email({
