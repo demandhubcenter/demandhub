@@ -14,15 +14,6 @@ import { useEffect, useState } from "react";
 import { type Case } from "@/context/case-context";
 import { useAuth } from "@/context/auth-context";
 
-// We still need this for static export, but it will only generate for existing cases.
-// New cases filed during a session will be rendered client-side.
-export async function generateStaticParams() {
-    // For initial build, there are no cases, so we return an empty array.
-    // In a real app with a database, you would fetch case IDs here.
-    return [];
-}
-
-
 export default function CaseDetailPage({ params }: { params: { id: string } }) {
   const { getCaseById } = useCases();
   const { user } = useAuth();
