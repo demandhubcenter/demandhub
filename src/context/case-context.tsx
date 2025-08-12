@@ -32,6 +32,7 @@ interface CaseContextType {
 
 const CaseContext = createContext<CaseContextType | undefined>(undefined);
 
+// Start with an empty array. No more mock data.
 const initialCases: Case[] = [];
 
 export const CaseProvider = ({ children }: { children: ReactNode }) => {
@@ -42,6 +43,7 @@ export const CaseProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const getCaseById = (id: string) => {
+    // Handle both 'CASE-001' and '001' formats
     const foundCase = cases.find(c => c.id === id || c.id.replace('CASE-', '') === id);
     return foundCase || null;
   }
@@ -49,9 +51,12 @@ export const CaseProvider = ({ children }: { children: ReactNode }) => {
   const addCommentToCase = (caseId: string, comment: CaseConversation) => {
     setCases(prevCases => 
         prevCases.map(c => {
+            // Handle both 'CASE-001' and '001' formats
             const caseIdentifier = c.id.replace('CASE-', '');
             if (c.id === caseId || caseIdentifier === caseId) {
+                // Create a new conversation array with the new comment
                 const updatedConversation = [...c.conversation, comment];
+                // Return a new case object with the updated conversation
                 return { ...c, conversation: updatedConversation };
             }
             return c;
