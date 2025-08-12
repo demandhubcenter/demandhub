@@ -45,12 +45,13 @@ export function SignInForm() {
  async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     try {
-      const user = await signIn(values.email, values.password);
+      await signIn(values.email, values.password);
       router.push('/dashboard');
 
     } catch (error: any) {
         let errorMessage = "An error occurred during sign in. Please check your credentials.";
-        if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
+        // Firebase specific error codes for bad credentials
+        if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found' || error.code === 'auth/invalid-email') {
             errorMessage = "Invalid email or password. Please try again.";
         }
         toast({
@@ -92,10 +93,7 @@ export function SignInForm() {
             </FormItem>
           )}
         />
-        <div className="flex items-center justify-between">
-            <div className="text-xs text-muted-foreground">
-                reCAPTCHA placeholder
-            </div>
+        <div className="flex items-center justify-end">
              <Link href="/forgot-password" passHref>
                 <Button variant="link" className="p-0 h-auto text-xs">Forgot Password?</Button>
             </Link>
