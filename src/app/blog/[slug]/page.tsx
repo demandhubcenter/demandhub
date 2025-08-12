@@ -13,11 +13,13 @@ import { Facebook, Twitter, Linkedin, Link2, ArrowLeft } from "lucide-react";
 import { useBlog } from "@/context/blog-context";
 import { useAuth } from "@/context/auth-context";
 import { notFound, useRouter } from "next/navigation";
+import React from "react";
 
 
 export default function BlogPostPage({ params }: { params: { slug: string } }) {
+    const resolvedParams = React.use(params);
     const { getPostBySlug, addCommentToPost } = useBlog();
-    const post = getPostBySlug(params.slug);
+    const post = getPostBySlug(resolvedParams.slug);
     const { user } = useAuth();
     const router = useRouter();
 
