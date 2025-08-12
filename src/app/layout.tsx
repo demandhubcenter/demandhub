@@ -1,3 +1,4 @@
+
 import type { Metadata } from 'next';
 import './globals.css';
 import { Header } from '@/components/layout/header';
@@ -7,6 +8,7 @@ import { AuthProvider } from '@/context/auth-context';
 import Script from 'next/script';
 import { WhatsAppButton } from '@/components/shared/whatsapp-button';
 import { ThemeProvider } from '@/context/theme-provider';
+import { BlogProvider } from '@/context/blog-context';
 
 export const metadata: Metadata = {
   title: 'DemandHub - Digital Asset Recovery',
@@ -33,11 +35,13 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <AuthProvider>
-            <Header />
-            <main className="flex-1">{children}</main>
-            <Footer />
-            <Toaster />
-            <WhatsAppButton />
+            <BlogProvider>
+              <Header />
+              <main className="flex-1">{children}</main>
+              <Footer />
+              <Toaster />
+              <WhatsAppButton />
+            </BlogProvider>
           </AuthProvider>
         </ThemeProvider>
         <Script id="tawk-to-script" strategy="lazyOnload">

@@ -1,3 +1,4 @@
+
 "use client";
 
 import * as React from "react";
@@ -8,6 +9,7 @@ import { useAuth } from "@/context/auth-context";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
+import { useAdminAuth } from "@/context/admin-auth-context";
 
 const navItems = [
   { name: "Home", href: "/" },
@@ -23,6 +25,7 @@ export function Header() {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
   const { user } = useAuth();
+  const { isAdmin } = useAdminAuth();
 
   React.useEffect(() => {
     if (isMobileMenuOpen) {
@@ -64,6 +67,17 @@ export function Header() {
               )}
             >
               Dashboard
+            </Link>
+          )}
+           {isAdmin && (
+            <Link
+              href="/admin/blog"
+              className={cn(
+                "text-sm font-medium transition-colors hover:text-primary",
+                pathname.startsWith('/admin') ? "text-primary" : "text-muted-foreground"
+              )}
+            >
+              Admin
             </Link>
           )}
         </nav>
@@ -125,6 +139,20 @@ export function Header() {
                 Dashboard
               </Link>
             )}
+             {isAdmin && (
+                <Link
+                  href="/admin/blog"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={cn(
+                    "block rounded-md px-3 py-2 text-base font-medium",
+                    pathname.startsWith('/admin')
+                      ? "bg-accent text-accent-foreground"
+                      : "text-muted-foreground hover:bg-accent/50"
+                  )}
+                >
+                  Admin
+                </Link>
+              )}
              <div className="mt-4 border-t pt-4">
                 {user ? (
                   <Button asChild className="w-full">

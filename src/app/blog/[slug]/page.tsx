@@ -1,3 +1,6 @@
+
+'use client'
+
 import Image from "next/image";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -6,59 +9,30 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
-import { Facebook, Twitter, Linkedin, Link2 } from "lucide-react";
+import { Facebook, Twitter, Linkedin, Link2, ArrowLeft } from "lucide-react";
+import { useBlog } from "@/context/blog-context";
+import { useAuth } from "@/context/auth-context";
+import { notFound, useRouter } from "next/navigation";
 
-// This is mock data. In a real app, this would come from a CMS or database based on the slug.
-const post = {
-  title: "The Rise of AI in Fraud Detection and Recovery",
-  author: {
-    name: "Alice Johnson",
-    avatar: "https://placehold.co/100x100.png",
-    hint: "woman portrait",
-    bio: "Alice is the Founder & CEO of DemandHub, with over 15 years of experience in cybersecurity and digital forensics.",
-  },
-  date: "October 30, 2023",
-  tags: ["AI", "Cybersecurity", "Forensics"],
-  image: { src: "https://placehold.co/1200x600.png", hint: "futuristic AI" },
-  content: `
-    <p class="lead text-lg text-muted-foreground mb-6">In an era where digital transactions are the norm, the methods employed by fraudsters have become increasingly sophisticated. Traditional security measures are often a step behind. Enter Artificial Intelligence (AI), a transformative technology that is revolutionizing how we identify, prevent, and recover from financial fraud.</p>
-    <h3 class="text-2xl font-bold mt-8 mb-4">Proactive Threat Identification</h3>
-    <p class="mb-6">AI algorithms can analyze vast datasets of transactions in real-time, identifying patterns and anomalies that would be invisible to human analysts. By learning what constitutes 'normal' behavior for a user or system, AI can flag suspicious activities with incredible accuracy, stopping fraud before it even happens.</p>
-    <ul class="list-disc list-inside space-y-2 mb-6 text-muted-foreground">
-        <li><strong>Behavioral Analytics:</strong> AI models create a unique profile for each user, detecting deviations in transaction times, amounts, locations, and more.</li>
-        <li><strong>Network Analysis:</strong> It can map out complex networks of accounts and transactions to uncover sophisticated fraud rings that would otherwise remain hidden.</li>
-        <li><strong>Predictive Modeling:</strong> By analyzing historical fraud data, AI can predict which accounts or transactions are most likely to be fraudulent in the future.</li>
-    </ul>
-    <h3 class="text-2xl font-bold mt-8 mb-4">Accelerating the Recovery Process</h3>
-    <p class="mb-6">When fraud does occur, time is of the essence. AI plays a crucial role in the recovery process by automating and accelerating on-chain forensics. It can trace the movement of stolen funds across multiple blockchains and jurisdictions in a fraction of the time it would take a human team. This rapid analysis is critical for coordinating with exchanges and law enforcement to freeze assets before they disappear completely.</p>
-    <blockquote class="border-l-4 border-primary pl-4 italic my-8 text-muted-foreground">
-        "AI is our most powerful ally in the fight against digital fraud. It gives us the speed and scale needed to protect our clients in a rapidly evolving threat landscape."
-    </blockquote>
-    <p>The integration of AI into our recovery toolkit at DemandHub has significantly increased our success rate. It allows our human experts to focus on the strategic aspects of a case—liaising with financial institutions, navigating legal complexities, and providing support to our clients—while the AI handles the heavy lifting of data analysis. The future of asset recovery is not just about human expertise; it's about augmenting that expertise with the power of intelligent machines.</p>
-  `,
-};
-
-const comments = [
-    {
-        author: { name: "Bob Williams", avatar: "https://placehold.co/100x100.png", hint: "man portrait" },
-        date: "1 day ago",
-        text: "This is a fantastic overview. The point about behavioral analytics is key. We've seen it work wonders in preventing account takeovers."
-    },
-    {
-        author: { name: "Charlie Brown", avatar: "https://placehold.co/100x100.png", hint: "person portrait" },
-        date: "2 days ago",
-        text: "I'd be interested to learn more about the challenges of AI, like dealing with adversarial attacks or model bias. Do you plan a follow-up article?"
-    }
-]
 
 export default function BlogPostPage({ params }: { params: { slug: string } }) {
-    // In a real app, this would come from useAuth()
-    const isSignedIn = true;
+    const { getPostBySlug, addCommentToPost } = useBlog();
+    const post = getPostBySlug(params.slug);
+    const { user } = useAuth();
+    const router = useRouter();
+
+    if (!post) {
+      notFound();
+    }
 
   return (
     <>
       <section className="py-12 bg-background">
         <div className="container max-w-4xl">
+         <Button variant="ghost" onClick={() => router.back()} className="mb-8">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Blog
+        </Button>
           <div className="text-center mb-8">
             <div className="flex justify-center gap-2 mb-4">
               {post.tags.map((tag) => <Badge key={tag} variant="secondary">{tag}</Badge>)}
@@ -71,7 +45,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
               </Avatar>
               <div>
                 <p className="font-semibold">{post.author.name}</p>
-                <p className="text-sm text-muted-foreground">{post.date}</p>
+                <p className="text-sm text-muted-foreground">{new Date(post.date).toLocaleDateString()}</p>
               </div>
             </div>
           </div>
@@ -124,8 +98,8 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
 
       <section className="py-20 bg-background">
         <div className="container max-w-4xl">
-            <h2 className="text-3xl font-bold mb-8">Comments ({comments.length})</h2>
-            {isSignedIn ? (
+            <h2 className="text-3xl font-bold mb-8">Comments ({post.comments.length})</h2>
+            {user ? (
                 <div className="mb-12">
                     <Textarea placeholder="Write a comment..." className="mb-4" rows={4}/>
                     <Button>Submit Comment</Button>
@@ -141,7 +115,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
             )}
 
             <div className="space-y-8">
-                {comments.map((comment, index) => (
+                {post.comments.map((comment, index) => (
                     <div key={index} className="flex gap-4">
                         <Avatar>
                             <AvatarImage src={comment.author.avatar} alt={comment.author.name} data-ai-hint={comment.author.hint}/>
@@ -150,7 +124,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
                         <div className="flex-1">
                             <div className="flex items-baseline justify-between">
                                 <p className="font-semibold">{comment.author.name}</p>
-                                <p className="text-xs text-muted-foreground">{comment.date}</p>
+                                <p className="text-xs text-muted-foreground">{new Date(comment.date).toLocaleDateString()}</p>
                             </div>
                             <p className="text-muted-foreground mt-2">{comment.text}</p>
                         </div>

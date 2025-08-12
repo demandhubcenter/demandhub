@@ -10,6 +10,7 @@ import {
     signInWithEmailAndPassword,
     signOut as firebaseSignOut
 } from 'firebase/auth';
+import { AdminAuthProvider } from './admin-auth-context';
 
 interface User {
   name: string | null;
@@ -88,7 +89,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <AuthContext.Provider value={{ user, loading, signIn, signOut, updateUser }}>
-      {!loading && children}
+      <AdminAuthProvider>
+        {!loading && children}
+      </AdminAuthProvider>
     </AuthContext.Provider>
   );
 };
