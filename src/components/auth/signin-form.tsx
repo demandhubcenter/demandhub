@@ -46,14 +46,14 @@ export function SignInForm() {
  async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     try {
-      const userCredential = await signIn(values.email, values.password);
+      const user = await signIn(values.email, values.password);
 
       // It's crucial to check for email verification AFTER a successful sign-in
       // because Firebase might need to refresh the user's state.
       // We reload the user state to get the latest emailVerified status.
-      await userCredential.reload();
+      await user.reload();
       
-      if (userCredential.emailVerified) {
+      if (user.emailVerified) {
         router.push('/dashboard');
       } else {
         toast({
