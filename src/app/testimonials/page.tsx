@@ -58,8 +58,8 @@ export default function TestimonialsPage() {
       <div className="relative">
         <div 
           className="absolute inset-0 h-full w-full bg-cover bg-fixed bg-center opacity-10" 
-          style={{backgroundImage: "url('https://images.unsplash.com/photo-1517816743773-6e0fd518b4a6?w=1920&h=1080&q=80&fit=crop')"}}
-          data-ai-hint="abstract network"
+          style={{backgroundImage: "url('https://images.unsplash.com/photo-1518974886828-228f747864a6?w=1920&h=1080&q=80&fit=crop')"}}
+          data-ai-hint="abstract technology"
         ></div>
         <section className="relative py-20 md:py-28 bg-transparent">
           <div className="container max-w-7xl">
