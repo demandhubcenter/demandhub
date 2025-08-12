@@ -22,9 +22,14 @@ import { useAuth } from "@/context/auth-context";
 import { differenceInDays, parseISO } from "date-fns";
 
 export default function DashboardPage() {
-  const { cases } = useCases();
+  const { cases, setSelectedCase } = useCases();
   const { user } = useAuth();
   const router = useRouter();
+
+  const handleViewCase = (caseItem: any) => {
+    setSelectedCase(caseItem);
+    router.push('/dashboard/submitted-case');
+  };
 
   const openCases = useMemo(() => cases.filter(c => c.status === 'Open'), [cases]);
   const resolvedCases = useMemo(() => cases.filter(c => c.status === 'Closed'), [cases]);
@@ -109,7 +114,7 @@ export default function DashboardPage() {
                     <Button 
                       variant="outline" 
                       size="sm"
-                      onClick={() => router.push(`/dashboard/case/${caseItem.id.replace('CASE-','')}`)}
+                      onClick={() => handleViewCase(caseItem)}
                     >
                         View Case
                     </Button>

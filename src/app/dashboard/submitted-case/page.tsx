@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from "next/link";
@@ -8,37 +9,33 @@ import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useCases } from "@/context/case-context";
-import { notFound } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { type Case, type CaseConversation } from "@/context/case-context";
 import { useAuth } from "@/context/auth-context";
+import { ArrowLeft } from "lucide-react";
 
-// This is the actual component that renders the page content.
-// It uses client-side hooks to fetch and display data.
-export default function CaseDetailPageClient({ params }: { params: { id: string } }) {
-  const id = params.id as string;
-  const { getCaseById, addCommentToCase, cases } = useCases();
+export default function SubmittedCasePage() {
+  const { selectedCase, addCommentToCase } = useCases();
   const { user } = useAuth();
-  const [caseDetails, setCaseDetails] = useState<Case | null | undefined>(undefined);
   const [newComment, setNewComment] = useState("");
+  const router = useRouter();
   
   useEffect(() => {
-    if (id) {
-      const details = getCaseById(id);
-      setCaseDetails(details);
+    // If there's no selected case, redirect back to the cases list.
+    // This can happen if the user refreshes the page.
+    if (!selectedCase) {
+      router.replace('/dashboard/cases');
     }
-  }, [id, getCaseById, cases]); // Rerun when cases context updates
+  }, [selectedCase, router]);
 
-  if (caseDetails === undefined) {
-    return <div>Loading case details...</div>;
-  }
-  
-  if (caseDetails === null) {
-    return notFound();
+  // Render nothing or a loading state while redirecting
+  if (!selectedCase) {
+    return null; 
   }
   
   const handleAddComment = () => {
-    if (!newComment.trim() || !user || !id) return;
+    if (!newComment.trim() || !user) return;
     
     const comment: CaseConversation = {
       author: {
@@ -50,18 +47,22 @@ export default function CaseDetailPageClient({ params }: { params: { id: string 
       text: newComment,
     };
     
-    addCommentToCase(id, comment);
+    addCommentToCase(selectedCase.id, comment);
     setNewComment("");
   }
 
   return (
     <div className="space-y-8">
-      <div>
+       <div>
+        <Button variant="ghost" onClick={() => router.back()} className="mb-4">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Cases
+        </Button>
         <div className="flex items-center gap-4 mb-1">
-            <h1 className="text-3xl font-bold">{caseDetails.title}</h1>
-            <Badge variant={caseDetails.status === 'Open' ? 'destructive' : 'secondary'}>{caseDetails.status}</Badge>
+            <h1 className="text-3xl font-bold">{selectedCase.title}</h1>
+            <Badge variant={selectedCase.status === 'Open' ? 'destructive' : 'secondary'}>{selectedCase.status}</Badge>
         </div>
-        <p className="text-muted-foreground">Case ID: {caseDetails.id} | Opened: {caseDetails.date}</p>
+        <p className="text-muted-foreground">Case ID: {selectedCase.id} | Opened: {selectedCase.date}</p>
       </div>
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -71,7 +72,7 @@ export default function CaseDetailPageClient({ params }: { params: { id: string 
                     <CardTitle>Conversation</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                    {caseDetails.conversation.map((entry: any, index: number) => (
+                    {selectedCase.conversation.map((entry: any, index: number) => (
                         <div key={index} className={`flex gap-4 ${entry.author.role === 'Client' ? 'justify-end' : ''}`}>
                              {entry.author.role !== 'Client' && (
                                 <Avatar>
@@ -113,7 +114,7 @@ export default function CaseDetailPageClient({ params }: { params: { id: string 
                     <CardTitle>Case Summary</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <p className="text-muted-foreground">{caseDetails.description}</p>
+                    <p className="text-muted-foreground">{selectedCase.description}</p>
                 </CardContent>
             </Card>
             <Card>
@@ -121,7 +122,7 @@ export default function CaseDetailPageClient({ params }: { params: { id: string 
                     <CardTitle>Case Category</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <p className="text-muted-foreground">{caseDetails.category}</p>
+                    <p className="text-muted-foreground">{selectedCase.category}</p>
                 </CardContent>
             </Card>
             <Card>
@@ -129,11 +130,11 @@ export default function CaseDetailPageClient({ params }: { params: { id: string 
                     <CardTitle>Attached Evidence</CardTitle>
                 </CardHeader>
                  <CardContent>
-                    {caseDetails.evidence ? (
+                    {selectedCase.evidence ? (
                          <ul className="space-y-2 text-sm">
                             <li className="flex items-center">
-                                <Link href={caseDetails.evidence.url} className="text-primary hover:underline" download={caseDetails.evidence.name}>
-                                    {caseDetails.evidence.name}
+                                <Link href={selectedCase.evidence.url} className="text-primary hover:underline" download={selectedCase.evidence.name}>
+                                    {selectedCase.evidence.name}
                                 </Link>
                             </li>
                         </ul>

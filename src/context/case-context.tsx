@@ -29,6 +29,8 @@ interface CaseContextType {
   getCaseById: (id: string) => Case | null | undefined;
   addCommentToCase: (caseId: string, comment: CaseConversation) => void;
   deleteCase: (caseId: string) => void;
+  selectedCase: Case | null;
+  setSelectedCase: (caseData: Case | null) => void;
 }
 
 const CaseContext = createContext<CaseContextType | undefined>(undefined);
@@ -38,6 +40,7 @@ const initialCases: Case[] = [];
 
 export const CaseProvider = ({ children }: { children: ReactNode }) => {
   const [cases, setCases] = useState<Case[]>(initialCases);
+  const [selectedCase, setSelectedCase] = useState<Case | null>(null);
 
   const addCase = (newCase: Case) => {
     setCases(prevCases => [...prevCases, newCase]);
@@ -50,19 +53,23 @@ export const CaseProvider = ({ children }: { children: ReactNode }) => {
   }
 
   const addCommentToCase = (caseId: string, comment: CaseConversation) => {
+    const updatedCase = (caseToUpdate: Case | null) => {
+        if (!caseToUpdate) return null;
+        const updatedConversation = [...caseToUpdate.conversation, comment];
+        return { ...caseToUpdate, conversation: updatedConversation };
+    }
+
     setCases(prevCases => 
         prevCases.map(c => {
-            // Handle both 'CASE-001' and '001' formats
             const caseIdentifier = c.id.replace('CASE-', '');
             if (c.id === caseId || caseIdentifier === caseId) {
-                // Create a new conversation array with the new comment
-                const updatedConversation = [...c.conversation, comment];
-                // Return a new case object with the updated conversation
-                return { ...c, conversation: updatedConversation };
+                return updatedCase(c)!;
             }
             return c;
         })
-    )
+    );
+
+    setSelectedCase(prevSelected => updatedCase(prevSelected));
   }
 
   const deleteCase = (caseId: string) => {
@@ -70,7 +77,7 @@ export const CaseProvider = ({ children }: { children: ReactNode }) => {
   }
 
   return (
-    <CaseContext.Provider value={{ cases, addCase, getCaseById, addCommentToCase, deleteCase }}>
+    <CaseContext.Provider value={{ cases, addCase, getCaseById, addCommentToCase, deleteCase, selectedCase, setSelectedCase }}>
       {children}
     </CaseContext.Provider>
   );

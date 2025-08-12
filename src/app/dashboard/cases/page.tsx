@@ -37,8 +37,13 @@ import {
 
 export default function CasesPage() {
     const [filter, setFilter] = useState("All");
-    const { cases, deleteCase } = useCases();
+    const { cases, deleteCase, setSelectedCase } = useCases();
     const router = useRouter();
+
+    const handleViewCase = (caseItem: any) => {
+        setSelectedCase(caseItem);
+        router.push('/dashboard/submitted-case');
+    };
 
     const filteredCases = cases.filter(caseItem => {
         if (filter === "All") return true;
@@ -103,7 +108,7 @@ export default function CasesPage() {
                                 <Button 
                                     variant="outline" 
                                     size="sm" 
-                                    onClick={() => router.push(`/dashboard/case/${caseItem.id.replace('CASE-','')}`)}
+                                    onClick={() => handleViewCase(caseItem)}
                                 >
                                     View
                                 </Button>
