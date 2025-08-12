@@ -104,10 +104,12 @@ export default function DashboardPage() {
                   </TableCell>
                   <TableCell>{caseItem.date}</TableCell>
                   <TableCell className="text-right">
-                    <Button variant="outline" size="sm" asChild>
-                        <Link href={`/dashboard/case/${caseItem.id.replace('CASE-','')}`}>
-                            View Case
-                        </Link>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => router.push(`/dashboard/case/${caseItem.id.replace('CASE-','')}`)}
+                    >
+                        View Case
                     </Button>
                   </TableCell>
                 </TableRow>
