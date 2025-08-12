@@ -19,6 +19,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/auth-context";
 import { updateProfile, reauthenticateWithCredential, EmailAuthProvider, updatePassword } from "firebase/auth";
 import { auth } from "@/lib/firebase";
+import { useState } from "react";
 
 const profileSchema = z.object({
   fullName: z.string().min(2, "Full name must be at least 2 characters."),
@@ -36,7 +37,9 @@ const passwordSchema = z.object({
 
 export function AccountSettingsForm() {
     const { toast } = useToast();
-    const { user } = useAuth();
+    const { user, updateUsername } = useAuth();
+    const [isProfileSaving, setIsProfileSaving] = useState(false);
+    const [isPasswordSaving, setIsPasswordSaving] = useState(false);
 
     const profileForm = useForm<z.infer<typeof profileSchema>>({
         resolver: zodResolver(profileSchema),
@@ -57,20 +60,24 @@ export function AccountSettingsForm() {
 
     async function onProfileSubmit(values: z.infer<typeof profileSchema>) {
         if (!auth.currentUser) return;
+        setIsProfileSaving(true);
         try {
             await updateProfile(auth.currentUser, { displayName: values.fullName });
-            // Note: Updating email with Firebase requires re-authentication and is a more complex flow.
-            // This example focuses on updating the display name.
+            // This is the new part: update the context immediately
+            updateUsername(values.fullName);
+            
             toast({ title: "Profile Updated", description: "Your name has been successfully updated." });
 
         } catch (error: any) {
              toast({ title: "Error", description: error.message, variant: "destructive" });
+        } finally {
+            setIsProfileSaving(false);
         }
     }
 
     async function onPasswordSubmit(values: z.infer<typeof passwordSchema>) {
         if (!auth.currentUser || !auth.currentUser.email) return;
-
+        setIsPasswordSaving(true);
         try {
             const credential = EmailAuthProvider.credential(auth.currentUser.email, values.currentPassword);
             await reauthenticateWithCredential(auth.currentUser, credential);
@@ -79,6 +86,8 @@ export function AccountSettingsForm() {
             passwordForm.reset();
         } catch (error: any) {
             toast({ title: "Error", description: "Failed to change password. Please check your current password.", variant: "destructive" });
+        } finally {
+            setIsPasswordSaving(false);
         }
     }
 
@@ -94,7 +103,7 @@ export function AccountSettingsForm() {
                     <FormItem>
                     <FormLabel>Full Name</FormLabel>
                     <FormControl>
-                        <Input placeholder="John Doe" {...field} />
+                        <Input placeholder="John Doe" {...field} disabled={isProfileSaving} />
                     </FormControl>
                     <FormMessage />
                     </FormItem>
@@ -113,7 +122,7 @@ export function AccountSettingsForm() {
                     </FormItem>
                 )}
                 />
-                <Button type="submit">Save Profile</Button>
+                <Button type="submit" disabled={isProfileSaving}>{isProfileSaving ? "Saving..." : "Save Profile"}</Button>
             </form>
         </Form>
 
@@ -128,7 +137,7 @@ export function AccountSettingsForm() {
                     <FormItem>
                     <FormLabel>Current Password</FormLabel>
                     <FormControl>
-                        <Input type="password" {...field} />
+                        <Input type="password" {...field} disabled={isPasswordSaving} />
                     </FormControl>
                     <FormMessage />
                     </FormItem>
@@ -141,7 +150,7 @@ export function AccountSettingsForm() {
                     <FormItem>
                     <FormLabel>New Password</FormLabel>
                     <FormControl>
-                        <Input type="password" {...field} />
+                        <Input type="password" {...field} disabled={isPasswordSaving}/>
                     </FormControl>
                     <FormMessage />
                     </FormItem>
@@ -154,13 +163,13 @@ export function AccountSettingsForm() {
                     <FormItem>
                     <FormLabel>Confirm New Password</FormLabel>
                     <FormControl>
-                        <Input type="password" {...field} />
+                        <Input type="password" {...field} disabled={isPasswordSaving}/>
                     </FormControl>
                     <FormMessage />
                     </FormItem>
                 )}
                 />
-                <Button type="submit">Change Password</Button>
+                <Button type="submit" disabled={isPasswordSaving}>{isPasswordSaving ? "Saving..." : "Change Password"}</Button>
             </form>
         </Form>
     </div>
