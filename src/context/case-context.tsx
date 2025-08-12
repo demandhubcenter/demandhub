@@ -17,12 +17,8 @@ interface CaseContextType {
 
 const CaseContext = createContext<CaseContextType | undefined>(undefined);
 
-const initialCases: Case[] = [
-  { id: "CASE-001", title: "Crypto Investment Scam", status: "Open", date: "2023-10-15" },
-  { id: "CASE-002", title: "Ransomware Attack", status: "Closed", date: "2023-09-20" },
-  { id: "CASE-003", title: "Wire Transfer Fraud", status: "Open", date: "2023-10-28" },
-  { id: "CASE-004", title: "E-commerce Phishing", status: "Closed", date: "2023-08-05" },
-];
+// Start with an empty array for user-specific cases
+const initialCases: Case[] = [];
 
 export const CaseProvider = ({ children }: { children: ReactNode }) => {
   const [cases, setCases] = useState<Case[]>(initialCases);
