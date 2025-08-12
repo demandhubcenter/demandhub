@@ -58,7 +58,7 @@ export function Header() {
               {item.name}
             </Link>
           ))}
-           {user && (
+           {user && !isAdmin && (
             <Link
               href="/dashboard"
               className={cn(
@@ -86,9 +86,15 @@ export function Header() {
             <ThemeToggle />
             <div className="hidden sm:flex">
               {user ? (
-                <Button asChild>
-                  <Link href="/dashboard">Go to Dashboard</Link>
-                </Button>
+                 isAdmin ? (
+                    <Button asChild>
+                        <Link href="/admin/blog">Admin Dashboard</Link>
+                    </Button>
+                 ) : (
+                    <Button asChild>
+                        <Link href="/dashboard">Client Dashboard</Link>
+                    </Button>
+                 )
               ) : (
                 <Button asChild>
                     <Link href="/signin">Sign In</Link>
@@ -125,7 +131,7 @@ export function Header() {
                 {item.name}
               </Link>
             ))}
-             {user && (
+             {user && !isAdmin && (
               <Link
                 href="/dashboard"
                 onClick={() => setIsMobileMenuOpen(false)}
@@ -155,9 +161,15 @@ export function Header() {
               )}
              <div className="mt-4 border-t pt-4">
                 {user ? (
-                  <Button asChild className="w-full">
-                    <Link href="/dashboard" onClick={() => setIsMobileMenuOpen(false)}>Go to Dashboard</Link>
-                  </Button>
+                   isAdmin ? (
+                    <Button asChild className="w-full">
+                        <Link href="/admin/blog" onClick={() => setIsMobileMenuOpen(false)}>Admin Dashboard</Link>
+                    </Button>
+                    ) : (
+                    <Button asChild className="w-full">
+                        <Link href="/dashboard" onClick={() => setIsMobileMenuOpen(false)}>Client Dashboard</Link>
+                    </Button>
+                    )
                 ) : (
                   <Button asChild className="w-full">
                       <Link href="/signin" onClick={() => setIsMobileMenuOpen(false)}>Sign In</Link>

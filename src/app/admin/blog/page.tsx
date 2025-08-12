@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Trash2, Edit } from "lucide-react";
+import { Trash2, Edit, PlusCircle } from "lucide-react";
 import { useBlog } from "@/context/blog-context";
 import {
   AlertDialog,
@@ -41,17 +41,20 @@ export default function AdminBlogPage() {
         <div className="space-y-8">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold">Blog Management</h1>
-                    <p className="text-muted-foreground">Create, edit, and delete blog posts.</p>
+                    <h1 className="text-3xl font-bold">Blog Posts</h1>
+                    <p className="text-muted-foreground">Create, edit, and manage all articles.</p>
                 </div>
                  <Button asChild>
-                    <Link href="/admin/blog/new">Create New Post</Link>
+                    <Link href="/admin/blog/new">
+                        <PlusCircle className="mr-2 h-4 w-4"/>
+                        Create New Post
+                    </Link>
                 </Button>
             </div>
 
              <Card>
                 <CardHeader>
-                    <CardTitle>All Blog Posts</CardTitle>
+                    <CardTitle>All Posts</CardTitle>
                     <CardDescription>A complete list of all articles on the site.</CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -63,6 +66,7 @@ export default function AdminBlogPage() {
                             <TableHead>Author</TableHead>
                             <TableHead>Date</TableHead>
                              <TableHead>Featured</TableHead>
+                             <TableHead>Comments</TableHead>
                             <TableHead className="text-right">Actions</TableHead>
                         </TableRow>
                         </TableHeader>
@@ -74,6 +78,9 @@ export default function AdminBlogPage() {
                             <TableCell>{new Date(post.date).toLocaleDateString()}</TableCell>
                             <TableCell>
                                 {post.featured && <Badge>Yes</Badge>}
+                            </TableCell>
+                            <TableCell>
+                                {post.comments.length}
                             </TableCell>
                             <TableCell className="text-right space-x-2">
                                 <Button 
