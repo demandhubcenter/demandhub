@@ -95,7 +95,7 @@ export function SignInForm() {
         />
         <div className="flex items-center justify-end">
              <Link href="/forgot-password" passHref>
-                <Button variant="link" className="p-0 h-auto text-xs">Forgot Password?</Button>
+                <Button variant="link" className="p-0 h-auto text-xs" type="button">Forgot Password?</Button>
             </Link>
         </div>
         <Button type="submit" className="w-full" disabled={isLoading}>
