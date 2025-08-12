@@ -28,6 +28,7 @@ interface CaseContextType {
   addCase: (newCase: Case) => void;
   getCaseById: (id: string) => Case | null | undefined;
   addCommentToCase: (caseId: string, comment: CaseConversation) => void;
+  deleteCase: (caseId: string) => void;
 }
 
 const CaseContext = createContext<CaseContextType | undefined>(undefined);
@@ -64,8 +65,12 @@ export const CaseProvider = ({ children }: { children: ReactNode }) => {
     )
   }
 
+  const deleteCase = (caseId: string) => {
+    setCases(prevCases => prevCases.filter(c => c.id !== caseId));
+  }
+
   return (
-    <CaseContext.Provider value={{ cases, addCase, getCaseById, addCommentToCase }}>
+    <CaseContext.Provider value={{ cases, addCase, getCaseById, addCommentToCase, deleteCase }}>
       {children}
     </CaseContext.Provider>
   );

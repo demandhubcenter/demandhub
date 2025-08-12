@@ -20,13 +20,24 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Filter } from "lucide-react";
+import { Filter, Trash2 } from "lucide-react";
 import { useCases } from "@/context/case-context";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 
 export default function CasesPage() {
     const [filter, setFilter] = useState("All");
-    const { cases } = useCases();
+    const { cases, deleteCase } = useCases();
     const router = useRouter();
 
     const filteredCases = cases.filter(caseItem => {
@@ -76,7 +87,7 @@ export default function CasesPage() {
                             <TableHead>Title</TableHead>
                             <TableHead>Status</TableHead>
                             <TableHead>Date Opened</TableHead>
-                            <TableHead></TableHead>
+                            <TableHead className="text-right">Actions</TableHead>
                         </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -88,14 +99,39 @@ export default function CasesPage() {
                                 <Badge variant={caseItem.status === 'Open' ? 'destructive' : 'secondary'}>{caseItem.status}</Badge>
                             </TableCell>
                             <TableCell>{caseItem.date}</TableCell>
-                            <TableCell className="text-right">
+                            <TableCell className="text-right space-x-2">
                                 <Button 
                                     variant="outline" 
                                     size="sm" 
                                     onClick={() => router.push(`/dashboard/case/${caseItem.id.replace('CASE-','')}`)}
                                 >
-                                    View Case
+                                    View
                                 </Button>
+                                <AlertDialog>
+                                    <AlertDialogTrigger asChild>
+                                        <Button variant="destructive" size="icon" className="h-9 w-9">
+                                            <Trash2 className="h-4 w-4" />
+                                        </Button>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                        <AlertDialogHeader>
+                                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                            This action cannot be undone. This will permanently delete this case
+                                            and remove its data from our servers.
+                                        </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter>
+                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                        <AlertDialogAction
+                                            onClick={() => deleteCase(caseItem.id)}
+                                            className="bg-destructive hover:bg-destructive/90"
+                                        >
+                                            Continue
+                                        </AlertDialogAction>
+                                        </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                </AlertDialog>
                             </TableCell>
                             </TableRow>
                         ))}
