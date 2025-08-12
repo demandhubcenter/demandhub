@@ -6,40 +6,58 @@ import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 
-// Mock data for a single case
-const caseDetails = {
-  id: "CASE-001",
-  title: "Crypto Investment Scam",
-  status: "Open",
-  dateOpened: "2023-10-15",
-  category: "Cryptocurrency Scam",
-  description: "I was contacted on Telegram by someone offering a 'guaranteed' investment opportunity. They directed me to a convincing but fake exchange website where I deposited $15,000 in BTC. After the 'investment period', I was unable to withdraw my funds and the contact disappeared. I have screenshots of the conversation and the transaction ID.",
-  conversation: [
-    {
-      author: { name: "John Doe", role: "Client", avatar: "https://placehold.co/100x100.png" },
-      timestamp: "2023-10-15 10:30 AM",
-      text: "I've uploaded the initial evidence. Please let me know if you need anything else.",
-    },
-    {
-      author: { name: "Diana Prince", role: "Support Agent", avatar: "https://placehold.co/100x100.png" },
-      timestamp: "2023-10-15 11:15 AM",
-      text: "Thank you, John. We have received the evidence. Our forensics team is beginning the on-chain analysis. We will provide an update within 48 hours.",
-    },
-    {
-      author: { name: "John Doe", role: "Client", avatar: "https://placehold.co/100x100.png" },
-      timestamp: "2023-10-17 02:45 PM",
-      text: "Just checking in for any updates. I'm very anxious about this.",
-    },
-     {
-      author: { name: "Diana Prince", role: "Support Agent", avatar: "https://placehold.co/100x100.png" },
-      timestamp: "2023-10-17 03:00 PM",
-      text: "Hi John, we understand completely. We've successfully traced the initial movement of funds to a larger, known fraudulent wallet cluster. This is a positive step. We are now preparing to engage with the relevant exchanges. Please bear with us.",
-    },
-  ],
-};
+// Mock data for cases. In a real app, this would come from a database.
+const cases = [
+  { id: "001", title: "Crypto Investment Scam", status: "Open" as const, dateOpened: "2023-10-15" },
+  { id: "002", title: "Ransomware Attack", status: "Closed" as const, dateOpened: "2023-09-20" },
+  { id: "003", title: "Wire Transfer Fraud", status: "Open" as const, dateOpened: "2023-10-28" },
+  { id: "004", title: "E-commerce Phishing", status: "Closed" as const, dateOpened: "2023-08-05" },
+];
+
+const caseDetailsData: { [key: string]: any } = {
+  "001": {
+    id: "CASE-001",
+    title: "Crypto Investment Scam",
+    status: "Open",
+    dateOpened: "2023-10-15",
+    category: "Cryptocurrency Scam",
+    description: "I was contacted on Telegram by someone offering a 'guaranteed' investment opportunity. They directed me to a convincing but fake exchange website where I deposited $15,000 in BTC. After the 'investment period', I was unable to withdraw my funds and the contact disappeared. I have screenshots of the conversation and the transaction ID.",
+    conversation: [
+      {
+        author: { name: "John Doe", role: "Client", avatar: "https://placehold.co/100x100.png" },
+        timestamp: "2023-10-15 10:30 AM",
+        text: "I've uploaded the initial evidence. Please let me know if you need anything else.",
+      },
+      {
+        author: { name: "Diana Prince", role: "Support Agent", avatar: "https://placehold.co/100x100.png" },
+        timestamp: "2023-10-15 11:15 AM",
+        text: "Thank you, John. We have received the evidence. Our forensics team is beginning the on-chain analysis. We will provide an update within 48 hours.",
+      },
+      {
+        author: { name: "John Doe", role: "Client", avatar: "https://placehold.co/100x100.png" },
+        timestamp: "2023-10-17 02:45 PM",
+        text: "Just checking in for any updates. I'm very anxious about this.",
+      },
+       {
+        author: { name: "Diana Prince", role: "Support Agent", avatar: "https://placehold.co/100x100.png" },
+        timestamp: "2023-10-17 03:00 PM",
+        text: "Hi John, we understand completely. We've successfully traced the initial movement of funds to a larger, known fraudulent wallet cluster. This is a positive step. We are now preparing to engage with the relevant exchanges. Please bear with us.",
+      },
+    ],
+  }
+}
+
+// Pre-generate paths for static export
+export async function generateStaticParams() {
+    return cases.map((caseItem) => ({
+        id: caseItem.id,
+    }));
+}
 
 
 export default function CaseDetailPage({ params }: { params: { id: string } }) {
+  const caseDetails = caseDetailsData[params.id] || caseDetailsData['001']; // Fallback to a default case
+
   return (
     <div className="space-y-8">
       <div>
@@ -57,7 +75,7 @@ export default function CaseDetailPage({ params }: { params: { id: string } }) {
                     <CardTitle>Conversation</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                    {caseDetails.conversation.map((entry, index) => (
+                    {caseDetails.conversation.map((entry: any, index: number) => (
                         <div key={index} className={`flex gap-4 ${entry.author.role === 'Client' ? 'justify-end' : ''}`}>
                              {entry.author.role !== 'Client' && (
                                 <Avatar>
