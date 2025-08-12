@@ -10,15 +10,32 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { User } from "lucide-react";
 import { useAuth } from "@/context/auth-context";
 import { useBlog } from "@/context/blog-context";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+
+const POSTS_PER_PAGE = 6;
 
 export default function BlogIndexPage() {
     const { user } = useAuth();
     const { posts } = useBlog();
+    const [currentPage, setCurrentPage] = useState(1);
 
     const featuredPosts = useMemo(() => posts.filter(p => p.featured).slice(0, 3), [posts]);
     const regularPosts = useMemo(() => posts.filter(p => !p.featured), [posts]);
+    
+    const totalPages = Math.ceil(regularPosts.length / POSTS_PER_PAGE);
+    const paginatedPosts = useMemo(() => {
+        const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
+        const endIndex = startIndex + POSTS_PER_PAGE;
+        return regularPosts.slice(startIndex, endIndex);
+    }, [regularPosts, currentPage]);
 
+    const handleNextPage = () => {
+        setCurrentPage(prev => Math.min(prev + 1, totalPages));
+    }
+
+    const handlePrevPage = () => {
+        setCurrentPage(prev => Math.max(prev - 1, 1));
+    }
 
   return (
     <>
@@ -85,7 +102,7 @@ export default function BlogIndexPage() {
           <div className="container max-w-7xl">
             <h2 className="text-3xl font-bold tracking-tight text-center mb-12 sm:text-4xl">All Posts</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                 {regularPosts.map((post) => (
+                 {paginatedPosts.map((post) => (
                     <Card key={post.slug} className="flex flex-col shadow-md hover:shadow-lg transition-shadow duration-300">
                          <CardHeader className="p-0">
                             <Link href={`/blog/${post.slug}`}>
@@ -113,9 +130,16 @@ export default function BlogIndexPage() {
                 ))}
             </div>
 
-            <div className="flex justify-center mt-12">
-                <Button variant="outline" className="mr-2">Previous</Button>
-                <Button>Next</Button>
+            <div className="flex justify-center items-center mt-12 gap-4">
+                <Button variant="outline" onClick={handlePrevPage} disabled={currentPage === 1}>
+                    Previous
+                </Button>
+                <span className="text-sm text-muted-foreground">
+                    Page {currentPage} of {totalPages}
+                </span>
+                <Button variant="outline" onClick={handleNextPage} disabled={currentPage === totalPages}>
+                    Next
+                </Button>
             </div>
           </div>
         </section>
