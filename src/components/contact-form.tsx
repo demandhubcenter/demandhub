@@ -5,7 +5,6 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import React, { useState } from "react";
-import ReCAPTCHA from "react-google-recaptcha";
 
 import { Button } from "@/components/ui/button"
 import {
@@ -27,7 +26,9 @@ import {
 import { Textarea } from "@/components/ui/textarea"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { useAuth } from "@/context/auth-context"
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, Shield } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 
 const formSchema = z.object({
   fullName: z.string().min(2, {
@@ -79,7 +80,7 @@ export function ContactForm() {
       setIsSubmitting(false);
       setIsDialogOpen(true);
       form.reset();
-      // In a real app you'd reset the ReCAPTCHA instance here
+      setIsVerified(false);
     }, 1000);
   }
 
@@ -166,12 +167,23 @@ export function ContactForm() {
             </FormItem>
           )}
         />
-        <ReCAPTCHA
-            // This is the official test key provided by Google that will always work for development.
-            sitekey="6LeIxAcTAAAAAJcZvrVyA_TCY9P1i6N7eF3gAh09"
-            onChange={() => setIsVerified(true)}
-            onExpired={() => setIsVerified(false)}
-        />
+        
+        {/* Simulated reCAPTCHA */}
+        <div className="flex items-center space-x-2 rounded-md border border-input p-3 bg-background">
+          <Checkbox 
+            id="robot-check" 
+            onCheckedChange={(checked) => setIsVerified(!!checked)}
+            checked={isVerified}
+          />
+          <Label htmlFor="robot-check" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+            I am not a robot
+          </Label>
+           <div className="ml-auto text-center">
+              <Shield className="h-6 w-6 text-gray-400 mx-auto" />
+              <p className="text-xs text-gray-400 mt-1">Protected</p>
+           </div>
+        </div>
+
         <Button type="submit" className="w-full" disabled={!isVerified || isSubmitting}>
           {isSubmitting ? "Sending..." : "Send Message"}
         </Button>
