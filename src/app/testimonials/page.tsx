@@ -5,37 +5,37 @@ import { Button } from "@/components/ui/button";
 
 const caseStudies = [
   {
-    image: { src: "https://placehold.co/600x400.png", hint: "crypto chart" },
+    image: { src: "https://placehold.co/600x400.png", hint: "relieved person computer" },
     headline: "Recovered $120K from Crypto Investment Scam",
     quote: "I thought my retirement savings were gone forever. DemandHub's forensic team traced the transactions and recovered almost everything.",
     tags: ["Crypto", "Forensics"],
   },
   {
-    image: { src: "https://placehold.co/600x400.png", hint: "business meeting" },
+    image: { src: "https://placehold.co/600x400.png", hint: "business owner" },
     headline: "Saved a Small Business from Ransomware Attack",
     quote: "Our operations were halted. DemandHub not only helped us regain access without paying the ransom but also fortified our systems.",
     tags: ["Ransomware", "Cybersecurity"],
   },
   {
-    image: { src: "https://placehold.co/600x400.png", hint: "email inbox" },
+    image: { src: "https://placehold.co/600x400.png", hint: "professional on phone" },
     headline: "Intercepted Fraudulent Wire Transfer of $500K",
     quote: "Their rapid response team worked with banks to freeze the wire transfer mid-transit. It was incredible.",
     tags: ["Wire Fraud", "Crisis Management"],
   },
   {
-    image: { src: "https://placehold.co/600x400.png", hint: "online shopping" },
+    image: { src: "https://placehold.co/600x400.png", hint: "secure online shopping" },
     headline: "Uncovered an E-commerce Phishing Ring",
     quote: "We were losing customer trust. They identified the source of the phishing attacks and helped us secure our platform.",
     tags: ["Phishing", "E-commerce"],
   },
   {
-    image: { src: "https://placehold.co/600x400.png", hint: "real estate" },
+    image: { src: "https://placehold.co/600x400.png", hint: "happy couple home" },
     headline: "Recovered a Down Payment from Real Estate Scam",
     quote: "A sophisticated scam nearly cost us our dream home. DemandHub's expertise made all the difference.",
     tags: ["Real Estate", "Individual Recovery"],
   },
   {
-    image: { src: "https://placehold.co/600x400.png", hint: "nft art" },
+    image: { src: "https://placehold.co/600x400.png", hint: "digital artist" },
     headline: "Traced and Recovered Stolen NFT Collection",
     quote: "My valuable digital art was stolen from my wallet. Their on-chain analysis was key to getting it back.",
     tags: ["NFT", "Blockchain"],

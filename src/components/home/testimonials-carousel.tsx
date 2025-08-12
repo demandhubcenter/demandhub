@@ -17,21 +17,21 @@ const testimonials = [
     name: "John D.",
     role: "CEO, Tech Innovators",
     avatar: "https://placehold.co/100x100.png",
-    hint: "man portrait"
+    hint: "male ceo"
   },
   {
     quote: "The level of detail in their forensic analysis was astounding. They kept us informed at every step. Highly recommended for any digital asset issues.",
     name: "Sarah L.",
     role: "CFO, Global Logistics",
     avatar: "https://placehold.co/100x100.png",
-    hint: "woman portrait"
+    hint: "female cfo"
   },
   {
     quote: "We were devastated after the scam, but DemandHub turned the situation around in weeks. Their expertise is unmatched.",
     name: "Michael B.",
     role: "Individual Investor",
     avatar: "https://placehold.co/100x100.png",
-    hint: "person portrait"
+    hint: "man portrait"
   },
 ];
 
