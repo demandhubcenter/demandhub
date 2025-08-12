@@ -14,12 +14,20 @@ import { useEffect, useState } from "react";
 import { type Case, type CaseConversation } from "@/context/case-context";
 import { useAuth } from "@/context/auth-context";
 
+// This is required for static export with dynamic routes.
+// We return an empty array because we don't want to pre-render any specific case pages.
+// The page will be rendered on the client side.
+export async function generateStaticParams() {
+  return [];
+}
+
+
 // This is the actual component that renders the page content.
 // It uses client-side hooks to fetch and display data.
 function CaseDetailContent() {
   const params = useParams();
   const id = params.id as string;
-  const { getCaseById, addCommentToCase } = useCases();
+  const { getCaseById, addCommentToCase, cases } = useCases();
   const { user } = useAuth();
   const [caseDetails, setCaseDetails] = useState<Case | null | undefined>(undefined);
   const [newComment, setNewComment] = useState("");
@@ -30,8 +38,6 @@ function CaseDetailContent() {
       setCaseDetails(details);
     }
   }, [id, getCaseById, cases]); // Rerun when cases context updates
-
-  const { cases } = useCases();
 
   if (caseDetails === undefined) {
     return <div>Loading case details...</div>;
