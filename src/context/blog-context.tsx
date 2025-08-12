@@ -176,7 +176,7 @@ export const BlogProvider = ({ children }: { children: ReactNode }) => {
             if (p.slug === slug) {
                 const newComment: PostComment = {
                     ...commentData,
-                    id: new Date().getTime().toString(), // simple unique id
+                    id: `${new Date().getTime()}-${Math.random()}`, // Robust unique id
                     date: new Date().toISOString(),
                 };
                 const updatedComments = [...p.comments, newComment];
