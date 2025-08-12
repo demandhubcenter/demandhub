@@ -44,7 +44,10 @@ const caseDetailsData: { [key: string]: any } = {
         text: "Hi John, we understand completely. We've successfully traced the initial movement of funds to a larger, known fraudulent wallet cluster. This is a positive step. We are now preparing to engage with the relevant exchanges. Please bear with us.",
       },
     ],
-  }
+  },
+  "002": {}, // Add empty objects for other cases to prevent crashes if they are accessed
+  "003": {},
+  "004": {},
 }
 
 // Pre-generate paths for static export
@@ -57,6 +60,12 @@ export async function generateStaticParams() {
 
 export default function CaseDetailPage({ params }: { params: { id: string } }) {
   const caseDetails = caseDetailsData[params.id] || caseDetailsData['001']; // Fallback to a default case
+
+  // A simple check to ensure caseDetails and its properties exist
+  if (!caseDetails || !caseDetails.conversation) {
+    // You can render a loading state or a "not found" message
+    return <div>Case details not found.</div>;
+  }
 
   return (
     <div className="space-y-8">

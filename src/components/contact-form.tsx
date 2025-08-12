@@ -57,8 +57,8 @@ export function ContactForm() {
 
   React.useEffect(() => {
     if (user) {
-        form.setValue('fullName', user.name);
-        form.setValue('email', user.email);
+        form.setValue('fullName', user.name || '');
+        form.setValue('email', user.email || '');
     }
   }, [user, form]);
 

@@ -27,7 +27,7 @@ export function Hero() {
           </p>
         </div>
         <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
-          <Button size="lg" asChild>
+          <Button size="lg" asChild className="animate-pulse">
             <Link href="/contact">Get a Free Assessment</Link>
           </Button>
            <Button size="lg" variant="outline" asChild>
