@@ -9,6 +9,10 @@ import { ArrowLeft } from 'lucide-react';
 import { useBlog } from '@/context/blog-context';
 import { notFound } from 'next/navigation';
 
+export async function generateStaticParams() {
+  return [];
+}
+
 export default function EditPostPage({ params }: { params: { slug: string } }) {
   const { getPostBySlug } = useBlog();
   const post = getPostBySlug(params.slug);
