@@ -1,3 +1,4 @@
+
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -17,6 +18,8 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { useAuth } from "@/context/auth-context";
+import { useToast } from "@/hooks/use-toast"
+import { useState } from "react"
 
 const formSchema = z.object({
   email: z.string().email({
@@ -28,6 +31,8 @@ const formSchema = z.object({
 export function SignInForm() {
   const { signIn } = useAuth();
   const router = useRouter();
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -38,10 +43,28 @@ export function SignInForm() {
   })
 
  async function onSubmit(values: z.infer<typeof formSchema>) {
-    // Here you would typically call your auth provider (e.g., Firebase)
-    console.log(values);
-    await signIn(values.email); // Mock sign in
-    router.push('/dashboard');
+    setIsLoading(true);
+    try {
+      const user = await signIn(values.email, values.password);
+      if (!user.emailVerified) {
+        toast({
+          title: "Email Not Verified",
+          description: "Please check your email and click the verification link before signing in.",
+          variant: "destructive",
+        });
+        router.push('/verify-email');
+      } else {
+        router.push('/dashboard');
+      }
+    } catch (error: any) {
+        toast({
+            title: "Sign In Failed",
+            description: error.message || "An error occurred during sign in. Please check your credentials.",
+            variant: "destructive",
+        })
+    } finally {
+        setIsLoading(false);
+    }
   }
 
   return (
@@ -54,7 +77,7 @@ export function SignInForm() {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input type="email" placeholder="you@example.com" {...field} />
+                <Input type="email" placeholder="you@example.com" {...field} disabled={isLoading} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -67,7 +90,7 @@ export function SignInForm() {
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="********" {...field} />
+                <Input type="password" placeholder="********" {...field} disabled={isLoading}/>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -81,7 +104,9 @@ export function SignInForm() {
                 <Button variant="link" className="p-0 h-auto text-xs">Forgot Password?</Button>
             </Link>
         </div>
-        <Button type="submit" className="w-full">Sign In</Button>
+        <Button type="submit" className="w-full" disabled={isLoading}>
+          {isLoading ? "Signing In..." : "Sign In"}
+        </Button>
       </form>
     </Form>
   )

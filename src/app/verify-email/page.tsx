@@ -1,29 +1,43 @@
+
 "use client";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { MailCheck } from "lucide-react";
-import { resendVerificationEmail } from "@/ai/flows/resend-verification-flow";
 import { useState } from "react";
+import { useAuth } from "@/context/auth-context";
+import { sendEmailVerification } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 
 export default function VerifyEmailPage() {
     const { toast } = useToast();
     const [isLoading, setIsLoading] = useState(false);
+    const { user } = useAuth();
 
   const handleResend = async () => {
     setIsLoading(true);
+    // use auth.currentUser instead of user from context because it might not be updated yet
+    const currentUser = auth.currentUser;
+    if (!currentUser) {
+        toast({
+            title: "Error",
+            description: "No user is signed in to resend verification for.",
+            variant: "destructive",
+        });
+        setIsLoading(false);
+        return;
+    }
     try {
-        // In a real app, you might get the user's email from the session or context
-        await resendVerificationEmail({ email: 'user@example.com' });
+        await sendEmailVerification(currentUser);
         toast({
             title: "Link Sent",
             description: "A new verification link has been sent to your email address.",
         });
-    } catch (error) {
+    } catch (error: any) {
         toast({
             title: "Error",
-            description: "Failed to resend verification link. Please try again later.",
+            description: error.message || "Failed to resend verification link. Please try again later.",
             variant: "destructive",
         });
     } finally {

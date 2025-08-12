@@ -1,3 +1,4 @@
+
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -17,7 +18,8 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { useToast } from "@/hooks/use-toast"
-import { signUpUser } from "@/ai/flows/signup-flow";
+import { auth } from "@/lib/firebase";
+import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from "firebase/auth";
 
 const formSchema = z.object({
   fullName: z.string().min(2, {
@@ -55,10 +57,13 @@ export function SignUpForm() {
     }
     setIsLoading(true);
     try {
-      await signUpUser({
-        fullName: values.fullName,
-        email: values.email,
+      const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
+      
+      await updateProfile(userCredential.user, {
+        displayName: values.fullName
       });
+
+      await sendEmailVerification(userCredential.user);
 
       toast({
         title: "Account Created!",
@@ -66,10 +71,10 @@ export function SignUpForm() {
       })
       router.push('/verify-email');
 
-    } catch (error) {
+    } catch (error: any) {
        toast({
         title: "Sign Up Failed",
-        description: "An error occurred during sign up. Please try again.",
+        description: error.message || "An error occurred during sign up. Please try again.",
         variant: "destructive",
       });
     } finally {

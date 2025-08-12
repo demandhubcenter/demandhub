@@ -1,40 +1,67 @@
+
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React,
+{ createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { auth } from '@/lib/firebase';
+import {
+    User as FirebaseUser,
+    onAuthStateChanged,
+    signInWithEmailAndPassword,
+    signOut as firebaseSignOut
+} from 'firebase/auth';
 
 interface User {
-  name: string;
-  email: string;
+  name: string | null;
+  email: string | null;
+  uid: string;
+  emailVerified: boolean;
 }
 
 interface AuthContextType {
   user: User | null;
-  signIn: (email: string) => Promise<void>;
+  loading: boolean;
+  signIn: (email: string, password: string) => Promise<FirebaseUser>;
   signOut: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Mock user data, in a real app this would come from your auth provider
-const MOCK_USER: User = { name: 'John Doe', email: 'john.doe@example.com' };
-
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const signIn = async (email: string) => {
-    // In a real app, you would verify credentials with a backend
-    console.log(`Signing in as ${email}`);
-    setUser({ name: "John Doe", email });
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+        if (firebaseUser) {
+            setUser({
+                email: firebaseUser.email,
+                name: firebaseUser.displayName,
+                uid: firebaseUser.uid,
+                emailVerified: firebaseUser.emailVerified
+            });
+        } else {
+            setUser(null);
+        }
+        setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+
+  const signIn = async (email: string, password: string) => {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    return userCredential.user;
   };
 
   const signOut = async () => {
-    console.log("Signing out");
-    setUser(null);
+    await firebaseSignOut(auth);
   };
 
   return (
-    <AuthContext.Provider value={{ user, signIn, signOut }}>
-      {children}
+    <AuthContext.Provider value={{ user, loading, signIn, signOut }}>
+      {!loading && children}
     </AuthContext.Provider>
   );
 };

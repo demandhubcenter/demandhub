@@ -1,3 +1,4 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -15,6 +16,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/context/auth-context";
+import { updateProfile, reauthenticateWithCredential, EmailAuthProvider, updatePassword } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 
 const profileSchema = z.object({
   fullName: z.string().min(2, "Full name must be at least 2 characters."),
@@ -32,13 +36,13 @@ const passwordSchema = z.object({
 
 export function AccountSettingsForm() {
     const { toast } = useToast();
+    const { user } = useAuth();
 
     const profileForm = useForm<z.infer<typeof profileSchema>>({
         resolver: zodResolver(profileSchema),
-        // This would be pre-filled with user data from your auth context
         defaultValues: {
-            fullName: "John Doe",
-            email: "john.doe@example.com",
+            fullName: user?.name || "",
+            email: user?.email || "",
         },
     });
 
@@ -51,15 +55,31 @@ export function AccountSettingsForm() {
         }
     })
 
-    function onProfileSubmit(values: z.infer<typeof profileSchema>) {
-        console.log("Profile update:", values);
-        toast({ title: "Profile Updated", description: "Your name and email have been successfully updated." });
+    async function onProfileSubmit(values: z.infer<typeof profileSchema>) {
+        if (!auth.currentUser) return;
+        try {
+            await updateProfile(auth.currentUser, { displayName: values.fullName });
+            // Note: Updating email with Firebase requires re-authentication and is a more complex flow.
+            // This example focuses on updating the display name.
+            toast({ title: "Profile Updated", description: "Your name has been successfully updated." });
+
+        } catch (error: any) {
+             toast({ title: "Error", description: error.message, variant: "destructive" });
+        }
     }
 
-    function onPasswordSubmit(values: z.infer<typeof passwordSchema>) {
-        console.log("Password change:", values);
-        toast({ title: "Password Updated", description: "Your password has been changed successfully." });
-        passwordForm.reset();
+    async function onPasswordSubmit(values: z.infer<typeof passwordSchema>) {
+        if (!auth.currentUser || !auth.currentUser.email) return;
+
+        try {
+            const credential = EmailAuthProvider.credential(auth.currentUser.email, values.currentPassword);
+            await reauthenticateWithCredential(auth.currentUser, credential);
+            await updatePassword(auth.currentUser, values.newPassword);
+            toast({ title: "Password Updated", description: "Your password has been changed successfully." });
+            passwordForm.reset();
+        } catch (error: any) {
+            toast({ title: "Error", description: "Failed to change password. Please check your current password.", variant: "destructive" });
+        }
     }
 
 
@@ -87,7 +107,7 @@ export function AccountSettingsForm() {
                     <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                        <Input type="email" placeholder="you@example.com" {...field} />
+                        <Input type="email" placeholder="you@example.com" {...field} disabled />
                     </FormControl>
                     <FormMessage />
                     </FormItem>
