@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 
 const caseStudies = [
   {
-    image: { src: "https://images.unsplash.com/photo-1639322537228-f710d846310a?w=600&h=400&q=80&fit=crop", hint: "relieved person computer" },
+    image: { src: "https://images.unsplash.com/photo-1628191013149-5a9e3e7a3b3c?w=600&h=400&q=80&fit=crop", hint: "relieved person computer" },
     headline: "Recovered $120K from Crypto Investment Scam",
     quote: "I thought my retirement savings were gone forever. DemandHub's forensic team traced the transactions and recovered almost everything.",
     tags: ["Crypto", "Forensics"],
@@ -35,7 +35,7 @@ const caseStudies = [
     tags: ["Real Estate", "Individual Recovery"],
   },
   {
-    image: { src: "https://images.unsplash.com/photo-1642158832127-94a5c5d03a7d?w=600&h=400&q=80&fit=crop", hint: "digital art" },
+    image: { src: "https://images.unsplash.com/photo-1629838035251-716c6d091a13?w=600&h=400&q=80&fit=crop", hint: "digital art" },
     headline: "Traced and Recovered Stolen NFT Collection",
     quote: "My valuable digital art was stolen from my wallet. Their on-chain analysis was key to getting it back.",
     tags: ["NFT", "Blockchain"],
