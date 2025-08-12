@@ -1,9 +1,11 @@
+
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
-import React from "react";
+import React, { useState } from "react";
+import ReCAPTCHA from "react-google-recaptcha";
 
 import { Button } from "@/components/ui/button"
 import {
@@ -23,8 +25,9 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
-import { useToast } from "@/hooks/use-toast"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { useAuth } from "@/context/auth-context"
+import { CheckCircle2 } from "lucide-react";
 
 const formSchema = z.object({
   fullName: z.string().min(2, {
@@ -43,8 +46,10 @@ const formSchema = z.object({
 })
 
 export function ContactForm() {
-  const { toast } = useToast()
   const { user } = useAuth();
+  const [isVerified, setIsVerified] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -63,18 +68,23 @@ export function ContactForm() {
   }, [user, form]);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    if (values.honeypot) {
+    if (values.honeypot || !isVerified) {
       return;
     }
-    console.log(values)
-    toast({
-      title: "Message Sent!",
-      description: "Thank you for contacting us. We will get back to you shortly.",
-    })
-    form.reset();
+    setIsSubmitting(true);
+    console.log(values);
+
+    // Simulate API call
+    setTimeout(() => {
+      setIsSubmitting(false);
+      setIsDialogOpen(true);
+      form.reset();
+      // In a real app you'd reset the ReCAPTCHA instance here
+    }, 1000);
   }
 
   return (
+    <>
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <FormField
@@ -84,7 +94,7 @@ export function ContactForm() {
             <FormItem>
               <FormLabel>Full Name</FormLabel>
               <FormControl>
-                <Input placeholder="John Doe" {...field} />
+                <Input placeholder="John Doe" {...field} disabled={isSubmitting}/>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -97,7 +107,7 @@ export function ContactForm() {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder="you@example.com" {...field} />
+                <Input placeholder="you@example.com" {...field} disabled={isSubmitting}/>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -109,7 +119,7 @@ export function ContactForm() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Subject</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isSubmitting}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a service" />
@@ -137,6 +147,7 @@ export function ContactForm() {
                   placeholder="Tell us a little bit about your situation"
                   className="resize-none"
                   {...field}
+                  disabled={isSubmitting}
                 />
               </FormControl>
               <FormMessage />
@@ -155,11 +166,30 @@ export function ContactForm() {
             </FormItem>
           )}
         />
-        <div className="text-xs text-muted-foreground">
-            A placeholder for reCAPTCHA widget can go here.
-        </div>
-        <Button type="submit" className="w-full">Send Message</Button>
+        <ReCAPTCHA
+            // Replace with your actual site key
+            sitekey="6LeIxAcTAAAAAJcZvrVyA_TCY9P1i6N7eF3gAh09"
+            onChange={() => setIsVerified(true)}
+            onExpired={() => setIsVerified(false)}
+        />
+        <Button type="submit" className="w-full" disabled={!isVerified || isSubmitting}>
+          {isSubmitting ? "Sending..." : "Send Message"}
+        </Button>
       </form>
     </Form>
+     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="sm:max-w-md text-center">
+          <DialogHeader className="items-center">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 mb-4">
+              <CheckCircle2 className="h-10 w-10 text-primary" />
+            </div>
+            <DialogTitle className="text-2xl">Message Sent!</DialogTitle>
+            <DialogDescription className="pt-2">
+              Thank you for contacting us. We have received your message and will get back to you shortly.
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
+    </>
   )
 }
