@@ -8,10 +8,12 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { useBlog } from '@/context/blog-context';
 import { notFound } from 'next/navigation';
+import React from 'react';
 
 export default function EditPostPage({ params }: { params: { slug: string } }) {
+  const resolvedParams = React.use(params);
   const { getPostBySlug } = useBlog();
-  const post = getPostBySlug(params.slug);
+  const post = getPostBySlug(resolvedParams.slug);
 
   if (!post) {
     notFound();
