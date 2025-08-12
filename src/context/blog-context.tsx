@@ -118,6 +118,42 @@ const initialPosts: BlogPost[] = [
     image: { src: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&h=400&q=80&fit=crop", hint: "data privacy" },
     comments: [],
   },
+   {
+    slug: "securing-your-down-payment-real-estate-fraud",
+    featured: false,
+    title: "Securing Your Down Payment: How to Avoid Real Estate Wire Fraud",
+    excerpt: "Your dream home is within reach, but so are the scammers. Learn how to protect the biggest transaction of your life from sophisticated wire fraud schemes.",
+    content: `<p class="lead text-lg text-muted-foreground mb-6">Closing on a new home is one of life's most exciting moments, but it's also a prime target for sophisticated criminals. Real estate wire fraud is a growing problem where scammers impersonate title companies or real estate agents to trick you into wiring your down payment to a fraudulent account.</p><h3 class="text-2xl font-bold mt-8 mb-4">How the Scam Works</h3><p class="mb-6">Scammers use phishing emails to gain access to the accounts of real estate agents, lawyers, or title companies. They monitor email chains to understand the details of your upcoming transaction. Just before closing, they'll send you an email with wire instructions that look legitimate, but direct your funds to their own account. By the time anyone realizes the mistake, the money is often gone.</p><h3 class="text-2xl font-bold mt-8 mb-4">Prevention is Key</h3><p class="mb-6">Protecting your down payment requires vigilance.</p><ul class="list-disc list-inside space-y-2 mb-6 text-muted-foreground"><li><strong>Verify Instructions Verbally:</strong> Always call your title company or agent using a known, trusted phone number to confirm wire instructions before sending money. Do not use phone numbers from the email containing the instructions.</li><li><strong>Be Wary of Last-Minute Changes:</strong> Scammers thrive on urgency. Be extremely suspicious of any emails that change wiring instructions at the last minute.</li><li><strong>Secure Your Email:</strong> Use strong, unique passwords and enable two-factor authentication on your email account to prevent it from being compromised.</li></ul><p>If you suspect you've been targeted, act immediately. Contact your bank to recall the wire, report it to the FBI's Internet Crime Complaint Center (IC3), and call us for assistance.</p>`,
+    author: initialAuthors.charlie,
+    date: "2023-10-15T10:00:00Z",
+    tags: ["Real Estate", "Wire Fraud"],
+    image: { src: "https://images.unsplash.com/photo-1560518883-ce09059ee41f?w=600&h=400&q=80&fit=crop", hint: "house keys" },
+    comments: [],
+  },
+  {
+    slug: "emotional-toll-of-being-scammed",
+    featured: false,
+    title: "Beyond the Financials: The Emotional Toll of Being Scammed",
+    excerpt: "Losing money is only part of the story. We explore the significant psychological impact of digital fraud and how to begin the healing process.",
+    content: `<p class="lead text-lg text-muted-foreground mb-6">When someone becomes a victim of a financial scam, the focus is often on the monetary loss. However, the emotional and psychological damage can be just as devastating, and often lasts much longer. It's a part of the recovery process that deserves more attention.</p><h3 class="text-2xl font-bold mt-8 mb-4">A Violation of Trust</h3><p class="mb-6">Many scams, particularly investment and romance scams, are built on creating a sense of trust and personal connection with the victim. When that trust is shattered, it can lead to feelings of shame, embarrassment, and isolation. Victims often blame themselves, asking "How could I have been so foolish?" This self-blame can prevent them from seeking help or even telling their loved ones what happened.</p><blockquote class="border-l-4 border-primary pl-4 italic my-8 text-muted-foreground">"The feeling of violation is profound. It's not just about the money; it's about someone exploiting your trust for their gain."</blockquote><h3 class="text-2xl font-bold mt-8 mb-4">Steps Toward Healing</h3><p class="mb-6">Recovering emotionally is just as important as recovering your funds. Acknowledging that you were the victim of a crime, not a personal failure, is the first step. Here are a few more:</p><ul class="list-disc list-inside space-y-2 mb-6 text-muted-foreground"><li><strong>Talk About It:</strong> Share your experience with trusted friends, family, or a professional counselor. Removing the secrecy reduces the power the shame holds over you.</li><li><strong>Take Control:</strong> Actively participating in the recovery process, by reporting the crime and working with experts, can help restore a sense of agency.</li><li><strong>Forgive Yourself:</strong> Understand that these scams are designed by professional criminals to be incredibly deceptive. Anyone can become a victim.</li></ul><p>At DemandHub, we recognize the human element in every case. Our team is trained to provide compassionate support alongside our technical expertise, helping you navigate both the financial and emotional paths to recovery.</p>`,
+    author: initialAuthors.diana,
+    date: "2023-10-12T10:00:00Z",
+    tags: ["Mental Health", "Support"],
+    image: { src: "https://images.unsplash.com/photo-1532383518231-50a735491915?w=600&h=400&q=80&fit=crop", hint: "person thinking" },
+    comments: [],
+  },
+   {
+    slug: "technical-breakdown-of-ransomware",
+    featured: false,
+    title: "A Technical Breakdown of a Ransomware Attack",
+    excerpt: "Go behind the scenes of a typical ransomware attack, from initial infection to encryption, and learn how to build a stronger defense.",
+    content: `<p class="lead text-lg text-muted-foreground mb-6">Ransomware is a malicious software that encrypts a victim's files, making them inaccessible until a ransom is paid. Understanding the technical stages of an attack is crucial for effective prevention and response.</p><h3 class="text-2xl font-bold mt-8 mb-4">Stage 1: Initial Access</h3><p class="mb-6">Attackers gain a foothold in a network through various methods. The most common are:</p><ul class="list-disc list-inside space-y-2 mb-6 text-muted-foreground"><li><strong>Phishing Emails:</strong> Emails with malicious attachments or links that, when opened, download the initial malware payload.</li><li><strong>Exploiting Vulnerabilities:</strong> Unpatched software, open RDP (Remote Desktop Protocol) ports, or weak credentials provide an easy entry point.</li><li><strong>Compromised Credentials:</strong> Using stolen usernames and passwords purchased from the dark web.</li></ul><h3 class="text-2xl font-bold mt-8 mb-4">Stage 2: Network Propagation & Encryption</h3><p class="mb-6">Once inside, the malware doesn't strike immediately. It often moves laterally across the network, seeking high-value targets like file servers and backups. It disables security software and exfiltrates sensitive data for double extortion—threatening to leak the data if the ransom isn't paid. After establishing persistence and control, it begins the encryption process, locking down critical files.</p><h3 class="text-2xl font-bold mt-8 mb-4">Stage 3: The Ransom Note</h3><p>Finally, the ransom note appears, informing the victim of the attack and providing instructions for payment, almost always in cryptocurrency. At this point, the business is crippled.</p><h3 class="text-2xl font-bold mt-8 mb-4">Defense Strategies</h3><p>Preventing ransomware requires a multi-layered defense: regular employee training on phishing, a robust patch management policy, strong access controls (like multi-factor authentication), and, most importantly, having offline, immutable backups that cannot be encrypted by the attacker. These backups are often the only way to restore operations without paying the ransom.</p>`,
+    author: initialAuthors.john,
+    date: "2023-10-09T10:00:00Z",
+    tags: ["Ransomware", "Cybersecurity", "Technical"],
+    image: { src: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600&h=400&q=80&fit=crop", hint: "binary code" },
+    comments: [],
+  },
   {
     slug: "how-to-talk-about-online-safety",
     featured: false,
@@ -226,3 +262,5 @@ export const useBlog = (): BlogContextType => {
   }
   return context;
 };
+
+    
