@@ -29,7 +29,7 @@ const formSchema = z.object({
 })
 
 export function SignInForm() {
-  const { signIn, signOut } = useAuth();
+  const { signIn } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
@@ -46,25 +46,7 @@ export function SignInForm() {
     setIsLoading(true);
     try {
       const user = await signIn(values.email, values.password);
-
-      // It's crucial to check for email verification AFTER a successful sign-in
-      // because Firebase might need to refresh the user's state.
-      // We reload the user state to get the latest emailVerified status.
-      await user.reload();
-      
-      if (user.emailVerified) {
-        router.push('/dashboard');
-      } else {
-        toast({
-          title: "Email Not Verified",
-          description: "Please check your email and click the verification link before signing in.",
-          variant: "destructive",
-        });
-        // We log the user out to prevent them from accessing protected routes
-        // and redirect them to the verification page.
-        await signOut();
-        router.push('/verify-email');
-      }
+      router.push('/dashboard');
 
     } catch (error: any) {
         let errorMessage = "An error occurred during sign in. Please check your credentials.";
