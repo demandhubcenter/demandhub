@@ -17,9 +17,11 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowRight } from "lucide-react";
 import { useCases } from "@/context/case-context";
 import { useMemo } from "react";
+import { useAuth } from "@/context/auth-context";
 
 export default function DashboardPage() {
   const { cases } = useCases();
+  const { user } = useAuth();
 
   const openCases = useMemo(() => cases.filter(c => c.status === 'Open'), [cases]);
   const resolvedCases = useMemo(() => cases.filter(c => c.status === 'Closed'), [cases]);
@@ -33,7 +35,7 @@ export default function DashboardPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold">Hello, John Doe</h1>
+        <h1 className="text-3xl font-bold">Hello, {user?.name || 'User'}</h1>
         <p className="text-muted-foreground">Welcome back to your DemandHub dashboard.</p>
       </div>
 
@@ -92,7 +94,7 @@ export default function DashboardPage() {
                   <TableCell>{caseItem.date}</TableCell>
                   <TableCell className="text-right">
                     <Button variant="outline" size="sm" asChild>
-                        <Link href={`/dashboard/case/${caseItem.id}`}>View Case</Link>
+                        <Link href={`/dashboard/case/${caseItem.id.replace('CASE-','')}`}>View Case</Link>
                     </Button>
                   </TableCell>
                 </TableRow>
