@@ -12,6 +12,7 @@ export interface PostAuthor {
 }
 
 export interface PostComment {
+    id: string; // Unique ID for each comment
     author: { name: string; avatar: string; hint: string };
     date: string; // ISO string
     text: string;
@@ -36,7 +37,8 @@ interface BlogContextType {
     addPost: (post: BlogPost) => void;
     updatePost: (slug: string, postData: Partial<BlogPost>) => void;
     deletePost: (slug: string) => void;
-    addCommentToPost: (slug: string, comment: PostComment) => void;
+    addCommentToPost: (slug: string, comment: Omit<PostComment, 'id' | 'date'>) => void;
+    deleteCommentFromPost: (slug: string, commentId: string) => void;
 }
 
 const BlogContext = createContext<BlogContextType | undefined>(undefined);
@@ -63,8 +65,8 @@ const initialPosts: BlogPost[] = [
     tags: ["AI", "Cybersecurity", "Forensics"],
     image: { src: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=600&h=400&q=80&fit=crop", hint: "cyber security" },
     comments: [
-        { author: { name: "Bob Williams", avatar: initialAuthors.bob.avatar, hint: initialAuthors.bob.hint }, date: "2023-10-31T11:00:00Z", text: "This is a fantastic overview. The point about behavioral analytics is key. We've seen it work wonders in preventing account takeovers." },
-        { author: { name: "Charlie Brown", avatar: initialAuthors.charlie.avatar, hint: initialAuthors.charlie.hint }, date: "2023-11-01T12:00:00Z", text: "I'd be interested to learn more about the challenges of AI, like dealing with adversarial attacks or model bias. Do you plan a follow-up article?" }
+        { id: "1", author: { name: "Bob Williams", avatar: initialAuthors.bob.avatar, hint: initialAuthors.bob.hint }, date: "2023-10-31T11:00:00Z", text: "This is a fantastic overview. The point about behavioral analytics is key. We've seen it work wonders in preventing account takeovers." },
+        { id: "2", author: { name: "Charlie Brown", avatar: initialAuthors.charlie.avatar, hint: initialAuthors.charlie.hint }, date: "2023-11-01T12:00:00Z", text: "I'd be interested to learn more about the challenges of AI, like dealing with adversarial attacks or model bias. Do you plan a follow-up article?" }
     ]
   },
   {
@@ -168,11 +170,16 @@ export const BlogProvider = ({ children }: { children: ReactNode }) => {
     setPosts(prevPosts => prevPosts.filter(p => p.slug !== slug));
   };
   
-  const addCommentToPost = (slug: string, comment: PostComment) => {
+  const addCommentToPost = (slug: string, commentData: Omit<PostComment, 'id' | 'date'>) => {
     setPosts(prevPosts => 
         prevPosts.map(p => {
             if (p.slug === slug) {
-                const updatedComments = [...p.comments, comment];
+                const newComment: PostComment = {
+                    ...commentData,
+                    id: new Date().getTime().toString(), // simple unique id
+                    date: new Date().toISOString(),
+                };
+                const updatedComments = [...p.comments, newComment];
                 return { ...p, comments: updatedComments };
             }
             return p;
@@ -180,7 +187,19 @@ export const BlogProvider = ({ children }: { children: ReactNode }) => {
     );
   }
 
-  const value = { posts, getPostBySlug, addPost, updatePost, deletePost, addCommentToPost };
+  const deleteCommentFromPost = (slug: string, commentId: string) => {
+     setPosts(prevPosts =>
+        prevPosts.map(p => {
+            if (p.slug === slug) {
+                const updatedComments = p.comments.filter(c => c.id !== commentId);
+                return { ...p, comments: updatedComments };
+            }
+            return p;
+        })
+    );
+  }
+
+  const value = { posts, getPostBySlug, addPost, updatePost, deletePost, addCommentToPost, deleteCommentFromPost };
 
   return <BlogContext.Provider value={value}>{children}</BlogContext.Provider>;
 };

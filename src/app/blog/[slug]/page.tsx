@@ -13,7 +13,7 @@ import { Facebook, Twitter, Linkedin, Link2, ArrowLeft } from "lucide-react";
 import { useBlog } from "@/context/blog-context";
 import { useAuth } from "@/context/auth-context";
 import { notFound, useRouter } from "next/navigation";
-import React from "react";
+import React, { useState } from "react";
 
 
 export default function BlogPostPage({ params }: { params: { slug: string } }) {
@@ -22,10 +22,30 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
     const post = getPostBySlug(resolvedParams.slug);
     const { user } = useAuth();
     const router = useRouter();
+    const [comment, setComment] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     if (!post) {
       notFound();
     }
+    
+    const handleSubmitComment = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!comment.trim() || !user) return;
+
+        setIsSubmitting(true);
+        addCommentToPost(post.slug, {
+            author: {
+                name: user.name || "Anonymous",
+                avatar: "", // In a real app, user would have an avatar URL
+                hint: "user portrait"
+            },
+            text: comment
+        });
+        setComment("");
+        setIsSubmitting(false);
+    }
+
 
   return (
     <>
@@ -62,7 +82,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
                 />
             </div>
 
-            <article className="prose prose-lg max-w-none" dangerouslySetInnerHTML={{ __html: post.content }}></article>
+            <article className="prose prose-lg max-w-none dark:prose-invert" dangerouslySetInnerHTML={{ __html: post.content }}></article>
 
              <Separator className="my-12" />
 
@@ -102,10 +122,19 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
         <div className="container max-w-4xl">
             <h2 className="text-3xl font-bold mb-8">Comments ({post.comments.length})</h2>
             {user ? (
-                <div className="mb-12">
-                    <Textarea placeholder="Write a comment..." className="mb-4" rows={4}/>
-                    <Button>Submit Comment</Button>
-                </div>
+                <form onSubmit={handleSubmitComment} className="mb-12">
+                    <Textarea 
+                        placeholder="Write a comment..." 
+                        className="mb-4" 
+                        rows={4}
+                        value={comment}
+                        onChange={(e) => setComment(e.target.value)}
+                        disabled={isSubmitting}
+                    />
+                    <Button type="submit" disabled={isSubmitting || !comment.trim()}>
+                        {isSubmitting ? "Submitting..." : "Submit Comment"}
+                    </Button>
+                </form>
             ) : (
                 <Card className="text-center p-8 mb-12 bg-primary/5">
                     <h3 className="text-xl font-semibold">Want to join the discussion?</h3>
@@ -118,7 +147,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
 
             <div className="space-y-8">
                 {post.comments.map((comment, index) => (
-                    <div key={index} className="flex gap-4">
+                    <div key={comment.id} className="flex gap-4">
                         <Avatar>
                             <AvatarImage src={comment.author.avatar} alt={comment.author.name} data-ai-hint={comment.author.hint}/>
                             <AvatarFallback>{comment.author.name.charAt(0)}</AvatarFallback>
@@ -128,7 +157,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
                                 <p className="font-semibold">{comment.author.name}</p>
                                 <p className="text-xs text-muted-foreground">{new Date(comment.date).toLocaleDateString()}</p>
                             </div>
-                            <p className="text-muted-foreground mt-2">{comment.text}</p>
+                            <p className="text-muted-foreground mt-2 whitespace-pre-wrap">{comment.text}</p>
                         </div>
                     </div>
                 ))}
