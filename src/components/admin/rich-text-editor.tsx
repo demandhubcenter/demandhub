@@ -1,55 +1,91 @@
 
 "use client"
 
-import React, { forwardRef } from 'react';
-import dynamic from 'next/dynamic';
-import 'react-quill/dist/quill.snow.css'; // import styles
-
-// Dynamically import ReactQuill to avoid SSR issues
-const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
+import { useEditor, EditorContent, BubbleMenu } from '@tiptap/react'
+import StarterKit from '@tiptap/starter-kit'
+import {
+  Bold,
+  Italic,
+  Strikethrough,
+  Heading1,
+  Heading2,
+  Heading3,
+} from 'lucide-react'
+import { Toggle } from '@/components/ui/toggle'
 
 interface RichTextEditorProps {
-  value: string;
-  onChange: (value: string) => void;
-  [key: string]: any; // Allow other props
+  value: string
+  onChange: (value: string) => void
 }
 
-const modules = {
-  toolbar: [
-    [{ 'header': [1, 2, 3, false] }],
-    ['bold', 'italic', 'underline', 'strike'],
-    [{'list': 'ordered'}, {'list': 'bullet'}],
-    ['link'],
-    ['clean']
-  ],
-};
+export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
+  const editor = useEditor({
+    extensions: [StarterKit],
+    content: value,
+    editorProps: {
+      attributes: {
+        class:
+          'prose dark:prose-invert prose-sm sm:prose-base lg:prose-lg xl:prose-2xl m-5 focus:outline-none',
+      },
+    },
+    onUpdate: ({ editor }) => {
+      onChange(editor.getHTML())
+    },
+  })
 
-const formats = [
-  'header',
-  'bold', 'italic', 'underline', 'strike',
-  'list', 'bullet',
-  'link'
-];
-
-export const RichTextEditor = forwardRef<typeof ReactQuill, RichTextEditorProps>(
-  ({ value, onChange, ...props }, ref) => {
-    return (
-      <div className="bg-background rounded-md border border-input">
-        <ReactQuill
-          theme="snow"
-          value={value}
-          onChange={onChange}
-          modules={modules}
-          formats={formats}
-          className="[&_.ql-container]:min-h-[250px] [&_.ql-container]:rounded-b-md [&_.ql-toolbar]:rounded-t-md [&_.ql-toolbar]:border-input [&_.ql-container]:border-input"
-          {...props}
-          // The ref from react-hook-form isn't directly compatible, 
-          // but we don't need it as onChange handles the value.
-          // This component will be controlled by the form state.
-        />
-      </div>
-    );
-  }
-);
-
-RichTextEditor.displayName = 'RichTextEditor';
+  return (
+    <div className="relative rounded-md border border-input min-h-[250px] bg-background">
+      {editor && (
+        <BubbleMenu
+          editor={editor}
+          tippyOptions={{ duration: 100 }}
+          className="bg-background border border-border rounded-lg shadow-xl p-1 flex items-center gap-1"
+        >
+          <Toggle
+            size="sm"
+            pressed={editor.isActive('bold')}
+            onPressedChange={() => editor.chain().focus().toggleBold().run()}
+          >
+            <Bold className="h-4 w-4" />
+          </Toggle>
+          <Toggle
+            size="sm"
+            pressed={editor.isActive('italic')}
+            onPressedChange={() => editor.chain().focus().toggleItalic().run()}
+          >
+            <Italic className="h-4 w-4" />
+          </Toggle>
+          <Toggle
+            size="sm"
+            pressed={editor.isActive('strike')}
+            onPressedChange={() => editor.chain().focus().toggleStrike().run()}
+          >
+            <Strikethrough className="h-4 w-4" />
+          </Toggle>
+           <Toggle
+            size="sm"
+            pressed={editor.isActive('heading', { level: 1 })}
+            onPressedChange={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+          >
+            <Heading1 className="h-4 w-4" />
+          </Toggle>
+           <Toggle
+            size="sm"
+            pressed={editor.isActive('heading', { level: 2 })}
+            onPressedChange={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+          >
+            <Heading2 className="h-4 w-4" />
+          </Toggle>
+           <Toggle
+            size="sm"
+            pressed={editor.isActive('heading', { level: 3 })}
+            onPressedChange={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+          >
+            <Heading3 className="h-4 w-4" />
+          </Toggle>
+        </BubbleMenu>
+      )}
+      <EditorContent editor={editor} />
+    </div>
+  )
+}
