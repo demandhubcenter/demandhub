@@ -77,7 +77,7 @@ export function NewsletterSignup() {
                  <div className="absolute inset-0 bg-primary opacity-50"></div>
                  <div 
                     className="h-full w-full bg-cover bg-center"
-                    style={{ backgroundImage: "url('https://placehold.co/600x400.png')" }}
+                    style={{ backgroundImage: "url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=600&h=400&q=80')" }}
                     data-ai-hint="security abstract"
                   ></div>
               </div>
