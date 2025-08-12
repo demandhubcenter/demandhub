@@ -20,6 +20,9 @@ import { Input } from "@/components/ui/input"
 import { useAuth } from "@/context/auth-context";
 import { useToast } from "@/hooks/use-toast"
 import { useState } from "react"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Label } from "@/components/ui/label"
+import { Shield } from "lucide-react"
 
 const formSchema = z.object({
   email: z.string().email({
@@ -33,6 +36,7 @@ export function SignInForm() {
   const router = useRouter();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [isVerified, setIsVerified] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -43,6 +47,7 @@ export function SignInForm() {
   })
 
  async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (!isVerified) return;
     setIsLoading(true);
     try {
       await signIn(values.email, values.password);
@@ -98,7 +103,25 @@ export function SignInForm() {
                 <Button variant="link" className="p-0 h-auto text-xs" type="button">Forgot Password?</Button>
             </Link>
         </div>
-        <Button type="submit" className="w-full" disabled={isLoading}>
+        
+        {/* Simulated reCAPTCHA */}
+        <div className="flex items-center space-x-2 rounded-md border border-input p-3 bg-background">
+          <Checkbox 
+            id="robot-check" 
+            onCheckedChange={(checked) => setIsVerified(!!checked)}
+            checked={isVerified}
+            disabled={isLoading}
+          />
+          <Label htmlFor="robot-check" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+            I am not a robot
+          </Label>
+           <div className="ml-auto text-center">
+              <Shield className="h-6 w-6 text-gray-400 mx-auto" />
+              <p className="text-xs text-gray-400 mt-1">Protected</p>
+           </div>
+        </div>
+
+        <Button type="submit" className="w-full" disabled={isLoading || !isVerified}>
           {isLoading ? "Signing In..." : "Sign In"}
         </Button>
       </form>
