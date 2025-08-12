@@ -76,8 +76,8 @@ export default function AdminCommentsPage() {
                         </TableRow>
                         </TableHeader>
                         <TableBody>
-                        {allComments.map((comment) => (
-                            <TableRow key={`${comment.postSlug}-${comment.id}`}>
+                        {allComments.map((comment, index) => (
+                            <TableRow key={`${comment.postSlug}-${comment.id}-${index}`}>
                                 <TableCell>
                                     <div className="flex items-start gap-3">
                                          <Avatar className="w-8 h-8">

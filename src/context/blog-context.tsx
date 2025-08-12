@@ -65,8 +65,8 @@ const initialPosts: BlogPost[] = [
     tags: ["AI", "Cybersecurity", "Forensics"],
     image: { src: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=600&h=400&q=80&fit=crop", hint: "cyber security" },
     comments: [
-        { id: "1", author: { name: "Bob Williams", avatar: initialAuthors.bob.avatar, hint: initialAuthors.bob.hint }, date: "2023-10-31T11:00:00Z", text: "This is a fantastic overview. The point about behavioral analytics is key. We've seen it work wonders in preventing account takeovers." },
-        { id: "2", author: { name: "Charlie Brown", avatar: initialAuthors.charlie.avatar, hint: initialAuthors.charlie.hint }, date: "2023-11-01T12:00:00Z", text: "I'd be interested to learn more about the challenges of AI, like dealing with adversarial attacks or model bias. Do you plan a follow-up article?" }
+        { id: "comment-1-1", author: { name: "Bob Williams", avatar: initialAuthors.bob.avatar, hint: initialAuthors.bob.hint }, date: "2023-10-31T11:00:00Z", text: "This is a fantastic overview. The point about behavioral analytics is key. We've seen it work wonders in preventing account takeovers." },
+        { id: "comment-1-2", author: { name: "Charlie Brown", avatar: initialAuthors.charlie.avatar, hint: initialAuthors.charlie.hint }, date: "2023-11-01T12:00:00Z", text: "I'd be interested to learn more about the challenges of AI, like dealing with adversarial attacks or model bias. Do you plan a follow-up article?" }
     ]
   },
   {
@@ -176,7 +176,7 @@ export const BlogProvider = ({ children }: { children: ReactNode }) => {
             if (p.slug === slug) {
                 const newComment: PostComment = {
                     ...commentData,
-                    id: `${new Date().getTime()}-${Math.random()}`, // Robust unique id
+                    id: `${new Date().getTime()}-${Math.random().toString(36).substr(2, 9)}`, // Robust unique id
                     date: new Date().toISOString(),
                 };
                 const updatedComments = [...p.comments, newComment];
