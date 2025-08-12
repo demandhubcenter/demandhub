@@ -38,7 +38,7 @@ export function CaseStudiesTeaser() {
                 <CarouselItem>
                   <div className="relative h-96">
                     <Image
-                      src="https://placehold.co/600x400.png"
+                      src="https://images.unsplash.com/photo-1544377193-33dcf4d68fb5?w=600&h=400&q=80"
                       alt="Before recovery fund status"
                       layout="fill"
                       objectFit="cover"
@@ -53,7 +53,7 @@ export function CaseStudiesTeaser() {
                 <CarouselItem>
                   <div className="relative h-96">
                     <Image
-                      src="https://placehold.co/600x400.png"
+                      src="https://images.unsplash.com/photo-1553729459-efe14ef6055d?w=600&h=400&q=80"
                       alt="After recovery fund status"
                       layout="fill"
                       objectFit="cover"
