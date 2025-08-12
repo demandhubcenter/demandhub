@@ -1,3 +1,4 @@
+
 import Image from "next/image";
 import {
   Accordion,
@@ -38,7 +39,7 @@ const services = [
     title: "Crisis Management",
     description: "Immediate, decisive action to contain threats and manage the fallout from a security breach.",
     details: "In the critical hours following a scam or breach, our team provides rapid response support. We guide you through securing remaining assets, preserving evidence, and communicating with stakeholders. Our goal is to minimize damage and stabilize the situation swiftly.",
-    image: { src: "https://images.unsplash.com/photo-1516321118335-06b3537c3589?w=500&h=400&q=80&fit=crop", hint: "emergency response" },
+    image: { src: "https://images.unsplash.com/photo-1586473216832-26b62e40f113?w=500&h=400&q=80&fit=crop", hint: "emergency response" },
   },
   {
     id: "future-planning",
