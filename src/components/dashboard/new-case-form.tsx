@@ -36,18 +36,20 @@ import {
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { useCases } from "@/context/case-context"
+import { useAuth } from "@/context/auth-context"
 
 const formSchema = z.object({
   title: z.string().min(5, "Title must be at least 5 characters."),
   category: z.string({ required_error: "Please select a category." }),
   description: z.string().min(20, "Please provide a detailed description of at least 20 characters."),
-  evidence: z.any().optional(),
+  evidence: z.instanceof(File).optional(),
 })
 
 export function NewCaseForm() {
   const { toast } = useToast()
   const router = useRouter();
   const { addCase, cases } = useCases();
+  const { user } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newCaseId, setNewCaseId] = useState("");
 
@@ -61,7 +63,6 @@ export function NewCaseForm() {
   })
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
     const nextId = cases.length > 0 ? Math.max(...cases.map(c => parseInt(c.id.split('-')[1]))) + 1 : 1;
     const formattedId = `CASE-${String(nextId).padStart(3, '0')}`;
     setNewCaseId(formattedId);
@@ -71,6 +72,16 @@ export function NewCaseForm() {
         title: values.title,
         status: "Open" as const,
         date: new Date().toISOString().split('T')[0],
+        category: values.category,
+        description: values.description,
+        evidence: values.evidence ? { name: values.evidence.name, url: URL.createObjectURL(values.evidence) } : undefined,
+        conversation: [
+            {
+                author: { name: user?.name || "Client", role: 'Client' as const, avatar: "" },
+                timestamp: new Date().toLocaleString(),
+                text: "Case created.",
+            }
+        ]
     };
     addCase(newCase);
     
@@ -87,6 +98,8 @@ export function NewCaseForm() {
     })
     router.push('/dashboard/cases');
   }
+
+  const fileRef = form.register("evidence");
 
   return (
     <>
@@ -153,7 +166,7 @@ export function NewCaseForm() {
                 <FormItem>
                     <FormLabel>Upload Evidence</FormLabel>
                     <FormControl>
-                        <Input type="file" {...field} value={field.value?.fileName} />
+                        <Input type="file" {...fileRef} />
                     </FormControl>
                     <FormMessage />
                 </FormItem>
