@@ -31,9 +31,6 @@ export default function DashboardPage() {
     router.push('/dashboard/submitted-case');
   };
 
-  const openCases = useMemo(() => cases.filter(c => c.status === 'Open'), [cases]);
-  const resolvedCases = useMemo(() => cases.filter(c => c.status === 'Closed'), [cases]);
-
   const daysSinceLastActivity = useMemo(() => {
     if (cases.length === 0) {
       return 0;
@@ -45,8 +42,7 @@ export default function DashboardPage() {
   }, [cases]);
 
   const stats = [
-    { value: openCases.length, label: "Open Cases" },
-    { value: resolvedCases.length, label: "Resolved Cases" },
+    { value: cases.length, label: "Total Cases" },
     { value: daysSinceLastActivity, label: "Days Since Last Activity", suffix: " days" },
   ];
 
@@ -57,7 +53,7 @@ export default function DashboardPage() {
         <p className="text-muted-foreground">Welcome back to your DemandHub dashboard.</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {stats.map((stat) => (
           <Card key={stat.label}>
             <CardHeader>
@@ -96,7 +92,6 @@ export default function DashboardPage() {
               <TableRow>
                 <TableHead>Case ID</TableHead>
                 <TableHead>Title</TableHead>
-                <TableHead>Status</TableHead>
                 <TableHead>Date Opened</TableHead>
                 <TableHead></TableHead>
               </TableRow>
@@ -106,9 +101,6 @@ export default function DashboardPage() {
                 <TableRow key={caseItem.id}>
                   <TableCell className="font-medium">{caseItem.id}</TableCell>
                   <TableCell>{caseItem.title}</TableCell>
-                  <TableCell>
-                    <Badge variant={caseItem.status === 'Open' ? 'destructive' : 'secondary'}>{caseItem.status}</Badge>
-                  </TableCell>
                   <TableCell>{caseItem.date}</TableCell>
                   <TableCell className="text-right">
                     <Button 

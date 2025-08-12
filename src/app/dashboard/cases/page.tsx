@@ -2,7 +2,6 @@
 "use client"
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import {
   Table,
   TableHeader,
@@ -11,7 +10,6 @@ import {
   TableBody,
   TableCell,
 } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,7 +18,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Filter, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { useCases } from "@/context/case-context";
 import {
   AlertDialog,
@@ -36,7 +34,6 @@ import {
 
 
 export default function CasesPage() {
-    const [filter, setFilter] = useState("All");
     const { cases, deleteCase, setSelectedCase } = useCases();
     const router = useRouter();
 
@@ -44,11 +41,6 @@ export default function CasesPage() {
         setSelectedCase(caseItem);
         router.push('/dashboard/submitted-case');
     };
-
-    const filteredCases = cases.filter(caseItem => {
-        if (filter === "All") return true;
-        return caseItem.status === filter;
-    })
 
     return (
         <div className="space-y-8">
@@ -69,18 +61,6 @@ export default function CasesPage() {
                             <CardTitle>All Submitted Cases</CardTitle>
                             <CardDescription>A complete history of your recovery cases with DemandHub.</CardDescription>
                         </div>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="outline" size="sm" className="gap-2 w-full sm:w-auto">
-                                    <Filter className="h-4 w-4" /> Filter ({filter})
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent>
-                                <DropdownMenuItem onClick={() => setFilter("All")}>All</DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => setFilter("Open")}>Open</DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => setFilter("Closed")}>Closed</DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
                     </div>
                 </CardHeader>
                 <CardContent>
@@ -90,19 +70,15 @@ export default function CasesPage() {
                         <TableRow>
                             <TableHead>Case ID</TableHead>
                             <TableHead>Title</TableHead>
-                            <TableHead>Status</TableHead>
                             <TableHead>Date Opened</TableHead>
                             <TableHead className="text-right">Actions</TableHead>
                         </TableRow>
                         </TableHeader>
                         <TableBody>
-                        {filteredCases.map((caseItem) => (
+                        {cases.map((caseItem) => (
                             <TableRow key={caseItem.id}>
                             <TableCell className="font-medium">{caseItem.id}</TableCell>
                             <TableCell>{caseItem.title}</TableCell>
-                            <TableCell>
-                                <Badge variant={caseItem.status === 'Open' ? 'destructive' : 'secondary'}>{caseItem.status}</Badge>
-                            </TableCell>
                             <TableCell>{caseItem.date}</TableCell>
                             <TableCell className="text-right space-x-2">
                                 <Button 

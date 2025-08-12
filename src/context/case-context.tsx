@@ -12,7 +12,6 @@ export interface CaseConversation {
 export interface Case {
   id: string;
   title: string;
-  status: 'Open' | 'Closed';
   date: string;
   category: string;
   description: string;
@@ -41,6 +40,9 @@ export const CaseProvider = ({ children }: { children: ReactNode }) => {
   const [cases, setCases] = useState<Case[]>(() => {
     // On initial load, try to get cases from localStorage
     try {
+        if (typeof window === 'undefined') {
+          return initialCases;
+        }
         const item = window.localStorage.getItem('cases');
         return item ? JSON.parse(item) : initialCases;
     } catch (error) {

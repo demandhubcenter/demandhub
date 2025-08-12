@@ -72,7 +72,6 @@ export function NewCaseForm() {
     const newCase = {
         id: formattedId,
         title: values.title,
-        status: "Open" as const,
         date: new Date().toISOString().split('T')[0],
         category: values.category,
         description: values.description,
@@ -183,7 +182,7 @@ export function NewCaseForm() {
             <AlertDialogHeader>
             <AlertDialogTitle>Case Submitted Successfully</AlertDialogTitle>
             <AlertDialogDescription>
-                We have received your case details and will begin our initial assessment. You will receive a confirmation email shortly, and a case manager will be in touch within 24 hours. Your case ID is {newCaseId}.
+                We have received your case details and will begin our initial assessment. You will receive a confirmation email shortly, and a case manager will be in touch within 24 hours. Your case ID is ${newCaseId}.
             </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>

@@ -60,7 +60,6 @@ export default function SubmittedCasePage() {
         </Button>
         <div className="flex items-center gap-4 mb-1">
             <h1 className="text-3xl font-bold">{selectedCase.title}</h1>
-            <Badge variant={selectedCase.status === 'Open' ? 'destructive' : 'secondary'}>{selectedCase.status}</Badge>
         </div>
         <p className="text-muted-foreground">Case ID: {selectedCase.id} | Opened: {selectedCase.date}</p>
       </div>
