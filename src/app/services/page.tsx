@@ -14,7 +14,7 @@ const services = [
     title: "Risk Management",
     description: "Proactive identification and mitigation of fraudulent schemes. We help you build a stronger defense before you're a target.",
     details: "Our risk management services include vulnerability assessments, security protocol reviews, and employee training programs. We analyze your digital footprint to identify weak points that could be exploited by fraudsters, providing actionable recommendations to fortify your defenses.",
-    image: { src: "https://placehold.co/500x400.png", hint: "security shield" },
+    image: { src: "https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?w=500&h=400&q=80&fit=crop", hint: "security shield" },
   },
   {
     id: "claim-assessment",
@@ -22,7 +22,7 @@ const services = [
     title: "Claim Assessment",
     description: "A comprehensive, no-cost evaluation of your case to determine the viability of fund recovery.",
     details: "We start with a free, no-obligation assessment of your situation. Our experts review all provided evidence, evaluate the nature of the fraud, and use preliminary tracing techniques to gauge the likelihood of a successful recovery. You receive a clear report on our findings and recommended next steps.",
-    image: { src: "https://placehold.co/500x400.png", hint: "document analysis" },
+    image: { src: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=500&h=400&q=80&fit=crop", hint: "document analysis" },
   },
   {
     id: "intelligence-gathering",
@@ -30,7 +30,7 @@ const services = [
     title: "Intelligence Gathering",
     description: "Utilizing advanced market scanning and on-chain forensic analysis to trace and track your lost assets.",
     details: "This is the core of our recovery process. We deploy proprietary software and expert analysts to conduct on-chain and off-chain investigations. We trace fund movements across multiple blockchains and jurisdictions, identify perpetrator wallets, and gather crucial evidence for law enforcement and legal action.",
-    image: { src: "https://placehold.co/500x400.png", hint: "data chart" },
+    image: { src: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=500&h=400&q=80&fit=crop", hint: "data chart" },
   },
   {
     id: "crisis-management",
@@ -38,7 +38,7 @@ const services = [
     title: "Crisis Management",
     description: "Immediate, decisive action to contain threats and manage the fallout from a security breach.",
     details: "In the critical hours following a scam or breach, our team provides rapid response support. We guide you through securing remaining assets, preserving evidence, and communicating with stakeholders. Our goal is to minimize damage and stabilize the situation swiftly.",
-    image: { src: "https://placehold.co/500x400.png", hint: "emergency plan" },
+    image: { src: "https://images.unsplash.com/photo-1586953208448-31511e39d733?w=500&h=400&q=80&fit=crop", hint: "emergency plan" },
   },
   {
     id: "future-planning",
@@ -46,7 +46,7 @@ const services = [
     title: "Future Planning",
     description: "Strategic advice and implementation of robust security measures to prevent future incidents.",
     details: "Beyond recovery, we help you plan for a secure future. Based on the specifics of your case, we develop a customized security roadmap. This can include multi-signature wallet setups, institutional-grade custody solutions, and ongoing monitoring services to protect you from evolving threats.",
-    image: { src: "https://placehold.co/500x400.png", hint: "strategy roadmap" },
+    image: { src: "https://images.unsplash.com/photo-1541746972996-4e0b0f43e02a?w=500&h=400&q=80&fit=crop", hint: "strategy roadmap" },
   },
   {
     id: "help-support",
@@ -54,7 +54,7 @@ const services = [
     title: "Help & Support",
     description: "Dedicated support throughout the recovery process and beyond, ensuring you're never alone.",
     details: "We understand the emotional and financial toll of digital fraud. Our support team provides regular updates, answers your questions, and offers compassionate guidance throughout the entire recovery journey. We are your partners from start to finish.",
-    image: { src: "https://placehold.co/500x400.png", hint: "customer support" },
+    image: { src: "https://images.unsplash.com/photo-1516321497487-e288fb19713f?w=500&h=400&q=80&fit=crop", hint: "customer support" },
   },
 ];
 
