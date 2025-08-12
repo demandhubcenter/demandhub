@@ -166,6 +166,30 @@ const initialPosts: BlogPost[] = [
     image: { src: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=600&h=400&q=80&fit=crop", hint: "family using computer" },
     comments: [],
   },
+  {
+    slug: "anatomy-of-a-romance-scam",
+    featured: false,
+    title: "Anatomy of a Romance Scam: How to Protect Your Heart and Wallet",
+    excerpt: "Romance scams are emotionally and financially devastating. Learn the common stages of these scams and how to spot a predator before it's too late.",
+    content: `<p class="lead text-lg text-muted-foreground mb-6">In the world of online fraud, romance scams are uniquely cruel. They exploit not just financial vulnerability, but the universal human need for connection. Understanding the predator's playbook is the first step toward protecting yourself.</p><h3 class="text-2xl font-bold mt-8 mb-4">Stage 1: The Love Bomb</h3><p class="mb-6">Scammers create a highly idealized online persona, often using stolen photos of attractive individuals. They will shower you with attention, compliments, and declarations of love very quickly. This 'love bombing' is designed to create a powerful emotional bond and short-circuit your rational judgment.</p><h3 class="text-2xl font-bold mt-8 mb-4">Stage 2: The Isolation</h3><p class="mb-6">Once a bond is formed, the scammer will work to isolate you from friends and family. They may insist on keeping the relationship a secret or create drama that drives a wedge between you and those who might question the legitimacy of the relationship. They will always have an excuse for why they cannot meet in person or do a video call.</p><h3 class="text-2xl font-bold mt-8 mb-4">Stage 3: The Crisis & The Ask</h3><p>This is the endgame. Suddenly, there is an emergency—a medical problem, a business deal gone wrong, a visa issue—and they need money. Urgently. They will leverage the emotional connection they've built to pressure you into sending funds, promising to pay you back as soon as their fabricated crisis is over. This cycle can repeat, draining a victim's savings.</p><h3 class="text-2xl font-bold mt-8 mb-4">Red Flags to Watch For</h3><ul class="list-disc list-inside space-y-2 mb-6 text-muted-foreground"><li>They move too fast, professing love within days or weeks.</li><li>Their profile seems too good to be true.</li><li>They consistently avoid video calls or meeting in person.</li><li>They ask you to move the conversation off the dating app to a private chat quickly.</li><li>Any request for money, gift cards, or cryptocurrency is a massive red flag.</li></ul>`,
+    author: initialAuthors.diana,
+    date: "2023-09-25T10:00:00Z",
+    tags: ["Scam Alert", "Romance Scam", "Support"],
+    image: { src: "https://images.unsplash.com/photo-1542362567-b07e54358753?w=600&h=400&q=80&fit=crop", hint: "heart hands" },
+    comments: [],
+  },
+  {
+    slug: "how-to-secure-your-digital-wallet",
+    featured: false,
+    title: "Fort Knox Your Crypto: Essential Tips for Securing Your Digital Wallet",
+    excerpt: "Your crypto is only as safe as your wallet. Follow these crucial security practices to protect your digital assets from thieves.",
+    content: `<p class="lead text-lg text-muted-foreground mb-6">In the decentralized world of cryptocurrency, you are your own bank. This freedom comes with immense responsibility. Securing your digital wallet is the single most important thing you can do to protect your investments. Let's cover the essentials.</p><h3 class="text-2xl font-bold mt-8 mb-4">1. Use a Hardware Wallet</h3><p class="mb-6">For any significant amount of crypto, a hardware wallet (or "cold wallet") is non-negotiable. These are physical devices that store your private keys offline, making them immune to online hacking attempts. Your keys never leave the device, so you must approve every transaction directly on it.</p><h3 class="text-2xl font-bold mt-8 mb-4">2. Safeguard Your Seed Phrase</h3><p class="mb-6">Your seed phrase (or recovery phrase) is the master key to all your crypto. Anyone with this phrase can control your funds.</p><ul class="list-disc list-inside space-y-2 mb-6 text-muted-foreground"><li><strong>Never store it digitally.</strong> Don't save it in a text file, in your notes app, in an email, or as a photo. These can all be hacked.</li><li><strong>Write it down.</strong> Use pen and paper. Better yet, stamp it into metal to protect it from fire or water damage.</li><li><strong>Store it securely.</strong> Keep your written-down phrase in multiple, secure, secret locations, like a safe deposit box or a fireproof safe at home.</li><li><strong>Never share it.</strong> No legitimate support agent, service, or giveaway will ever ask for your seed phrase.</li></ul><h3 class="text-2xl font-bold mt-8 mb-4">3. Beware of Phishing & Malicious Contracts</h3><p>Scammers will try to trick you into either giving them your keys or signing a malicious transaction that drains your wallet. Be skeptical of unsolicited emails, links, or airdrops. Before interacting with any decentralized application (dApp), verify it's the legitimate project. Use tools that can simulate transactions to see exactly what a smart contract will do before you approve it.</p>`,
+    author: initialAuthors.bob,
+    date: "2023-09-20T10:00:00Z",
+    tags: ["Crypto", "Cybersecurity", "Technical"],
+    image: { src: "https://images.unsplash.com/photo-1518546305927-5a555bb7020d?w=600&h=400&q=80&fit=crop", hint: "safe vault" },
+    comments: [],
+  },
 ];
 
 
@@ -262,5 +286,7 @@ export const useBlog = (): BlogContextType => {
   }
   return context;
 };
+
+    
 
     
