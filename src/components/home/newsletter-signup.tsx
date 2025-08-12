@@ -6,17 +6,41 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { CheckCircle2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { subscribeToNewsletter } from "@/ai/flows/newsletter-signup-flow";
 
 export function NewsletterSignup() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [email, setEmail] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Here you would typically handle the newsletter subscription logic
-    console.log("Subscribing email:", email);
-    setIsDialogOpen(true);
-    setEmail(""); // Reset email input
+    if (!email) return;
+
+    setIsLoading(true);
+    try {
+      const result = await subscribeToNewsletter({ email });
+      if (result.success) {
+        setIsDialogOpen(true);
+        setEmail(""); // Reset email input
+      } else {
+        toast({
+            title: "Subscription Failed",
+            description: result.message || "An unexpected error occurred.",
+            variant: "destructive"
+        })
+      }
+    } catch (error) {
+       toast({
+            title: "Subscription Failed",
+            description: "An unexpected error occurred. Please try again later.",
+            variant: "destructive"
+        })
+    } finally {
+        setIsLoading(false);
+    }
   };
 
   return (
@@ -41,9 +65,10 @@ export function NewsletterSignup() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
+                      disabled={isLoading}
                     />
-                    <Button type="submit" variant="secondary" className="bg-accent text-accent-foreground hover:bg-accent/90 w-full sm:w-auto">
-                      Subscribe
+                    <Button type="submit" variant="secondary" className="bg-accent text-accent-foreground hover:bg-accent/90 w-full sm:w-auto" disabled={isLoading}>
+                      {isLoading ? "Subscribing..." : "Subscribe"}
                     </Button>
                   </form>
                 </CardContent>
