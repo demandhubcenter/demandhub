@@ -155,7 +155,7 @@ function CaseDetailContent() {
 // This is required for static export with dynamic routes.
 // We return an empty array because we don't want to pre-render any specific case pages.
 // The page will be rendered on the client side.
-export async function generateStaticParams() {
+export function generateStaticParams() {
   return [];
 }
 
