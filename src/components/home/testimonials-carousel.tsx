@@ -16,21 +16,21 @@ const testimonials = [
     quote: "DemandHub's team was professional, swift, and reassuring. They recovered funds we thought were lost forever. Truly life-saving service.",
     name: "John D.",
     role: "CEO, Tech Innovators",
-    avatar: "https://placehold.co/100x100.png",
+    avatar: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=100&h=100&q=80",
     hint: "male ceo"
   },
   {
     quote: "The level of detail in their forensic analysis was astounding. They kept us informed at every step. Highly recommended for any digital asset issues.",
     name: "Sarah L.",
     role: "CFO, Global Logistics",
-    avatar: "https://placehold.co/100x100.png",
+    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&q=80",
     hint: "female cfo"
   },
   {
     quote: "We were devastated after the scam, but DemandHub turned the situation around in weeks. Their expertise is unmatched.",
     name: "Michael B.",
     role: "Individual Investor",
-    avatar: "https://placehold.co/100x100.png",
+    avatar: "https://images.unsplash.com/photo-1557862921-37829c790f19?w=100&h=100&q=80",
     hint: "man portrait"
   },
 ];
