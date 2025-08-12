@@ -166,7 +166,7 @@ export function NewCaseForm() {
                 <FormItem>
                     <FormLabel>Upload Evidence</FormLabel>
                     <FormControl>
-                        <Input type="file" {...fileRef} />
+                        <Input type="file" {...fileRef} accept="image/*,.pdf,.doc,.docx,.txt" />
                     </FormControl>
                     <FormMessage />
                 </FormItem>
