@@ -20,10 +20,21 @@ import { useAuth } from "@/context/auth-context";
 import { updateProfile, reauthenticateWithCredential, EmailAuthProvider, updatePassword } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { useState } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { countries } from "@/lib/countries";
+import Image from "next/image";
 
 const profileSchema = z.object({
   fullName: z.string().min(2, "Full name must be at least 2 characters."),
   email: z.string().email("Please enter a valid email address."),
+  phoneNumber: z.string().min(10, { message: "Please enter a valid phone number." }),
+  country: z.string({ required_error: "Please select a country."}),
 });
 
 const passwordSchema = z.object({
@@ -37,7 +48,7 @@ const passwordSchema = z.object({
 
 export function AccountSettingsForm() {
     const { toast } = useToast();
-    const { user, updateUsername } = useAuth();
+    const { user, updateUser } = useAuth();
     const [isProfileSaving, setIsProfileSaving] = useState(false);
     const [isPasswordSaving, setIsPasswordSaving] = useState(false);
 
@@ -46,6 +57,8 @@ export function AccountSettingsForm() {
         defaultValues: {
             fullName: user?.name || "",
             email: user?.email || "",
+            phoneNumber: user?.phoneNumber || "",
+            country: user?.country || "",
         },
     });
 
@@ -62,11 +75,19 @@ export function AccountSettingsForm() {
         if (!auth.currentUser) return;
         setIsProfileSaving(true);
         try {
-            await updateProfile(auth.currentUser, { displayName: values.fullName });
-            // This is the new part: update the context immediately
-            updateUsername(values.fullName);
+            const profileData = {
+              displayName: values.fullName,
+              photoURL: JSON.stringify({ country: values.country, phoneNumber: values.phoneNumber }),
+            }
+            await updateProfile(auth.currentUser, profileData);
             
-            toast({ title: "Profile Updated", description: "Your name has been successfully updated." });
+            updateUser({
+                name: values.fullName,
+                country: values.country,
+                phoneNumber: values.phoneNumber
+            });
+            
+            toast({ title: "Profile Updated", description: "Your profile has been successfully updated." });
 
         } catch (error: any) {
              toast({ title: "Error", description: error.message, variant: "destructive" });
@@ -121,6 +142,46 @@ export function AccountSettingsForm() {
                     <FormMessage />
                     </FormItem>
                 )}
+                />
+                <FormField
+                  control={profileForm.control}
+                  name="country"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Country</FormLabel>
+                       <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isProfileSaving}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select your country" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent className="max-h-60">
+                          {countries.map((country) => (
+                            <SelectItem key={country.code} value={country.name}>
+                               <div className="flex items-center gap-2">
+                                <Image src={country.flag} alt={country.name} width={18} height={12} />
+                                <span>{country.name} ({country.dial_code})</span>
+                               </div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={profileForm.control}
+                  name="phoneNumber"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Phone Number</FormLabel>
+                      <FormControl>
+                        <Input type="tel" placeholder="e.g. 2025550125" {...field} disabled={isProfileSaving} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
                 <Button type="submit" disabled={isProfileSaving}>{isProfileSaving ? "Saving..." : "Save Profile"}</Button>
             </form>

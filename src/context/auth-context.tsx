@@ -16,6 +16,8 @@ interface User {
   email: string | null;
   uid: string;
   emailVerified: boolean;
+  phoneNumber: string | null;
+  country: string | null;
 }
 
 interface AuthContextType {
@@ -23,7 +25,7 @@ interface AuthContextType {
   loading: boolean;
   signIn: (email: string, password: string) => Promise<FirebaseUser>;
   signOut: () => Promise<void>;
-  updateUsername: (name: string) => void;
+  updateUser: (data: Partial<Omit<User, 'uid' | 'email' | 'emailVerified'>>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -35,11 +37,26 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
         if (firebaseUser) {
+            let phoneNumber = null;
+            let country = null;
+            // The extra user data is stored in photoURL as a JSON string.
+            if (firebaseUser.photoURL) {
+              try {
+                const extraData = JSON.parse(firebaseUser.photoURL);
+                phoneNumber = extraData.phoneNumber || null;
+                country = extraData.country || null;
+              } catch (e) {
+                console.error("Could not parse user profile data from photoURL");
+              }
+            }
+
             setUser({
                 email: firebaseUser.email,
                 name: firebaseUser.displayName,
                 uid: firebaseUser.uid,
-                emailVerified: firebaseUser.emailVerified
+                emailVerified: firebaseUser.emailVerified,
+                phoneNumber,
+                country,
             });
         } else {
             setUser(null);
@@ -60,17 +77,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     await firebaseSignOut(auth);
   };
   
-  const updateUsername = (name: string) => {
+  const updateUser = (data: Partial<Omit<User, 'uid' | 'email' | 'emailVerified'>>) => {
     setUser(currentUser => {
         if (currentUser) {
-            return { ...currentUser, name };
+            return { ...currentUser, ...data };
         }
         return null;
     });
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, signIn, signOut, updateUsername }}>
+    <AuthContext.Provider value={{ user, loading, signIn, signOut, updateUser }}>
       {!loading && children}
     </AuthContext.Provider>
   );
