@@ -27,6 +27,7 @@ import { Calendar } from "../ui/calendar"
 import { cn } from "@/lib/utils"
 import { format } from "date-fns"
 import { useAuth } from "@/context/auth-context"
+import { RichTextEditor } from "./rich-text-editor"
 
 
 const formSchema = z.object({
@@ -155,15 +156,8 @@ export function BlogPostForm({ existingPost }: BlogPostFormProps) {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Content</FormLabel>
-              <FormDescription>
-                Use HTML for formatting (e.g., &lt;p&gt;, &lt;h3&gt;, &lt;ul&gt;, &lt;li&gt;, &lt;strong&gt;).
-              </FormDescription>
-               <FormControl>
-                <Textarea
-                  placeholder="The full content of the blog post..."
-                  className="resize-y min-h-[250px]"
-                  {...field}
-                />
+              <FormControl>
+                <RichTextEditor {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
