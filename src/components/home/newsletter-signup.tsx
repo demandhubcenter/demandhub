@@ -1,39 +1,79 @@
+"use client";
+
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { CheckCircle2 } from "lucide-react";
 
 export function NewsletterSignup() {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [email, setEmail] = useState("");
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    // Here you would typically handle the newsletter subscription logic
+    console.log("Subscribing email:", email);
+    setIsDialogOpen(true);
+    setEmail(""); // Reset email input
+  };
+
   return (
-    <section className="py-20 md:py-28 bg-background">
-      <div className="container max-w-7xl">
-        <Card className="bg-primary text-primary-foreground shadow-lg overflow-hidden">
-         <div className="grid md:grid-cols-2 items-center">
-            <div className="p-8">
-              <CardHeader className="p-0 text-left">
-                <CardTitle className="text-3xl font-bold">Stay Ahead of Scams</CardTitle>
-                <CardDescription className="text-primary-foreground/80 text-lg mt-2">
-                  Subscribe to our newsletter for the latest scam alerts & recovery tips.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="p-0 mt-6">
-                <form className="flex flex-col sm:flex-row w-full max-w-lg items-center gap-2">
-                  <Input
-                    type="email"
-                    placeholder="Enter your email"
-                    className="bg-primary-foreground/10 text-primary-foreground placeholder:text-primary-foreground/60 border-primary-foreground/20 focus:ring-accent w-full"
-                  />
-                  <Button type="submit" variant="secondary" className="bg-accent text-accent-foreground hover:bg-accent/90 w-full sm:w-auto">
-                    Subscribe
-                  </Button>
-                </form>
-              </CardContent>
+    <>
+      <section className="py-20 md:py-28 bg-background">
+        <div className="container max-w-7xl">
+          <Card className="bg-primary text-primary-foreground shadow-lg overflow-hidden">
+           <div className="grid md:grid-cols-2 items-center">
+              <div className="p-8 md:p-12">
+                <CardHeader className="p-0 text-left">
+                  <CardTitle className="text-3xl font-bold">Stay Ahead of Scams</CardTitle>
+                  <CardDescription className="text-primary-foreground/80 text-lg mt-2">
+                    Subscribe to our newsletter for the latest scam alerts & recovery tips.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="p-0 mt-6">
+                  <form className="flex flex-col sm:flex-row w-full max-w-lg items-center gap-2" onSubmit={handleSubmit}>
+                    <Input
+                      type="email"
+                      placeholder="Enter your email"
+                      className="bg-primary-foreground/10 text-primary-foreground placeholder:text-primary-foreground/60 border-primary-foreground/20 focus:ring-accent w-full"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                    />
+                    <Button type="submit" variant="secondary" className="bg-accent text-accent-foreground hover:bg-accent/90 w-full sm:w-auto">
+                      Subscribe
+                    </Button>
+                  </form>
+                </CardContent>
+              </div>
+              <div className="hidden md:block h-full bg-accent/20 relative">
+                 <div className="absolute inset-0 bg-primary opacity-50"></div>
+                 <div 
+                    className="h-full w-full bg-cover bg-center"
+                    style={{ backgroundImage: "url('https://placehold.co/600x400.png')" }}
+                    data-ai-hint="security abstract"
+                  ></div>
+              </div>
             </div>
-            <div className="hidden md:block h-full bg-accent/20">
-              {/* You can add a decorative image or icon here */}
+          </Card>
+        </div>
+      </section>
+
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="sm:max-w-md text-center">
+          <DialogHeader className="items-center">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 mb-4">
+              <CheckCircle2 className="h-10 w-10 text-primary" />
             </div>
-          </div>
-        </Card>
-      </div>
-    </section>
+            <DialogTitle className="text-2xl">Subscription Successful!</DialogTitle>
+            <DialogDescription className="pt-2">
+              Thank you for subscribing. You'll receive the latest scam alerts and recovery tips directly in your inbox.
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
