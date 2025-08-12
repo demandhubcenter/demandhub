@@ -10,21 +10,21 @@ import { User } from "lucide-react";
 const featuredPosts = [
   {
     slug: "post-1",
-    image: { src: "https://placehold.co/600x400.png", hint: "cyber security" },
+    image: { src: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=600&h=400&q=80&fit=crop", hint: "cyber security" },
     title: "The Rise of AI in Fraud Detection and Recovery",
     excerpt: "Discover how artificial intelligence is becoming a game-changer in the fight against sophisticated financial scams.",
     tags: ["AI", "Cybersecurity"],
   },
   {
     slug: "post-2",
-    image: { src: "https://placehold.co/600x400.png", hint: "crypto wallet" },
+    image: { src: "https://images.unsplash.com/photo-1621452773357-011f76285314?w=600&h=400&q=80&fit=crop", hint: "crypto wallet" },
     title: "5 Telltale Signs of a Cryptocurrency Scam",
     excerpt: "Learn to spot the red flags before you invest. We break down the most common tactics used by crypto fraudsters.",
     tags: ["Crypto", "Scam Alert"],
   },
   {
     slug: "post-3",
-    image: { src: "https://placehold.co/600x400.png", hint: "person on laptop" },
+    image: { src: "https://images.unsplash.com/photo-1516321497487-e288fb19713f?w=600&h=400&q=80&fit=crop", hint: "person on laptop" },
     title: "Protecting Your Small Business from Wire Fraud",
     excerpt: "Small businesses are prime targets. Implement these essential security measures to safeguard your company's finances.",
     tags: ["Wire Fraud", "Business"],
@@ -34,7 +34,7 @@ const featuredPosts = [
 const regularPosts = [
     {
         slug: "post-4",
-        image: { src: "https://placehold.co/600x400.png", hint: "padlock" },
+        image: { src: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=600&h=400&q=80&fit=crop", hint: "padlock" },
         title: "What to Do Immediately After a Phishing Attack",
         excerpt: "Time is critical. Follow these steps to mitigate damage and begin the recovery process after your data has been compromised.",
         tags: ["Phishing", "Recovery"],
@@ -43,7 +43,7 @@ const regularPosts = [
     },
     {
         slug: "post-5",
-        image: { src: "https://placehold.co/600x400.png", hint: "data privacy" },
+        image: { src: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&h=400&q=80&fit=crop", hint: "data privacy" },
         title: "Understanding On-Chain Forensics",
         excerpt: "A deep dive into the technology we use to trace stolen digital assets across the blockchain.",
         tags: ["Blockchain", "Forensics"],
@@ -52,7 +52,7 @@ const regularPosts = [
     },
     {
         slug: "post-6",
-        image: { src: "https://placehold.co/600x400.png", hint: "family using computer" },
+        image: { src: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=600&h=400&q=80&fit=crop", hint: "family using computer" },
         title: "How to Talk to Your Family About Online Safety",
         excerpt: "Protect your loved ones from common scams with these simple conversation starters and tips.",
         tags: ["Online Safety", "Family"],
@@ -61,7 +61,7 @@ const regularPosts = [
     },
     {
         slug: "post-7",
-        image: { src: "https://placehold.co/600x400.png", hint: "real estate closing" },
+        image: { src: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=600&h=400&q=80&fit=crop", hint: "real estate closing" },
         title: "The Dangers of Real Estate Wire Fraud",
         excerpt: "Buying a home? Here's how to avoid the increasingly common scams targeting down payments.",
         tags: ["Real Estate", "Wire Fraud"],
@@ -70,7 +70,7 @@ const regularPosts = [
     },
      {
         slug: "post-8",
-        image: { src: "https://placehold.co/600x400.png", hint: "mobile banking" },
+        image: { src: "https://images.unsplash.com/photo-1639322537228-f710d846310a?w=600&h=400&q=80&fit=crop", hint: "mobile banking" },
         title: "Securing Your Digital Wallet: A 2024 Guide",
         excerpt: "Best practices for keeping your cryptocurrency and NFTs safe from hackers.",
         tags: ["Crypto", "NFT", "Security"],
@@ -79,7 +79,7 @@ const regularPosts = [
     },
      {
         slug: "post-9",
-        image: { src: "https://placehold.co/600x400.png", hint: "sad person" },
+        image: { src: "https://images.unsplash.com/photo-1541829076-248499980da1?w=600&h=400&q=80&fit=crop", hint: "sad person" },
         title: "The Emotional Toll of Financial Fraud",
         excerpt: "It's not just about the money. We explore the psychological impact of scams and how to find support.",
         tags: ["Mental Health", "Support"],
