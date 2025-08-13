@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export default function ResetPasswordPage() {
   return (
-    <div className="container flex min-h-[calc(100vh-8rem)] items-center justify-center py-12">
+    <div className="container flex min-h-[calc(100vh-8rem)] items-center justify-center py-12 bg-gradient-to-br from-primary/5 via-background to-background">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">Reset Your Password</CardTitle>
