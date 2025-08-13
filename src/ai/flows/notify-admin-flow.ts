@@ -57,7 +57,7 @@ const notifyAdminFlow = ai.defineFlow(
 *Phone:* ${input.userPhone}
 
 *Description:*
-${input.description}
+${input.caseDescription.substring(0, 2000)}...
     `;
 
     // If there is evidence, send it first
@@ -119,3 +119,4 @@ ${input.description}
     }
   }
 );
+

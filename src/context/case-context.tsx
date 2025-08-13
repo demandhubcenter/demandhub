@@ -4,6 +4,7 @@
 
 import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback } from 'react';
 import { useAuth } from './auth-context';
+import { notifyAdminOnNewCase } from '@/ai/flows/notify-admin-flow';
 
 export interface CaseConversation {
     author: { name: string; role: 'Client' | 'Support Agent'; avatar: string };
@@ -67,32 +68,82 @@ export const CaseProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     try {
-        // This simple setup assumes one user per browser.
-        // A real multi-user app would filter by user ID if storing all cases locally.
-        window.localStorage.setItem('userCases', JSON.stringify(cases));
+        if (typeof window === 'undefined') return;
+        const item = window.localStorage.getItem('allCases');
+        const allStoredCases = item ? JSON.parse(item) : initialCases;
+        setAllCases(allStoredCases);
+
+        if (user) {
+            const userCases = allStoredCases.filter((c: Case) => c.user?.uid === user.uid);
+            setCases(userCases);
+        } else {
+            setCases([]);
+        }
     } catch (error) {
-        console.error("Could not save cases to localStorage", error);
+        console.warn("Could not parse cases from localStorage", error);
+        setCases(initialCases);
+        setAllCases(initialCases);
     }
-  }, [cases]);
+  }, [user]);
 
+  useEffect(() => {
+    try {
+        if (typeof window === 'undefined') return;
+        // Store all cases in one key to simulate a shared database
+        window.localStorage.setItem('allCases', JSON.stringify(allCases));
+    } catch (error) {
+        console.error("Could not save all cases to localStorage", error);
+    }
+  }, [allCases]);
 
-  const fetchAllCases = () => {
-    // In this localStorage model, allCases is just a copy of cases.
-    setAllCases(cases);
-  };
+  const fetchAllCases = useCallback(() => {
+    try {
+      if (typeof window !== 'undefined') {
+        const item = window.localStorage.getItem('allCases');
+        setAllCases(item ? JSON.parse(item) : []);
+      }
+    } catch (error) {
+        console.warn("Could not parse all cases from localStorage", error);
+        setAllCases([]);
+    }
+  }, []);
   
   const addCase = async (newCaseData: Omit<Case, 'id'>): Promise<string> => {
-    const newId = `case_${new Date().getTime()}`;
-    const newCaseWithId = { ...newCaseData, id: newId };
+    return new Promise((resolve) => {
+        const newId = `case_${new Date().getTime()}`;
+        const newCaseWithId = { ...newCaseData, id: newId };
 
-    setCases(prev => [newCaseWithId, ...prev]);
-    // Also update allCases for admin view
-    setAllCases(prev => [newCaseWithId, ...prev]);
-    return newId;
+        // Update state for all cases (for admin)
+        setAllCases(prev => [newCaseWithId, ...prev]);
+
+        // Update state for the current user's cases
+        setCases(prev => [newCaseWithId, ...prev]);
+
+        // Trigger notification after state update
+        if (newCaseData.user) {
+             notifyAdminOnNewCase({
+                caseId: newId,
+                caseTitle: newCaseData.title,
+                caseCategory: newCaseData.category,
+                caseDescription: newCaseData.description,
+                userName: newCaseData.user.name || 'N/A',
+                userCountry: newCaseData.user.country || 'N/A',
+                userPhone: newCaseData.user.phoneNumber || 'N/A',
+                evidenceDataUrl: newCaseData.evidence?.url,
+                evidenceFileName: newCaseData.evidence?.name,
+                evidenceFileType: newCaseData.evidence?.type,
+            }).catch(error => {
+                // Log the error but don't block the user
+                console.error("Failed to send admin notification:", error);
+            });
+        }
+        
+        resolve(newId);
+    });
   };
 
   const getCaseById = (id: string) => {
-     return cases.find(c => c.id === id);
+     return allCases.find(c => c.id === id);
   }
 
   const addCommentToCase = (caseId: string, comment: CaseConversation) => {
@@ -107,8 +158,10 @@ export const CaseProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const deleteCase = (caseId: string) => {
-    setCases(prevCases => prevCases.filter(c => c.id !== caseId));
     setAllCases(prevCases => prevCases.filter(c => c.id !== caseId));
+     if(user) {
+        setCases(prevCases => prevCases.filter(c => c.id !== caseId));
+     }
   }
 
   return (
