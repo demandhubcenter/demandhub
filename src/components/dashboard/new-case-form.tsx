@@ -38,7 +38,7 @@ import { useRouter } from "next/navigation"
 import { useCases } from "@/context/case-context"
 import { useAuth } from "@/context/auth-context"
 import { notifyAdminOnNewCase } from "@/ai/flows/notify-admin-flow"
-import { collection, getDocs } from "firebase/firestore"
+import { collection, doc } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 
 const formSchema = z.object({
@@ -84,11 +84,9 @@ export function NewCaseForm() {
     }
     setIsSubmitting(true);
 
-    const casesCollection = collection(db, 'cases');
-    const caseSnapshot = await getDocs(casesCollection);
-    const nextId = caseSnapshot.size + 1;
-    const formattedId = `CASE-${String(nextId).padStart(3, '0')}`;
-    setNewCaseId(formattedId);
+    const newCaseRef = doc(collection(db, "cases"));
+    const newId = newCaseRef.id;
+    setNewCaseId(newId);
     
     const submittedFile = values.evidence?.[0];
     let evidenceData;
@@ -118,11 +116,11 @@ export function NewCaseForm() {
           uid: user.uid,
         }
     };
-    await addCase(newCase, formattedId);
+    await addCase(newCase, newId);
     
     try {
         await notifyAdminOnNewCase({
-            caseId: formattedId,
+            caseId: newId,
             caseTitle: values.title,
             caseCategory: values.category,
             caseDescription: values.description,
