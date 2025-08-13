@@ -3,6 +3,9 @@ import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
   /* config options here */
+  experimental: {
+    allowedDevOrigins: ["6000-firebase-studio-*.cloudworkstations.dev"]
+  },
   reactStrictMode: false,
   typescript: {
     ignoreBuildErrors: true,

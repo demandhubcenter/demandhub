@@ -1,3 +1,6 @@
+
+"use client";
+
 import { NewCaseForm } from "@/components/dashboard/new-case-form";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
