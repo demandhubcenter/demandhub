@@ -4,6 +4,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import Image from "next/image";
 
 const faqs = [
   {
@@ -43,7 +44,15 @@ const faqs = [
 export default function FAQPage() {
   return (
     <>
-      <section className="py-20 md:py-32 bg-primary/5">
+      <section className="relative py-20 md:py-32 bg-primary/5">
+        <Image
+          src="https://images.unsplash.com/photo-1554224324-a4b37a5d0034?w=1920&h=600&q=80&fit=crop"
+          alt="Abstract background with question marks"
+          layout="fill"
+          objectFit="cover"
+          className="absolute inset-0 -z-10 opacity-10"
+          data-ai-hint="questions support"
+        />
         <div className="container max-w-7xl text-center">
           <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">Frequently Asked Questions</h1>
           <p className="mt-6 max-w-3xl mx-auto text-lg text-muted-foreground md:text-xl">
