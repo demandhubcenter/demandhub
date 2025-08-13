@@ -71,7 +71,15 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      <section className="py-20 md:py-28 bg-background">
+      <section className="relative py-20 md:py-28 bg-background">
+         <Image
+          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRs00Q9K4G74R_05QRe9-hUW0wONjYU18choA&s"
+          alt="Abstract services background"
+          layout="fill"
+          objectFit="cover"
+          className="absolute inset-0 -z-10 opacity-5"
+          data-ai-hint="abstract lines"
+        />
         <div className="container max-w-7xl">
           <div className="space-y-16">
             {services.map((service, index) => (
