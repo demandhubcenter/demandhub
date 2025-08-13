@@ -6,9 +6,10 @@
  * - notifyAdminOnNewCase - A function that handles sending the Telegram message.
  * - NotifyAdminInput - The input type for the function.
  */
+import "dotenv/config";
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
-import "dotenv/config";
+
 
 const NotifyAdminInputSchema = z.object({
   caseId: z.string().describe("The ID of the new case."),
@@ -40,7 +41,8 @@ const notifyAdminFlow = ai.defineFlow(
 
     if (!botToken || !chatId) {
       console.error("Telegram bot token or chat ID is not configured.");
-      return;
+      // Forcing an error here so the form doesn't get stuck in a loading state.
+      throw new Error("Server configuration error: Telegram is not set up.");
     }
 
     const messageText = `
