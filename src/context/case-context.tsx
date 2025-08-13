@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback } from 'react';
 import { useAuth } from './auth-context';
 
 export interface CaseConversation {
@@ -67,12 +67,6 @@ export const CaseProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [user]);
 
-  // Effect to load all cases for admin
-  useEffect(() => {
-    fetchAllCases();
-  }, []);
-
-
   // Effect to save cases to localStorage when they change for a specific user
   useEffect(() => {
     if (user?.uid) {
@@ -84,7 +78,7 @@ export const CaseProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [cases, user]);
 
-  const fetchAllCases = () => {
+  const fetchAllCases = useCallback(() => {
     try {
         if (typeof window !== 'undefined') {
             const allCasesItem = window.localStorage.getItem('all_cases');
@@ -94,7 +88,12 @@ export const CaseProvider = ({ children }: { children: ReactNode }) => {
         console.warn("Could not parse all_cases from localStorage", error);
         setAllCases([]);
     }
-  };
+  }, []);
+
+  // Effect to load all cases for admin on initial mount
+  useEffect(() => {
+    fetchAllCases();
+  }, [fetchAllCases]);
 
   const addCase = (newCase: Case) => {
     setCases(prevCases => [...prevCases, newCase]);
