@@ -9,6 +9,7 @@ import Script from 'next/script';
 import { WhatsAppButton } from '@/components/shared/whatsapp-button';
 import { ThemeProvider } from '@/context/theme-provider';
 import { BlogProvider } from '@/context/blog-context';
+import { TestimonialProvider } from '@/context/testimonial-context';
 
 export const metadata: Metadata = {
   title: 'DemandHub - Digital Asset Recovery',
@@ -36,11 +37,13 @@ export default function RootLayout({
         >
           <AuthProvider>
             <BlogProvider>
-              <Header />
-              <main className="flex-1">{children}</main>
-              <Footer />
-              <Toaster />
-              <WhatsAppButton />
+                <TestimonialProvider>
+                    <Header />
+                    <main className="flex-1">{children}</main>
+                    <Footer />
+                    <Toaster />
+                    <WhatsAppButton />
+                </TestimonialProvider>
             </BlogProvider>
           </AuthProvider>
         </ThemeProvider>

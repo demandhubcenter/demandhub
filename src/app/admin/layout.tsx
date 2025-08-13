@@ -12,6 +12,7 @@ import { useMediaQuery } from 'react-responsive';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Menu } from 'lucide-react';
+import { TestimonialProvider } from '@/context/testimonial-context';
 
 export default function AdminLayout({
   children,
@@ -63,25 +64,27 @@ export default function AdminLayout({
   }
 
   return (
-    <div className="flex min-h-screen">
-      {isDesktop ? (
-        <AdminSidebar />
-      ) : (
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button variant="ghost" size="icon" className="fixed top-4 left-4 z-50 md:hidden bg-background">
-              <Menu className="h-6 w-6" />
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="left" className="p-0 w-64">
+    <TestimonialProvider>
+        <div className="flex min-h-screen">
+        {isDesktop ? (
             <AdminSidebar />
-          </SheetContent>
-        </Sheet>
-      )}
-      <main className="flex-1 p-4 sm:p-8 bg-primary/5">
-          <div className="md:hidden h-12"></div>
-          {children}
-      </main>
-    </div>
+        ) : (
+            <Sheet>
+            <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="fixed top-4 left-4 z-50 md:hidden bg-background">
+                <Menu className="h-6 w-6" />
+                </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="p-0 w-64">
+                <AdminSidebar />
+            </SheetContent>
+            </Sheet>
+        )}
+        <main className="flex-1 p-4 sm:p-8 bg-primary/5">
+            <div className="md:hidden h-12"></div>
+            {children}
+        </main>
+        </div>
+    </TestimonialProvider>
   );
 }
