@@ -39,7 +39,15 @@ export default function BlogIndexPage() {
 
   return (
     <>
-      <section className="py-20 md:py-32 bg-primary/5">
+      <section className="relative py-20 md:py-32 bg-primary/5">
+         <Image
+          src="https://res.cloudinary.com/jerrick/image/upload/c_fill,d_642250b563292b35f27461a7.png,f_jpg,fl_progressive,h_375,q_auto,w_625/68213d5213e3a7001d6d1cf1.jpg"
+          alt="Blog background"
+          layout="fill"
+          objectFit="cover"
+          className="absolute inset-0 -z-10 opacity-10"
+          data-ai-hint="typewriter blog"
+        />
         <div className="container max-w-7xl text-center">
           <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">The DemandHub Blog</h1>
           <p className="mt-6 max-w-3xl mx-auto text-lg text-muted-foreground md:text-xl">
