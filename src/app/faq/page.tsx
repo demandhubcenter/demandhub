@@ -1,3 +1,4 @@
+
 import {
   Accordion,
   AccordionContent,
@@ -46,7 +47,7 @@ export default function FAQPage() {
     <>
       <section className="relative py-20 md:py-32 bg-primary/5">
         <Image
-          src="https://images.unsplash.com/photo-1554224324-a4b37a5d0034?w=1920&h=600&q=80&fit=crop"
+          src="https://res.cloudinary.com/jerrick/image/upload/c_fill,d_642250b563292b35f27461a7.png,f_jpg,fl_progressive,h_375,q_auto,w_625/68213d5213e3a7001d6d1cf1.jpg"
           alt="Abstract background with question marks"
           layout="fill"
           objectFit="cover"
