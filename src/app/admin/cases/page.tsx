@@ -44,12 +44,20 @@ export default function AdminCasesPage() {
         router.push('/dashboard/submitted-case');
     };
 
-    const handleDeleteCase = (caseId: string) => {
-        deleteCase(caseId);
-        toast({
-            title: "Case Deleted",
-            description: `Case with ID ${caseId} has been successfully deleted.`,
-        });
+    const handleDeleteCase = async (caseId: string) => {
+        try {
+            await deleteCase(caseId);
+            toast({
+                title: "Case Deleted",
+                description: `Case with ID ${caseId} has been successfully deleted.`,
+            });
+        } catch (error) {
+             toast({
+                title: "Error Deleting Case",
+                description: "There was an error deleting the case. Please try again.",
+                variant: "destructive"
+            });
+        }
     };
 
     return (

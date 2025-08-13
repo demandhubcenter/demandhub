@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight } from "lucide-react";
-import { useCases } from "@/context/case-context";
+import { useCases, type Case } from "@/context/case-context";
 import { useMemo } from "react";
 import { useAuth } from "@/context/auth-context";
 import { differenceInDays, parseISO } from "date-fns";
@@ -26,7 +26,7 @@ export default function DashboardPage() {
   const { user } = useAuth();
   const router = useRouter();
 
-  const handleViewCase = (caseItem: any) => {
+  const handleViewCase = (caseItem: Case) => {
     setSelectedCase(caseItem);
     router.push('/dashboard/submitted-case');
   };
@@ -97,11 +97,11 @@ export default function DashboardPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {[...cases].reverse().slice(0,4).map((caseItem) => (
+              {[...cases].slice(0,4).map((caseItem) => (
                 <TableRow key={caseItem.id}>
                   <TableCell className="font-medium">{caseItem.id}</TableCell>
                   <TableCell>{caseItem.title}</TableCell>
-                  <TableCell>{caseItem.date}</TableCell>
+                  <TableCell>{new Date(caseItem.date).toLocaleDateString()}</TableCell>
                   <TableCell className="text-right">
                     <Button 
                       variant="outline" 

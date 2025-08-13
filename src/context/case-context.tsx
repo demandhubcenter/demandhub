@@ -3,6 +3,19 @@
 
 import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback } from 'react';
 import { useAuth } from './auth-context';
+import { db } from '@/lib/firebase';
+import { 
+    collection, 
+    query, 
+    where, 
+    getDocs, 
+    doc, 
+    setDoc, 
+    updateDoc, 
+    arrayUnion,
+    deleteDoc,
+    orderBy
+} from "firebase/firestore";
 
 export interface CaseConversation {
     author: { name: string; role: 'Client' | 'Support Agent'; avatar: string };
@@ -32,151 +45,99 @@ export interface Case {
 interface CaseContextType {
   cases: Case[];
   allCases: Case[]; // For admin view
-  addCase: (newCase: Case) => void;
-  getCaseById: (id: string) => Case | null | undefined;
-  addCommentToCase: (caseId: string, comment: CaseConversation) => void;
-  deleteCase: (caseId: string) => void;
+  loading: boolean;
+  addCase: (newCase: Omit<Case, 'id'>, newId: string) => Promise<void>;
+  getCaseById: (id: string) => Promise<Case | null | undefined>;
+  addCommentToCase: (caseId: string, comment: CaseConversation) => Promise<void>;
+  deleteCase: (caseId: string) => Promise<void>;
   selectedCase: Case | null;
   setSelectedCase: (caseData: Case | null) => void;
-  fetchAllCases: () => void;
+  fetchAllCases: () => Promise<void>;
 }
 
 const CaseContext = createContext<CaseContextType | undefined>(undefined);
 
-const initialCases: Case[] = [];
-
 export const CaseProvider = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth();
-  const [cases, setCases] = useState<Case[]>(initialCases);
+  const [cases, setCases] = useState<Case[]>([]);
   const [allCases, setAllCases] = useState<Case[]>([]);
   const [selectedCase, setSelectedCase] = useState<Case | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  // Effect to load/clear cases based on user auth state
+  const fetchUserCases = useCallback(async (uid: string) => {
+    setLoading(true);
+    const q = query(collection(db, "cases"), where("user.uid", "==", uid), orderBy("date", "desc"));
+    const querySnapshot = await getDocs(q);
+    const userCases = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Case));
+    setCases(userCases);
+    setLoading(false);
+  }, []);
+  
   useEffect(() => {
     if (user?.uid) {
-      try {
-        const item = window.localStorage.getItem(`cases_${user.uid}`);
-        setCases(item ? JSON.parse(item) : initialCases);
-      } catch (error) {
-        console.warn("Could not parse cases from localStorage", error);
-        setCases(initialCases);
-      }
+      fetchUserCases(user.uid);
     } else {
-      // If no user, clear the cases
-      setCases(initialCases);
+      setCases([]);
       setSelectedCase(null);
+      setLoading(false);
     }
-  }, [user]);
+  }, [user, fetchUserCases]);
 
-  // Effect to save cases to localStorage when they change for a specific user
-  useEffect(() => {
-    if (user?.uid) {
-        try {
-            window.localStorage.setItem(`cases_${user.uid}`, JSON.stringify(cases));
-        } catch (error) {
-            console.error("Could not save cases to localStorage", error);
-        }
-    }
-  }, [cases, user]);
-
-  const fetchAllCases = useCallback(() => {
-    try {
-        if (typeof window !== 'undefined') {
-            const allCasesItem = window.localStorage.getItem('all_cases');
-            setAllCases(allCasesItem ? JSON.parse(allCasesItem) : []);
-        }
-    } catch (error) {
-        console.warn("Could not parse all_cases from localStorage", error);
-        setAllCases([]);
-    }
+  const fetchAllCases = useCallback(async () => {
+    setLoading(true);
+    const q = query(collection(db, "cases"), orderBy("date", "desc"));
+    const querySnapshot = await getDocs(q);
+    const allDocs = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Case));
+    setAllCases(allDocs);
+    setLoading(false);
   }, []);
 
-  // Effect to load all cases for admin on initial mount
-  useEffect(() => {
-    fetchAllCases();
-  }, [fetchAllCases]);
-
-  const addCase = (newCase: Case) => {
-    setCases(prevCases => [...prevCases, newCase]);
-
-    // Add to global list for admin
-    try {
-        if (typeof window !== 'undefined') {
-            const currentAllCases = JSON.parse(window.localStorage.getItem('all_cases') || '[]');
-            const updatedAllCases = [...currentAllCases, newCase];
-            window.localStorage.setItem('all_cases', JSON.stringify(updatedAllCases));
-            setAllCases(updatedAllCases); // Update state for admin if they are the one adding
-        }
-    } catch(error) {
-        console.error("Could not update all_cases in localStorage", error);
+  const addCase = async (newCaseData: Omit<Case, 'id'>, newId: string) => {
+    const caseRef = doc(db, "cases", newId);
+    await setDoc(caseRef, newCaseData);
+    // Refresh cases for the current user
+    if (user?.uid) {
+        await fetchUserCases(user.uid);
     }
+    // Refresh all cases if admin might be viewing
+    await fetchAllCases();
   };
 
-  const getCaseById = (id: string) => {
-    // Handle both 'CASE-001' and '001' formats
-    const allCasesForSearch = [...cases, ...allCases];
-    const uniqueCases = Array.from(new Set(allCasesForSearch.map(c => c.id))).map(id => allCasesForSearch.find(c => c.id === id));
-    const foundCase = uniqueCases.find(c => c && (c.id === id || c.id.replace('CASE-', '') === id));
-    return foundCase || null;
+  const getCaseById = async (id: string) => {
+     // This function is less critical with Firestore but can be kept for consistency
+     // Direct fetching or context state can be used instead.
+     // For now, it will check the loaded contexts.
+     let foundCase = cases.find(c => c.id === id);
+     if (foundCase) return foundCase;
+     foundCase = allCases.find(c => c.id === id);
+     return foundCase || null;
   }
 
-  const addCommentToCase = (caseId: string, comment: CaseConversation) => {
-    const updateCaseList = (caseList: Case[]) => 
-        caseList.map(c => {
-            if (c.id === caseId) {
-                const updatedConversation = [...c.conversation, comment];
-                return { ...c, conversation: updatedConversation };
-            }
-            return c;
-        });
-
-    setCases(updateCaseList);
-    setAllCases(updateCaseList);
-    
-    // Update the selected case if it's the one being commented on
-    setSelectedCase(prevSelected => 
-        prevSelected && prevSelected.id === caseId 
-            ? { ...prevSelected, conversation: [...prevSelected.conversation, comment] } 
-            : prevSelected
+  const addCommentToCase = async (caseId: string, comment: CaseConversation) => {
+    const caseRef = doc(db, "cases", caseId);
+    await updateDoc(caseRef, {
+        conversation: arrayUnion(comment)
+    });
+     // Optimistically update local state for immediate feedback
+    const updateCaseInList = (list: Case[]) => list.map(c => 
+        c.id === caseId ? { ...c, conversation: [...c.conversation, comment] } : c
     );
-
-    // Update localStorage for both all_cases and the specific user's cases
-    const all_cases = JSON.parse(window.localStorage.getItem('all_cases') || '[]');
-    const targetCase = all_cases.find((c: Case) => c.id === caseId);
-    
-    if (targetCase && targetCase.user?.uid) {
-        const userCases = JSON.parse(window.localStorage.getItem(`cases_${targetCase.user.uid}`) || '[]');
-        const updatedUserCases = updateCaseList(userCases);
-        window.localStorage.setItem(`cases_${targetCase.user.uid}`, JSON.stringify(updatedUserCases));
+    setCases(updateCaseInList);
+    setAllCases(updateCaseInList);
+    if(selectedCase?.id === caseId){
+        setSelectedCase(prev => prev ? {...prev, conversation: [...prev.conversation, comment]} : null);
     }
-    
-    const updated_all_cases = updateCaseList(all_cases);
-    window.localStorage.setItem('all_cases', JSON.stringify(updated_all_cases));
   };
 
-
-  const deleteCase = (caseId: string) => {
-    const caseToDelete = allCases.find(c => c.id === caseId);
-
+  const deleteCase = async (caseId: string) => {
+    await deleteDoc(doc(db, "cases", caseId));
     // Remove from local state
     setCases(prevCases => prevCases.filter(c => c.id !== caseId));
     setAllCases(prevCases => prevCases.filter(c => c.id !== caseId));
-
-    // Remove from user-specific storage
-    if (caseToDelete && caseToDelete.user?.uid) {
-      const userCases = JSON.parse(window.localStorage.getItem(`cases_${caseToDelete.user.uid}`) || '[]');
-      const updatedUserCases = userCases.filter((c: Case) => c.id !== caseId);
-      window.localStorage.setItem(`cases_${caseToDelete.user.uid}`, JSON.stringify(updatedUserCases));
-    }
-
-    // Remove from global storage
-     const all_cases = JSON.parse(window.localStorage.getItem('all_cases') || '[]');
-     const updated_all_cases = all_cases.filter((c: Case) => c.id !== caseId);
-     window.localStorage.setItem('all_cases', JSON.stringify(updated_all_cases));
   }
 
   return (
-    <CaseContext.Provider value={{ cases, allCases, fetchAllCases, addCase, getCaseById, addCommentToCase, deleteCase, selectedCase, setSelectedCase }}>
+    <CaseContext.Provider value={{ cases, allCases, loading, fetchAllCases, addCase, getCaseById, addCommentToCase, deleteCase, selectedCase, setSelectedCase }}>
       {children}
     </CaseContext.Provider>
   );
@@ -189,5 +150,3 @@ export const useCases = (): CaseContextType => {
   }
   return context;
 };
-
-    

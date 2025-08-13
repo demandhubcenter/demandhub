@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Trash2 } from "lucide-react";
 import { useCases } from "@/context/case-context";
+import { type Case } from "@/context/case-context";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -37,7 +38,7 @@ export default function CasesPage() {
     const { cases, deleteCase, setSelectedCase } = useCases();
     const router = useRouter();
 
-    const handleViewCase = (caseItem: any) => {
+    const handleViewCase = (caseItem: Case) => {
         setSelectedCase(caseItem);
         router.push('/dashboard/submitted-case');
     };
@@ -79,7 +80,7 @@ export default function CasesPage() {
                             <TableRow key={caseItem.id}>
                             <TableCell className="font-medium">{caseItem.id}</TableCell>
                             <TableCell>{caseItem.title}</TableCell>
-                            <TableCell>{caseItem.date}</TableCell>
+                            <TableCell>{new Date(caseItem.date).toLocaleDateString()}</TableCell>
                             <TableCell className="text-right space-x-2">
                                 <Button 
                                     variant="outline" 
@@ -118,6 +119,9 @@ export default function CasesPage() {
                         ))}
                         </TableBody>
                     </Table>
+                     {cases.length === 0 && (
+                        <p className="text-center text-muted-foreground py-8">You have not submitted any cases yet.</p>
+                    )}
                 </div>
                 </CardContent>
             </Card>

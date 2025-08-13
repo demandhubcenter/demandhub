@@ -38,6 +38,8 @@ import { useRouter } from "next/navigation"
 import { useCases } from "@/context/case-context"
 import { useAuth } from "@/context/auth-context"
 import { notifyAdminOnNewCase } from "@/ai/flows/notify-admin-flow"
+import { collection, getDocs } from "firebase/firestore"
+import { db } from "@/lib/firebase"
 
 const formSchema = z.object({
   title: z.string().min(5, "Title must be at least 5 characters."),
@@ -60,7 +62,7 @@ const fileToDataUrl = (file: File): Promise<string> => {
 export function NewCaseForm() {
   const { toast } = useToast()
   const router = useRouter();
-  const { addCase, allCases } = useCases(); // Use allCases to determine next ID
+  const { addCase } = useCases();
   const { user } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newCaseId, setNewCaseId] = useState("");
@@ -82,7 +84,9 @@ export function NewCaseForm() {
     }
     setIsSubmitting(true);
 
-    const nextId = allCases.length > 0 ? Math.max(...allCases.map(c => parseInt(c.id.split('-')[1]))) + 1 : 1;
+    const casesCollection = collection(db, 'cases');
+    const caseSnapshot = await getDocs(casesCollection);
+    const nextId = caseSnapshot.size + 1;
     const formattedId = `CASE-${String(nextId).padStart(3, '0')}`;
     setNewCaseId(formattedId);
     
@@ -96,9 +100,8 @@ export function NewCaseForm() {
     }
 
     const newCase = {
-        id: formattedId,
         title: values.title,
-        date: new Date().toISOString().split('T')[0],
+        date: new Date().toISOString(), // Use full ISO string for accurate sorting
         category: values.category,
         description: values.description,
         evidence: evidenceData,
@@ -115,7 +118,7 @@ export function NewCaseForm() {
           uid: user.uid,
         }
     };
-    addCase(newCase);
+    await addCase(newCase, formattedId);
     
     try {
         await notifyAdminOnNewCase({
