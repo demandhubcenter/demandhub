@@ -8,12 +8,9 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertTriangle } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { AdminSidebar } from '@/components/admin/sidebar';
-import { useMediaQuery } from 'react-responsive';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Button } from '@/components/ui/button';
-import { Menu } from 'lucide-react';
 import { TestimonialProvider } from '@/context/testimonial-context';
 import { CaseProvider } from '@/context/case-context';
+import { SidebarProvider, Sidebar, SidebarTrigger, SidebarInset } from '@/components/ui/sidebar';
 
 export default function AdminLayout({
   children,
@@ -23,7 +20,6 @@ export default function AdminLayout({
   const { isAdmin } = useAdminAuth();
   const router = useRouter();
   const [authChecked, setAuthChecked] = React.useState(false);
-  const isDesktop = useMediaQuery({ query: '(min-width: 768px)' });
 
   useEffect(() => {
     // A slight delay to ensure auth context is fully loaded
@@ -65,29 +61,19 @@ export default function AdminLayout({
   }
 
   return (
-    <TestimonialProvider>
-      <CaseProvider>
-        <div className="flex min-h-screen">
-        {isDesktop ? (
+     <SidebarProvider>
+      <TestimonialProvider>
+        <CaseProvider>
+           <Sidebar>
             <AdminSidebar />
-        ) : (
-            <Sheet>
-            <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="fixed top-4 left-4 z-50 md:hidden bg-background">
-                <Menu className="h-6 w-6" />
-                </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="p-0 w-64">
-                <AdminSidebar />
-            </SheetContent>
-            </Sheet>
-        )}
-        <main className="flex-1 p-4 sm:p-8 bg-primary/5">
-            <div className="md:hidden h-12"></div>
-            {children}
-        </main>
-        </div>
-      </CaseProvider>
-    </TestimonialProvider>
+          </Sidebar>
+          <SidebarInset>
+            <main className="flex-1 p-4 sm:p-8 bg-primary/5 min-h-screen">
+              {children}
+            </main>
+          </SidebarInset>
+        </CaseProvider>
+      </TestimonialProvider>
+    </SidebarProvider>
   );
 }
