@@ -8,7 +8,7 @@ import { DashboardSidebar } from "@/components/dashboard/sidebar";
 import { CaseProvider } from "@/context/case-context";
 import { useAuth } from '@/context/auth-context';
 import { Skeleton } from '@/components/ui/skeleton';
-import { SidebarProvider, Sidebar, SidebarInset } from '@/components/ui/sidebar';
+import { SidebarProvider, Sidebar } from '@/components/ui/sidebar';
 
 export default function DashboardLayout({
   children,
@@ -59,7 +59,7 @@ export default function DashboardLayout({
     <SidebarProvider>
       <CaseProvider>
         <div className="flex">
-          <Sidebar>
+          <Sidebar side="left">
             <DashboardSidebar />
           </Sidebar>
           <main className="flex-1 p-4 sm:p-8 bg-primary/5 min-h-screen">
