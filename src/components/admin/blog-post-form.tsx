@@ -7,7 +7,7 @@ import * as z from "zod"
 import { useRouter } from "next/navigation"
 import { useToast } from "@/hooks/use-toast"
 import { useBlog } from "@/context/blog-context"
-import { type BlogPost } from "@/context/blog-context"
+import { type BlogPost, initialAuthors } from "@/context/blog-context"
 import { Button } from "@/components/ui/button"
 import {
   Form,
@@ -26,12 +26,13 @@ import { CalendarIcon } from "lucide-react"
 import { Calendar } from "../ui/calendar"
 import { cn } from "@/lib/utils"
 import { format } from "date-fns"
-import { useAuth } from "@/context/auth-context"
 import { RichTextEditor } from "./rich-text-editor"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
 
 
 const formSchema = z.object({
   title: z.string().min(5, "Title must be at least 5 characters."),
+  authorName: z.string({ required_error: "Please select an author." }),
   excerpt: z.string().min(20, "Excerpt must be at least 20 characters."),
   content: z.string().min(50, "Content must be at least 50 characters."),
   tags: z.string().min(1, "Please provide at least one tag, comma-separated."),
@@ -59,7 +60,6 @@ export function BlogPostForm({ existingPost }: BlogPostFormProps) {
   const { toast } = useToast()
   const router = useRouter();
   const { addPost, updatePost, posts } = useBlog();
-  const { user } = useAuth(); // Assuming useAuth provides author info
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -72,6 +72,7 @@ export function BlogPostForm({ existingPost }: BlogPostFormProps) {
         imageHint: existingPost?.image.hint || "",
         date: existingPost ? new Date(existingPost.date) : new Date(),
         featured: existingPost?.featured || false,
+        authorName: existingPost?.author.name || "",
     },
   })
 
@@ -86,6 +87,10 @@ export function BlogPostForm({ existingPost }: BlogPostFormProps) {
         })
         return;
     }
+    
+    const authorKey = Object.keys(initialAuthors).find(key => initialAuthors[key as keyof typeof initialAuthors].name === values.authorName);
+    const author = authorKey ? initialAuthors[authorKey as keyof typeof initialAuthors] : initialAuthors.alice;
+
 
     const postData = {
         slug: slug,
@@ -96,8 +101,7 @@ export function BlogPostForm({ existingPost }: BlogPostFormProps) {
         image: { src: values.imageSrc, hint: values.imageHint },
         date: values.date.toISOString(),
         featured: values.featured,
-        // In a real app, author would be managed more robustly
-        author: existingPost?.author || { name: user?.name || "Admin", avatar: "", hint: "", bio: "" },
+        author: author,
         comments: existingPost?.comments || [],
     };
 
@@ -120,19 +124,43 @@ export function BlogPostForm({ existingPost }: BlogPostFormProps) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <FormField
-          control={form.control}
-          name="title"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Post Title</FormLabel>
-              <FormControl>
-                <Input placeholder="e.g., 'The Rise of AI in Fraud Detection'" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <FormField
+            control={form.control}
+            name="title"
+            render={({ field }) => (
+                <FormItem>
+                <FormLabel>Post Title</FormLabel>
+                <FormControl>
+                    <Input placeholder="e.g., 'The Rise of AI in Fraud Detection'" {...field} />
+                </FormControl>
+                <FormMessage />
+                </FormItem>
+            )}
+            />
+             <FormField
+                control={form.control}
+                name="authorName"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Author</FormLabel>
+                     <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                        <SelectTrigger>
+                            <SelectValue placeholder="Select an author" />
+                        </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                           {Object.values(initialAuthors).map(author => (
+                             <SelectItem key={author.name} value={author.name}>{author.name}</SelectItem>
+                           ))}
+                        </SelectContent>
+                    </Select>
+                    <FormMessage />
+                    </FormItem>
+                )}
+            />
+        </div>
          <FormField
           control={form.control}
           name="excerpt"

@@ -45,7 +45,7 @@ interface BlogContextType {
 const BlogContext = createContext<BlogContextType | undefined>(undefined);
 
 // Initial Static Data
-const initialAuthors = {
+export const initialAuthors = {
   alice: { name: "Alice Johnson", avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&q=80&fit=crop", hint: "woman portrait", bio: "Alice is the Founder & CEO of DemandHub, with over 15 years of experience in cybersecurity and digital forensics." },
   bob: { name: "Bob Williams", avatar: "https://images.unsplash.com/photo-1557862921-37829c790f19?w=200&h=200&q=80&fit=crop", hint: "man portrait", bio: "Bob is the Head of Forensics, specializing in on-chain analysis and crypto-tracking."},
   charlie: { name: "Charlie Brown", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&q=80&fit=crop", hint: "person portrait", bio: "Charlie is a lead investigator and a specialist in wire fraud and phishing schemes."},
