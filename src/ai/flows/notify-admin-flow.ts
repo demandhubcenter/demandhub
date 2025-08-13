@@ -18,6 +18,9 @@ const NotifyAdminInputSchema = z.object({
   userName: z.string().describe("The full name of the user who submitted the case."),
   userCountry: z.string().describe("The country of the user."),
   userPhone: z.string().describe("The phone number of the user."),
+  evidenceDataUrl: z.string().optional().describe("The data URL of the uploaded evidence file."),
+  evidenceFileName: z.string().optional().describe("The name of the evidence file."),
+  evidenceFileType: z.string().optional().describe("The MIME type of the evidence file."),
 });
 export type NotifyAdminInput = z.infer<typeof NotifyAdminInputSchema>;
 
@@ -55,10 +58,40 @@ const notifyAdminFlow = ai.defineFlow(
 ${input.caseDescription}
     `;
 
-    const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
+    // If there is evidence, send it first
+    if (input.evidenceDataUrl && input.evidenceFileName && input.evidenceFileType) {
+        try {
+            const isImage = input.evidenceFileType.startsWith('image/');
+            const endpoint = isImage ? 'sendPhoto' : 'sendDocument';
+            const url = `https://api.telegram.org/bot${botToken}/${endpoint}`;
+            
+            const base64Data = input.evidenceDataUrl.split(',')[1];
+            const fileBuffer = Buffer.from(base64Data, 'base64');
 
+            const formData = new FormData();
+            formData.append('chat_id', chatId);
+            formData.append(isImage ? 'photo' : 'document', new Blob([fileBuffer]), input.evidenceFileName);
+
+            const fileResponse = await fetch(url, {
+                method: 'POST',
+                body: formData,
+            });
+
+            const fileResponseData = await fileResponse.json();
+            if (!fileResponseData.ok) {
+                console.error("Failed to send Telegram file:", fileResponseData);
+            } else {
+                 console.log("Evidence file sent successfully.");
+            }
+        } catch(error) {
+             console.error("Error sending Telegram file:", error);
+        }
+    }
+
+
+    const textUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
     try {
-      const response = await fetch(url, {
+      const response = await fetch(textUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

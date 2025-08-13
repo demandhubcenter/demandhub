@@ -88,10 +88,11 @@ export function NewCaseForm() {
     
     const submittedFile = values.evidence?.[0];
     let evidenceData;
+    let evidenceDataUrl;
 
     if (submittedFile) {
-        const dataUrl = await fileToDataUrl(submittedFile);
-        evidenceData = { name: submittedFile.name, url: dataUrl, type: submittedFile.type };
+        evidenceDataUrl = await fileToDataUrl(submittedFile);
+        evidenceData = { name: submittedFile.name, url: evidenceDataUrl, type: submittedFile.type };
     }
 
     const newCase = {
@@ -124,7 +125,10 @@ export function NewCaseForm() {
             caseDescription: values.description,
             userName: user.name || "N/A",
             userCountry: user.country || "N/A",
-            userPhone: user.phoneNumber || "N/A"
+            userPhone: user.phoneNumber || "N/A",
+            evidenceDataUrl: evidenceData?.url,
+            evidenceFileName: evidenceData?.name,
+            evidenceFileType: evidenceData?.type,
         });
     } catch (error) {
         console.error("Failed to send admin notification", error);
@@ -241,5 +245,3 @@ export function NewCaseForm() {
     </>
   )
 }
-
-    
