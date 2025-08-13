@@ -98,12 +98,9 @@ export const CaseProvider = ({ children }: { children: ReactNode }) => {
     const caseRef = doc(db, "cases", newId);
     await setDoc(caseRef, newCaseData);
     
-    // Refresh cases for the current user
-    if (user?.uid) {
-        await fetchUserCases(user.uid);
-    }
-    // Refresh all cases if admin might be viewing
-    await fetchAllCases();
+    const newCaseWithId = { ...newCaseData, id: newId };
+    setCases(prev => [newCaseWithId, ...prev]);
+    setAllCases(prev => [newCaseWithId, ...prev]);
   };
 
   const getCaseById = async (id: string) => {
