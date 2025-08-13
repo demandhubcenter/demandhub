@@ -83,45 +83,46 @@ export function NewCaseForm() {
         return;
     }
     setIsSubmitting(true);
-
+    
     const newCaseRef = doc(collection(db, "cases"));
     const newId = newCaseRef.id;
-    setNewCaseId(newId);
-    
-    const submittedFile = values.evidence?.[0];
-    let evidenceData;
 
-    if (submittedFile) {
-        const evidenceDataUrl = await fileToDataUrl(submittedFile);
-        evidenceData = { name: submittedFile.name, url: evidenceDataUrl, type: submittedFile.type };
-    }
-
-    const newCasePayload: any = {
-        title: values.title,
-        date: new Date().toISOString(),
-        category: values.category,
-        description: values.description,
-        conversation: [
-            {
-                author: { name: user?.name || "Client", role: 'Client' as const, avatar: "" },
-                timestamp: new Date().toLocaleString(),
-                text: "Case created.",
-            }
-        ],
-        user: {
-          name: user.name,
-          email: user.email,
-          uid: user.uid,
-        }
-    };
-    
-    if (evidenceData) {
-        newCasePayload.evidence = evidenceData;
-    }
-
-    await addCase(newCasePayload, newId);
-    
     try {
+        setNewCaseId(newId);
+        
+        const submittedFile = values.evidence?.[0];
+        let evidenceData;
+
+        if (submittedFile) {
+            const evidenceDataUrl = await fileToDataUrl(submittedFile);
+            evidenceData = { name: submittedFile.name, url: evidenceDataUrl, type: submittedFile.type };
+        }
+
+        const newCasePayload: any = {
+            title: values.title,
+            date: new Date().toISOString(),
+            category: values.category,
+            description: values.description,
+            conversation: [
+                {
+                    author: { name: user?.name || "Client", role: 'Client' as const, avatar: "" },
+                    timestamp: new Date().toLocaleString(),
+                    text: "Case created.",
+                }
+            ],
+            user: {
+              name: user.name,
+              email: user.email,
+              uid: user.uid,
+            }
+        };
+        
+        if (evidenceData) {
+            newCasePayload.evidence = evidenceData;
+        }
+
+        await addCase(newCasePayload, newId);
+        
         await notifyAdminOnNewCase({
             caseId: newId,
             caseTitle: values.title,
@@ -130,17 +131,24 @@ export function NewCaseForm() {
             userName: user.name || "N/A",
             userCountry: user.country || "N/A",
             userPhone: user.phoneNumber || "N/A",
-            ...(evidenceData && { // Conditionally add evidence fields
+            ...(evidenceData && {
                 evidenceDataUrl: evidenceData.url,
                 evidenceFileName: evidenceData.name,
                 evidenceFileType: evidenceData.type,
             })
         });
+
+        setIsModalOpen(true);
+
     } catch (error) {
-        console.error("Failed to send admin notification", error);
+        console.error("Failed to submit case or send notification", error);
+        toast({
+            title: "Submission Failed",
+            description: "There was an error submitting your case. Please try again.",
+            variant: "destructive"
+        })
     } finally {
         setIsSubmitting(false);
-        setIsModalOpen(true);
     }
   }
   
@@ -239,7 +247,7 @@ export function NewCaseForm() {
             <AlertDialogHeader>
             <AlertDialogTitle>Case Submitted Successfully</AlertDialogTitle>
             <AlertDialogDescription>
-                We have received your case details and will begin our initial assessment. You will receive a confirmation email shortly, and a case manager will be in touch within 24 hours. Your case ID is ${newCaseId}.
+                We have received your case details and will begin our initial assessment. You will receive a confirmation email shortly, and a case manager will be in touch within 24 hours. Your case ID is {newCaseId}.
             </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
