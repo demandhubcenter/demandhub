@@ -6,7 +6,7 @@
  * - notifyAdminOnNewCase - A function that handles sending the Telegram message.
  * - NotifyAdminInput - The input type for the function.
  */
-
+import 'dotenv/config';
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
 
@@ -57,7 +57,7 @@ const notifyAdminFlow = ai.defineFlow(
 *Phone:* ${input.userPhone}
 
 *Description:*
-${input.caseDescription}
+${input.description}
     `;
 
     // If there is evidence, send it first
@@ -67,11 +67,13 @@ ${input.caseDescription}
             const endpoint = isImage ? 'sendPhoto' : 'sendDocument';
             const url = `https://api.telegram.org/bot${botToken}/${endpoint}`;
             
+            // Convert data URL to buffer
             const base64Data = input.evidenceDataUrl.split(',')[1];
             const fileBuffer = Buffer.from(base64Data, 'base64');
 
             const formData = new FormData();
             formData.append('chat_id', chatId);
+            // Use Blob to send the file buffer
             formData.append(isImage ? 'photo' : 'document', new Blob([fileBuffer]), input.evidenceFileName);
 
             const fileResponse = await fetch(url, {
@@ -87,6 +89,7 @@ ${input.caseDescription}
             }
         } catch(error) {
              console.error("Error sending Telegram file:", error);
+             // Don't re-throw, allow the text message to proceed
         }
     }
 

@@ -84,18 +84,17 @@ export function NewCaseForm() {
     }
     setIsSubmitting(true);
     
+    let newId = "";
     try {
         const caseRef = doc(collection(db, "cases"));
-        const newId = caseRef.id;
+        newId = caseRef.id;
         setNewCaseId(newId);
         
         const submittedFile = values.evidence?.[0];
-        let evidenceData;
         let evidenceDataUrl: string | undefined;
 
         if (submittedFile) {
             evidenceDataUrl = await fileToDataUrl(submittedFile);
-            evidenceData = { name: submittedFile.name, url: evidenceDataUrl, type: submittedFile.type };
         }
 
         const newCasePayload: any = {
@@ -117,15 +116,19 @@ export function NewCaseForm() {
             }
         };
         
-        if (evidenceData) {
-            newCasePayload.evidence = evidenceData;
+        if (submittedFile && evidenceDataUrl) {
+            newCasePayload.evidence = { 
+                name: submittedFile.name, 
+                url: evidenceDataUrl, 
+                type: submittedFile.type 
+            };
         }
 
         // Step 1: Save case to Firestore
         await addCase(newCasePayload, newId);
         
         // Step 2: Send notification (this is a background task, don't let it block UI)
-        notifyAdminOnNewCase({
+        await notifyAdminOnNewCase({
             caseId: newId,
             caseTitle: values.title,
             caseCategory: values.category,
@@ -133,15 +136,11 @@ export function NewCaseForm() {
             userName: user.name || "N/A",
             userCountry: user.country || "N/A",
             userPhone: user.phoneNumber || "N/A",
-            ...(evidenceData && {
-                evidenceDataUrl: evidenceData.url,
-                evidenceFileName: evidenceData.name,
-                evidenceFileType: evidenceData.type,
+            ...(submittedFile && evidenceDataUrl && {
+                evidenceDataUrl: evidenceDataUrl,
+                evidenceFileName: submittedFile.name,
+                evidenceFileType: submittedFile.type,
             })
-        }).catch(error => {
-            // Log the notification error, but don't show a scary error to the user
-            // as their case was already submitted successfully.
-            console.error("Failed to send admin notification:", error);
         });
 
         setIsModalOpen(true);
