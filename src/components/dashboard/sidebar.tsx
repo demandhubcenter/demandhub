@@ -29,7 +29,7 @@ export function DashboardSidebar() {
   return (
     <aside className="w-full flex-shrink-0 border-r bg-background p-2 flex flex-col h-full">
        <div className="flex items-center justify-between p-2">
-            <div className={`flex items-center gap-2 overflow-hidden ${state === 'collapsed' ? 'w-0' : 'w-auto'}`}>
+            <div className={`flex items-center gap-2 overflow-hidden transition-all ${state === 'collapsed' ? 'w-0' : 'w-auto'}`}>
                 <Link href="/" className="flex items-center gap-2">
                     <ShieldCheck className="h-8 w-8 text-primary shrink-0" />
                     <span className="text-xl font-bold tracking-tight text-foreground">
