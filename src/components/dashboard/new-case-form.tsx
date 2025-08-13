@@ -37,6 +37,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { useCases } from "@/context/case-context"
 import { useAuth } from "@/context/auth-context"
+import { notifyAdminOnNewCase } from "@/ai/flows/notify-admin-flow"
 
 const formSchema = z.object({
   title: z.string().min(5, "Title must be at least 5 characters."),
@@ -52,6 +53,7 @@ export function NewCaseForm() {
   const { user } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newCaseId, setNewCaseId] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -62,7 +64,13 @@ export function NewCaseForm() {
     },
   })
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (!user) {
+        toast({ title: "Error", description: "You must be logged in to file a case.", variant: "destructive"});
+        return;
+    }
+    setIsSubmitting(true);
+
     const nextId = cases.length > 0 ? Math.max(...cases.map(c => parseInt(c.id.split('-')[1]))) + 1 : 1;
     const formattedId = `CASE-${String(nextId).padStart(3, '0')}`;
     setNewCaseId(formattedId);
@@ -86,8 +94,23 @@ export function NewCaseForm() {
     };
     addCase(newCase);
     
-    // Here you would upload the file and submit the case to your backend
-    setIsModalOpen(true);
+    try {
+        await notifyAdminOnNewCase({
+            caseId: formattedId,
+            caseTitle: values.title,
+            caseCategory: values.category,
+            caseDescription: values.description,
+            userName: user.name || "N/A",
+            userCountry: user.country || "N/A",
+            userPhone: user.phoneNumber || "N/A"
+        });
+    } catch (error) {
+        console.error("Failed to send admin notification", error);
+        // We can decide if we want to show an error to the user or just log it
+    } finally {
+        setIsSubmitting(false);
+        setIsModalOpen(true);
+    }
   }
   
   const handleModalClose = () => {
@@ -113,7 +136,7 @@ export function NewCaseForm() {
             <FormItem>
               <FormLabel>Case Title</FormLabel>
               <FormControl>
-                <Input placeholder="e.g., 'Lost funds from crypto exchange'" {...field} />
+                <Input placeholder="e.g., 'Lost funds from crypto exchange'" {...field} disabled={isSubmitting} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -125,7 +148,7 @@ export function NewCaseForm() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Category</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isSubmitting}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a service related to your case" />
@@ -154,6 +177,7 @@ export function NewCaseForm() {
                   placeholder="Please describe the incident in detail, including dates, amounts, and any other relevant information."
                   className="resize-y min-h-[150px]"
                   {...field}
+                  disabled={isSubmitting}
                 />
               </FormControl>
               <FormMessage />
@@ -167,13 +191,15 @@ export function NewCaseForm() {
                 <FormItem>
                     <FormLabel>Upload Evidence</FormLabel>
                     <FormControl>
-                        <Input type="file" {...fileRef} accept="image/*,.pdf,.doc,.docx,.txt" />
+                        <Input type="file" {...fileRef} accept="image/*,.pdf,.doc,.docx,.txt" disabled={isSubmitting} />
                     </FormControl>
                     <FormMessage />
                 </FormItem>
             )}
         />
-        <Button type="submit">Submit Case</Button>
+        <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Submitting..." : "Submit Case"}
+        </Button>
       </form>
     </Form>
 
