@@ -6,7 +6,7 @@
  * - notifyAdminOnNewCase - A function that handles sending the Telegram message.
  * - NotifyAdminInput - The input type for the function.
  */
-import "dotenv/config";
+
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
 

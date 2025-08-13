@@ -84,10 +84,9 @@ export function NewCaseForm() {
     }
     setIsSubmitting(true);
     
-    const newCaseRef = doc(collection(db, "cases"));
-    const newId = newCaseRef.id;
-
     try {
+        const newCaseRef = doc(collection(db, "cases"));
+        const newId = newCaseRef.id;
         setNewCaseId(newId);
         
         const submittedFile = values.evidence?.[0];
@@ -123,20 +122,21 @@ export function NewCaseForm() {
 
         await addCase(newCasePayload, newId);
         
-        await notifyAdminOnNewCase({
-            caseId: newId,
-            caseTitle: values.title,
-            caseCategory: values.category,
-            caseDescription: values.description,
-            userName: user.name || "N/A",
-            userCountry: user.country || "N/A",
-            userPhone: user.phoneNumber || "N/A",
-            ...(evidenceData && {
-                evidenceDataUrl: evidenceData.url,
-                evidenceFileName: evidenceData.name,
-                evidenceFileType: evidenceData.type,
-            })
-        });
+        // Temporarily disabled to fix form submission bug
+        // await notifyAdminOnNewCase({
+        //     caseId: newId,
+        //     caseTitle: values.title,
+        //     caseCategory: values.category,
+        //     caseDescription: values.description,
+        //     userName: user.name || "N/A",
+        //     userCountry: user.country || "N/A",
+        //     userPhone: user.phoneNumber || "N/A",
+        //     ...(evidenceData && {
+        //         evidenceDataUrl: evidenceData.url,
+        //         evidenceFileName: evidenceData.name,
+        //         evidenceFileType: evidenceData.type,
+        //     })
+        // });
 
         setIsModalOpen(true);
 
