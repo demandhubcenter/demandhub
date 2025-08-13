@@ -120,45 +120,55 @@ export const CaseProvider = ({ children }: { children: ReactNode }) => {
   }
 
   const addCommentToCase = (caseId: string, comment: CaseConversation) => {
-    const updateCaseInState = (prevState: Case[]) => prevState.map(c => {
-         if (c.id === caseId || c.id.replace('CASE-', '') === caseId) {
-            const updatedConversation = [...c.conversation, comment];
-            return { ...c, conversation: updatedConversation };
-        }
-        return c;
-    });
+    const updateCaseList = (caseList: Case[]) => 
+        caseList.map(c => {
+            if (c.id === caseId) {
+                const updatedConversation = [...c.conversation, comment];
+                return { ...c, conversation: updatedConversation };
+            }
+            return c;
+        });
 
-    setCases(updateCaseInState);
-    setAllCases(updateCaseInState);
-    setSelectedCase(prevSelected => {
-        if (prevSelected && prevSelected.id === caseId) {
-             const updatedConversation = [...prevSelected.conversation, comment];
-             return { ...prevSelected, conversation: updatedConversation };
-        }
-        return prevSelected;
-    });
+    setCases(updateCaseList);
+    setAllCases(updateCaseList);
+    
+    // Update the selected case if it's the one being commented on
+    setSelectedCase(prevSelected => 
+        prevSelected && prevSelected.id === caseId 
+            ? { ...prevSelected, conversation: [...prevSelected.conversation, comment] } 
+            : prevSelected
+    );
 
-    // Update localStorage for both user-specific and all_cases
-     if (user?.uid) {
-        const userCases = JSON.parse(window.localStorage.getItem(`cases_${user.uid}`) || '[]');
-        const updatedUserCases = userCases.map((c: Case) => c.id === caseId ? {...c, conversation: [...c.conversation, comment]} : c);
-        window.localStorage.setItem(`cases_${user.uid}`, JSON.stringify(updatedUserCases));
-     }
-     const all_cases = JSON.parse(window.localStorage.getItem('all_cases') || '[]');
-     const updated_all_cases = all_cases.map((c: Case) => c.id === caseId ? {...c, conversation: [...c.conversation, comment]} : c);
-     window.localStorage.setItem('all_cases', JSON.stringify(updated_all_cases));
-  }
+    // Update localStorage for both all_cases and the specific user's cases
+    const all_cases = JSON.parse(window.localStorage.getItem('all_cases') || '[]');
+    const targetCase = all_cases.find((c: Case) => c.id === caseId);
+    
+    if (targetCase && targetCase.user?.uid) {
+        const userCases = JSON.parse(window.localStorage.getItem(`cases_${targetCase.user.uid}`) || '[]');
+        const updatedUserCases = updateCaseList(userCases);
+        window.localStorage.setItem(`cases_${targetCase.user.uid}`, JSON.stringify(updatedUserCases));
+    }
+    
+    const updated_all_cases = updateCaseList(all_cases);
+    window.localStorage.setItem('all_cases', JSON.stringify(updated_all_cases));
+  };
+
 
   const deleteCase = (caseId: string) => {
+    const caseToDelete = allCases.find(c => c.id === caseId);
+
+    // Remove from local state
     setCases(prevCases => prevCases.filter(c => c.id !== caseId));
     setAllCases(prevCases => prevCases.filter(c => c.id !== caseId));
 
-     // Update localStorage for both user-specific and all_cases
-     if (user?.uid) {
-        const userCases = JSON.parse(window.localStorage.getItem(`cases_${user.uid}`) || '[]');
-        const updatedUserCases = userCases.filter((c: Case) => c.id !== caseId);
-        window.localStorage.setItem(`cases_${user.uid}`, JSON.stringify(updatedUserCases));
-     }
+    // Remove from user-specific storage
+    if (caseToDelete && caseToDelete.user?.uid) {
+      const userCases = JSON.parse(window.localStorage.getItem(`cases_${caseToDelete.user.uid}`) || '[]');
+      const updatedUserCases = userCases.filter((c: Case) => c.id !== caseId);
+      window.localStorage.setItem(`cases_${caseToDelete.user.uid}`, JSON.stringify(updatedUserCases));
+    }
+
+    // Remove from global storage
      const all_cases = JSON.parse(window.localStorage.getItem('all_cases') || '[]');
      const updated_all_cases = all_cases.filter((c: Case) => c.id !== caseId);
      window.localStorage.setItem('all_cases', JSON.stringify(updated_all_cases));

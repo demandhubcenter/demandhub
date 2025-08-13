@@ -15,10 +15,24 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { useCases } from "@/context/case-context";
 import { useRouter } from "next/navigation";
 import { type Case } from "@/context/case-context";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import { Trash2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 export default function AdminCasesPage() {
-    const { allCases, fetchAllCases, setSelectedCase } = useCases();
+    const { allCases, fetchAllCases, setSelectedCase, deleteCase } = useCases();
     const router = useRouter();
+    const { toast } = useToast();
 
     useEffect(() => {
         // Ensure the latest cases are fetched when the component mounts
@@ -28,6 +42,14 @@ export default function AdminCasesPage() {
     const handleViewCase = (caseItem: Case) => {
         setSelectedCase(caseItem);
         router.push('/dashboard/submitted-case');
+    };
+
+    const handleDeleteCase = (caseId: string) => {
+        deleteCase(caseId);
+        toast({
+            title: "Case Deleted",
+            description: `Case with ID ${caseId} has been successfully deleted.`,
+        });
     };
 
     return (
@@ -66,7 +88,7 @@ export default function AdminCasesPage() {
                                     </div>
                                 </TableCell>
                                 <TableCell>{new Date(caseItem.date).toLocaleDateString()}</TableCell>
-                                <TableCell className="text-right">
+                                <TableCell className="text-right space-x-2">
                                     <Button 
                                         variant="outline" 
                                         size="sm"
@@ -74,6 +96,31 @@ export default function AdminCasesPage() {
                                     >
                                         View Details
                                     </Button>
+                                    <AlertDialog>
+                                        <AlertDialogTrigger asChild>
+                                            <Button variant="destructive" size="icon" className="h-9 w-9">
+                                                <Trash2 className="h-4 w-4" />
+                                            </Button>
+                                        </AlertDialogTrigger>
+                                        <AlertDialogContent>
+                                            <AlertDialogHeader>
+                                            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                            <AlertDialogDescription>
+                                                This action cannot be undone. This will permanently delete this case
+                                                and remove its data from our servers.
+                                            </AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <AlertDialogFooter>
+                                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                            <AlertDialogAction
+                                                onClick={() => handleDeleteCase(caseItem.id)}
+                                                className="bg-destructive hover:bg-destructive/90"
+                                            >
+                                                Delete
+                                            </AlertDialogAction>
+                                            </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                    </AlertDialog>
                                 </TableCell>
                             </TableRow>
                         ))}
