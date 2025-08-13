@@ -89,11 +89,6 @@ export function NewCaseForm() {
         setNewCaseId(newId);
         
         const submittedFile = values.evidence?.[0];
-        let evidenceDataUrl: string | undefined;
-
-        if (submittedFile) {
-            evidenceDataUrl = await fileToDataUrl(submittedFile);
-        }
 
         const newCasePayload: any = {
             title: values.title,
@@ -116,7 +111,8 @@ export function NewCaseForm() {
             }
         };
         
-        if (submittedFile && evidenceDataUrl) {
+        if (submittedFile) {
+            const evidenceDataUrl = await fileToDataUrl(submittedFile);
             newCasePayload.evidence = { 
                 name: submittedFile.name, 
                 url: evidenceDataUrl, 
@@ -124,7 +120,6 @@ export function NewCaseForm() {
             };
         }
 
-        // Step 1: Save case to Firestore. The addCase function will handle the notification.
         await addCase(newCasePayload, newId);
 
         setIsModalOpen(true);
@@ -236,7 +231,7 @@ export function NewCaseForm() {
             <AlertDialogHeader>
             <AlertDialogTitle>Case Submitted Successfully</AlertDialogTitle>
             <AlertDialogDescription>
-                We have received your case details and will begin our initial assessment. You will receive a confirmation email shortly, and a case manager will be in touch within 24 hours. Your case ID is {newCaseId}.
+                We have received your case details and will begin our initial assessment. You will receive a confirmation email shortly, and a case manager will be in touch within 24 hours. Your case ID is ${newCaseId}.
             </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
