@@ -119,4 +119,3 @@ ${input.caseDescription.substring(0, 2000)}...
     }
   }
 );
-
