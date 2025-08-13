@@ -16,7 +16,6 @@ import {
     deleteDoc,
     orderBy
 } from "firebase/firestore";
-import { notifyAdminOnNewCase } from '@/ai/flows/notify-admin-flow';
 
 export interface CaseConversation {
     author: { name: string; role: 'Client' | 'Support Agent'; avatar: string };
@@ -105,28 +104,6 @@ export const CaseProvider = ({ children }: { children: ReactNode }) => {
     }
     // Refresh all cases if admin might be viewing
     await fetchAllCases();
-
-    // Send notification after successful save
-    try {
-        await notifyAdminOnNewCase({
-            caseId: newId,
-            caseTitle: newCaseData.title,
-            caseCategory: newCaseData.category,
-            caseDescription: newCaseData.description,
-            userName: newCaseData.user?.name || "N/A",
-            userCountry: newCaseData.user?.country || "N/A",
-            userPhone: newCaseData.user?.phoneNumber || "N/A",
-            ...(newCaseData.evidence && {
-                evidenceDataUrl: newCaseData.evidence.url,
-                evidenceFileName: newCaseData.evidence.name,
-                evidenceFileType: newCaseData.evidence.type,
-            })
-        });
-    } catch (error) {
-        console.error("Failed to send admin notification, but case was saved.", error);
-        // We don't re-throw here because the primary action (saving the case) was successful.
-        // You might want to add more robust error logging here (e.g., to a monitoring service).
-    }
   };
 
   const getCaseById = async (id: string) => {
