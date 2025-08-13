@@ -73,7 +73,7 @@ ${input.caseDescription.substring(0, 2000)}...
 
             const formData = new FormData();
             formData.append('chat_id', chatId);
-            // Use Blob to send the file buffer
+            // Use Blob to send the file buffer, which is compatible with fetch
             formData.append(isImage ? 'photo' : 'document', new Blob([fileBuffer]), input.evidenceFileName);
 
             const fileResponse = await fetch(url, {
