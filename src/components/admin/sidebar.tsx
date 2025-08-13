@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Newspaper, MessageSquare, Settings, LogOut, ShieldCheck, ArrowLeft, Home, Star, FileText } from "lucide-react";
+import { Newspaper, MessageSquare, Settings, LogOut, ShieldCheck, ArrowLeft, Home, Star, FileText, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/auth-context";
 import { useRouter } from "next/navigation";
@@ -13,6 +13,7 @@ const navItems = [
   { name: "Comments", href: "/admin/comments", icon: MessageSquare },
   { name: "Testimonials", href: "/admin/testimonials", icon: Star },
   { name: "Cases", href: "/admin/cases", icon: FileText },
+  { name: "User Dashboard", href: "/dashboard", icon: User },
 ];
 
 export function AdminSidebar() {
