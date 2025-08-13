@@ -2,6 +2,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { useAuth } from './auth-context';
 
 export interface CaseConversation {
     author: { name: string; role: 'Client' | 'Support Agent'; avatar: string };
@@ -37,30 +38,38 @@ const CaseContext = createContext<CaseContextType | undefined>(undefined);
 const initialCases: Case[] = [];
 
 export const CaseProvider = ({ children }: { children: ReactNode }) => {
-  const [cases, setCases] = useState<Case[]>(() => {
-    // On initial load, try to get cases from localStorage
-    try {
-        if (typeof window === 'undefined') {
-          return initialCases;
-        }
-        const item = window.localStorage.getItem('cases');
-        return item ? JSON.parse(item) : initialCases;
-    } catch (error) {
-        console.warn("Could not parse cases from localStorage", error);
-        return initialCases;
-    }
-  });
-
+  const { user } = useAuth();
+  const [cases, setCases] = useState<Case[]>(initialCases);
   const [selectedCase, setSelectedCase] = useState<Case | null>(null);
 
-  // When cases change, save them to localStorage
+  // Effect to load/clear cases based on user auth state
   useEffect(() => {
-    try {
-        window.localStorage.setItem('cases', JSON.stringify(cases));
-    } catch (error) {
-        console.error("Could not save cases to localStorage", error);
+    if (user?.uid) {
+      try {
+        const item = window.localStorage.getItem(`cases_${user.uid}`);
+        setCases(item ? JSON.parse(item) : initialCases);
+      } catch (error) {
+        console.warn("Could not parse cases from localStorage", error);
+        setCases(initialCases);
+      }
+    } else {
+      // If no user, clear the cases
+      setCases(initialCases);
+      setSelectedCase(null);
     }
-  }, [cases]);
+  }, [user]);
+
+
+  // Effect to save cases to localStorage when they change for a specific user
+  useEffect(() => {
+    if (user?.uid) {
+        try {
+            window.localStorage.setItem(`cases_${user.uid}`, JSON.stringify(cases));
+        } catch (error) {
+            console.error("Could not save cases to localStorage", error);
+        }
+    }
+  }, [cases, user]);
 
   const addCase = (newCase: Case) => {
     setCases(prevCases => [...prevCases, newCase]);
