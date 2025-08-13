@@ -10,12 +10,12 @@ export function Hero() {
         className="absolute inset-0 top-0 h-full w-full bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-20"
       ></div>
        <Image
-        src="https://placehold.co/1920x1080.png"
+        src="https://www.grantthornton.co.uk/globalassets/1.-member-firms/united-kingdom/images/listing-image/910x544-trading.jpg"
         alt="A person at a desk working on asset recovery"
         layout="fill"
         objectFit="cover"
         className="absolute inset-0 -z-10 opacity-5"
-        data-ai-hint="person working"
+        data-ai-hint="trading desk"
       />
       <div className="container max-w-7xl text-center">
         <div className="mx-auto max-w-3xl">
