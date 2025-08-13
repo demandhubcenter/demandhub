@@ -20,6 +20,7 @@ export interface Case {
   evidence?: {
     name: string;
     url: string;
+    type: string;
   };
   user?: {
     name: string | null;
@@ -188,3 +189,5 @@ export const useCases = (): CaseContextType => {
   }
   return context;
 };
+
+    

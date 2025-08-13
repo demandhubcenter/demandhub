@@ -46,6 +46,17 @@ const formSchema = z.object({
   evidence: z.instanceof(FileList).optional(),
 })
 
+// Helper function to read a file as a Base64 Data URL
+const fileToDataUrl = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+};
+
+
 export function NewCaseForm() {
   const { toast } = useToast()
   const router = useRouter();
@@ -76,6 +87,12 @@ export function NewCaseForm() {
     setNewCaseId(formattedId);
     
     const submittedFile = values.evidence?.[0];
+    let evidenceData;
+
+    if (submittedFile) {
+        const dataUrl = await fileToDataUrl(submittedFile);
+        evidenceData = { name: submittedFile.name, url: dataUrl, type: submittedFile.type };
+    }
 
     const newCase = {
         id: formattedId,
@@ -83,7 +100,7 @@ export function NewCaseForm() {
         date: new Date().toISOString().split('T')[0],
         category: values.category,
         description: values.description,
-        evidence: submittedFile ? { name: submittedFile.name, url: URL.createObjectURL(submittedFile) } : undefined,
+        evidence: evidenceData,
         conversation: [
             {
                 author: { name: user?.name || "Client", role: 'Client' as const, avatar: "" },
@@ -224,3 +241,5 @@ export function NewCaseForm() {
     </>
   )
 }
+
+    

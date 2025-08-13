@@ -14,6 +14,7 @@ import { useEffect, useState } from "react";
 import { type Case, type CaseConversation } from "@/context/case-context";
 import { useAuth } from "@/context/auth-context";
 import { ArrowLeft } from "lucide-react";
+import Image from "next/image";
 
 export default function SubmittedCasePage() {
   const { selectedCase, addCommentToCase } = useCases();
@@ -50,6 +51,8 @@ export default function SubmittedCasePage() {
     addCommentToCase(selectedCase.id, comment);
     setNewComment("");
   }
+
+  const isImage = selectedCase.evidence?.type?.startsWith('image/');
 
   return (
     <div className="space-y-8">
@@ -130,13 +133,25 @@ export default function SubmittedCasePage() {
                 </CardHeader>
                  <CardContent>
                     {selectedCase.evidence ? (
-                         <ul className="space-y-2 text-sm">
-                            <li className="flex items-center">
-                                <Link href={selectedCase.evidence.url} className="text-primary hover:underline" download={selectedCase.evidence.name}>
-                                    {selectedCase.evidence.name}
-                                </Link>
-                            </li>
-                        </ul>
+                        <div>
+                            {isImage ? (
+                                <a href={selectedCase.evidence.url} download={selectedCase.evidence.name} target="_blank" rel="noopener noreferrer">
+                                    <Image
+                                        src={selectedCase.evidence.url}
+                                        alt={selectedCase.evidence.name}
+                                        width={500}
+                                        height={400}
+                                        className="rounded-lg shadow-lg w-full h-auto object-cover"
+                                    />
+                                </a>
+                            ) : (
+                                <Button asChild variant="link" className="p-0">
+                                    <Link href={selectedCase.evidence.url} download={selectedCase.evidence.name}>
+                                        Download: {selectedCase.evidence.name}
+                                    </Link>
+                                </Button>
+                            )}
+                        </div>
                     ) : (
                         <p className="text-sm text-muted-foreground">No evidence attached.</p>
                     )}
@@ -147,3 +162,5 @@ export default function SubmittedCasePage() {
     </div>
   );
 }
+
+    
