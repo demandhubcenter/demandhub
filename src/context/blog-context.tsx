@@ -99,7 +99,7 @@ const initialPosts: BlogPost[] = [
     featured: false,
     title: "What to Do Immediately After a Phishing Attack",
     excerpt: "Time is critical. Follow these steps to mitigate damage and begin the recovery process after your data has been compromised.",
-    content: "<p>Content for phishing attack aftermath...</p>",
+    content: "<p>When a phishing attack compromises your data, every second counts. First, immediately change the passwords for any affected accounts and any other accounts that use the same password. Enable two-factor authentication everywhere you can. Scan your computer for malware. Report the phishing attempt to the relevant services (your email provider, the company being impersonated) and monitor your accounts for suspicious activity.</p>",
     author: initialAuthors.jane,
     date: "2023-10-26T10:00:00Z",
     tags: ["Phishing", "Recovery"],

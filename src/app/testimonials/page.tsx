@@ -85,9 +85,6 @@ export default function TestimonialsPage() {
                   <CardContent className="flex-grow">
                     <CardDescription className="italic">"{study.quote}"</CardDescription>
                   </CardContent>
-                  <div className="p-6 pt-0">
-                    <Button variant="link" className="p-0">Read Full Story &rarr;</Button>
-                  </div>
                 </Card>
               ))}
             </div>
