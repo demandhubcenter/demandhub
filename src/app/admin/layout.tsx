@@ -13,6 +13,7 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Menu } from 'lucide-react';
 import { TestimonialProvider } from '@/context/testimonial-context';
+import { CaseProvider } from '@/context/case-context';
 
 export default function AdminLayout({
   children,
@@ -65,6 +66,7 @@ export default function AdminLayout({
 
   return (
     <TestimonialProvider>
+      <CaseProvider>
         <div className="flex min-h-screen">
         {isDesktop ? (
             <AdminSidebar />
@@ -85,6 +87,7 @@ export default function AdminLayout({
             {children}
         </main>
         </div>
+      </CaseProvider>
     </TestimonialProvider>
   );
 }
