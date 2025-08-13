@@ -49,7 +49,7 @@ const formSchema = z.object({
 export function NewCaseForm() {
   const { toast } = useToast()
   const router = useRouter();
-  const { addCase, cases } = useCases();
+  const { addCase, allCases } = useCases(); // Use allCases to determine next ID
   const { user } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newCaseId, setNewCaseId] = useState("");
@@ -71,7 +71,7 @@ export function NewCaseForm() {
     }
     setIsSubmitting(true);
 
-    const nextId = cases.length > 0 ? Math.max(...cases.map(c => parseInt(c.id.split('-')[1]))) + 1 : 1;
+    const nextId = allCases.length > 0 ? Math.max(...allCases.map(c => parseInt(c.id.split('-')[1]))) + 1 : 1;
     const formattedId = `CASE-${String(nextId).padStart(3, '0')}`;
     setNewCaseId(formattedId);
     
@@ -90,7 +90,12 @@ export function NewCaseForm() {
                 timestamp: new Date().toLocaleString(),
                 text: "Case created.",
             }
-        ]
+        ],
+        user: { // Attach user info to the case
+          name: user.name,
+          email: user.email,
+          uid: user.uid,
+        }
     };
     addCase(newCase);
     
