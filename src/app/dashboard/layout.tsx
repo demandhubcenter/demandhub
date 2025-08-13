@@ -58,14 +58,14 @@ export default function DashboardLayout({
   return (
     <SidebarProvider>
       <CaseProvider>
-        <Sidebar>
-          <DashboardSidebar />
-        </Sidebar>
-        <SidebarInset>
-           <main className="flex-1 p-4 sm:p-8 bg-primary/5 min-h-screen">
+        <div className="flex">
+          <Sidebar>
+            <DashboardSidebar />
+          </Sidebar>
+          <main className="flex-1 p-4 sm:p-8 bg-primary/5 min-h-screen">
             {children}
           </main>
-        </SidebarInset>
+        </div>
       </CaseProvider>
     </SidebarProvider>
   );

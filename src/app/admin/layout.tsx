@@ -10,7 +10,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { AdminSidebar } from '@/components/admin/sidebar';
 import { TestimonialProvider } from '@/context/testimonial-context';
 import { CaseProvider } from '@/context/case-context';
-import { SidebarProvider, Sidebar, SidebarTrigger, SidebarInset } from '@/components/ui/sidebar';
+import { SidebarProvider, Sidebar, SidebarInset } from '@/components/ui/sidebar';
 
 export default function AdminLayout({
   children,
@@ -64,14 +64,14 @@ export default function AdminLayout({
      <SidebarProvider>
       <TestimonialProvider>
         <CaseProvider>
-           <Sidebar>
-            <AdminSidebar />
-          </Sidebar>
-          <SidebarInset>
+           <div className="flex">
+            <Sidebar>
+              <AdminSidebar />
+            </Sidebar>
             <main className="flex-1 p-4 sm:p-8 bg-primary/5 min-h-screen">
               {children}
             </main>
-          </SidebarInset>
+           </div>
         </CaseProvider>
       </TestimonialProvider>
     </SidebarProvider>
