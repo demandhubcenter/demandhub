@@ -90,19 +90,17 @@ export function NewCaseForm() {
     
     const submittedFile = values.evidence?.[0];
     let evidenceData;
-    let evidenceDataUrl;
 
     if (submittedFile) {
-        evidenceDataUrl = await fileToDataUrl(submittedFile);
+        const evidenceDataUrl = await fileToDataUrl(submittedFile);
         evidenceData = { name: submittedFile.name, url: evidenceDataUrl, type: submittedFile.type };
     }
 
-    const newCase = {
+    const newCasePayload: any = {
         title: values.title,
-        date: new Date().toISOString(), // Use full ISO string for accurate sorting
+        date: new Date().toISOString(),
         category: values.category,
         description: values.description,
-        evidence: evidenceData,
         conversation: [
             {
                 author: { name: user?.name || "Client", role: 'Client' as const, avatar: "" },
@@ -110,13 +108,18 @@ export function NewCaseForm() {
                 text: "Case created.",
             }
         ],
-        user: { // Attach user info to the case
+        user: {
           name: user.name,
           email: user.email,
           uid: user.uid,
         }
     };
-    await addCase(newCase, newId);
+    
+    if (evidenceData) {
+        newCasePayload.evidence = evidenceData;
+    }
+
+    await addCase(newCasePayload, newId);
     
     try {
         await notifyAdminOnNewCase({
@@ -127,13 +130,14 @@ export function NewCaseForm() {
             userName: user.name || "N/A",
             userCountry: user.country || "N/A",
             userPhone: user.phoneNumber || "N/A",
-            evidenceDataUrl: evidenceData?.url,
-            evidenceFileName: evidenceData?.name,
-            evidenceFileType: evidenceData?.type,
+            ...(evidenceData && { // Conditionally add evidence fields
+                evidenceDataUrl: evidenceData.url,
+                evidenceFileName: evidenceData.name,
+                evidenceFileType: evidenceData.type,
+            })
         });
     } catch (error) {
         console.error("Failed to send admin notification", error);
-        // We can decide if we want to show an error to the user or just log it
     } finally {
         setIsSubmitting(false);
         setIsModalOpen(true);
