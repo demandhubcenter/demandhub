@@ -2,9 +2,9 @@
 
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { useAuth } from './auth-context';
-import { notifyAdminOnNewCase } from '@/ai/flows/notify-admin-flow';
+import { sendAdminNotification } from '@/app/actions';
 
 export interface CaseConversation {
     author: { name: string; role: 'Client' | 'Support Agent'; avatar: string };
@@ -52,27 +52,24 @@ const initialCases: Case[] = [];
 
 export const CaseProvider = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth();
-  const [cases, setCases] = useState<Case[]>(() => {
+  const [cases, setCases] = useState<Case[]>(initialCases);
+  const [allCases, setAllCases] = useState<Case[]>(() => {
     try {
-      if (typeof window === 'undefined') return initialCases;
-      const item = window.localStorage.getItem('userCases');
-      return item ? JSON.parse(item) : initialCases;
+        if (typeof window === 'undefined') return initialCases;
+        const item = window.localStorage.getItem('allCases');
+        return item ? JSON.parse(item) : initialCases;
     } catch (error) {
-      console.warn("Could not parse cases from localStorage", error);
-      return initialCases;
+        console.warn("Could not parse allCases from localStorage", error);
+        return initialCases;
     }
-  });
-  const [allCases, setAllCases] = useState<Case[]>(cases); // For admin, starts with all local cases
+  }); 
   const [selectedCase, setSelectedCase] = useState<Case | null>(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     try {
         if (typeof window === 'undefined') return;
-        const item = window.localStorage.getItem('allCases');
-        const allStoredCases = item ? JSON.parse(item) : initialCases;
-        setAllCases(allStoredCases);
-
+        const allStoredCases = allCases;
         if (user) {
             const userCases = allStoredCases.filter((c: Case) => c.user?.uid === user.uid);
             setCases(userCases);
@@ -82,21 +79,19 @@ export const CaseProvider = ({ children }: { children: ReactNode }) => {
     } catch (error) {
         console.warn("Could not parse cases from localStorage", error);
         setCases(initialCases);
-        setAllCases(initialCases);
     }
-  }, [user]);
+  }, [user, allCases]);
 
   useEffect(() => {
     try {
         if (typeof window === 'undefined') return;
-        // Store all cases in one key to simulate a shared database
         window.localStorage.setItem('allCases', JSON.stringify(allCases));
     } catch (error) {
         console.error("Could not save all cases to localStorage", error);
     }
   }, [allCases]);
 
-  const fetchAllCases = useCallback(() => {
+  const fetchAllCases = () => {
     try {
       if (typeof window !== 'undefined') {
         const item = window.localStorage.getItem('allCases');
@@ -106,40 +101,34 @@ export const CaseProvider = ({ children }: { children: ReactNode }) => {
         console.warn("Could not parse all cases from localStorage", error);
         setAllCases([]);
     }
-  }, []);
+  };
   
   const addCase = async (newCaseData: Omit<Case, 'id'>): Promise<string> => {
-    return new Promise((resolve) => {
-        const newId = `case_${new Date().getTime()}`;
-        const newCaseWithId = { ...newCaseData, id: newId };
+    const newId = `case_${new Date().getTime()}`;
+    const newCaseWithId = { ...newCaseData, id: newId };
+    
+    setAllCases(prev => [newCaseWithId, ...prev]);
 
-        // Update state for all cases (for admin)
-        setAllCases(prev => [newCaseWithId, ...prev]);
+    // Trigger notification in the background
+    if (newCaseData.user) {
+         sendAdminNotification({
+            caseId: newId,
+            caseTitle: newCaseData.title,
+            caseCategory: newCaseData.category,
+            caseDescription: newCaseData.description,
+            userName: newCaseData.user.name || 'N/A',
+            userCountry: newCaseData.user.country || 'N/A',
+            userPhone: newCaseData.user.phoneNumber || 'N/A',
+            evidenceDataUrl: newCaseData.evidence?.url,
+            evidenceFileName: newCaseData.evidence?.name,
+            evidenceFileType: newCaseData.evidence?.type,
+        }).catch(error => {
+            // Log the error but don't block the user
+            console.error("Failed to send admin notification:", error);
+        });
+    }
 
-        // Update state for the current user's cases
-        setCases(prev => [newCaseWithId, ...prev]);
-
-        // Trigger notification after state update
-        if (newCaseData.user) {
-             notifyAdminOnNewCase({
-                caseId: newId,
-                caseTitle: newCaseData.title,
-                caseCategory: newCaseData.category,
-                caseDescription: newCaseData.description,
-                userName: newCaseData.user.name || 'N/A',
-                userCountry: newCaseData.user.country || 'N/A',
-                userPhone: newCaseData.user.phoneNumber || 'N/A',
-                evidenceDataUrl: newCaseData.evidence?.url,
-                evidenceFileName: newCaseData.evidence?.name,
-                evidenceFileType: newCaseData.evidence?.type,
-            }).catch(error => {
-                // Log the error but don't block the user
-                console.error("Failed to send admin notification:", error);
-            });
-        }
-        
-        resolve(newId);
-    });
+    return newId;
   };
 
   const getCaseById = (id: string) => {
@@ -159,9 +148,6 @@ export const CaseProvider = ({ children }: { children: ReactNode }) => {
 
   const deleteCase = (caseId: string) => {
     setAllCases(prevCases => prevCases.filter(c => c.id !== caseId));
-     if(user) {
-        setCases(prevCases => prevCases.filter(c => c.id !== caseId));
-     }
   }
 
   return (
