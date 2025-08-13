@@ -1,4 +1,5 @@
 
+
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -37,8 +38,6 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { useCases } from "@/context/case-context"
 import { useAuth } from "@/context/auth-context"
-import { collection, doc } from "firebase/firestore"
-import { db } from "@/lib/firebase"
 
 const formSchema = z.object({
   title: z.string().min(5, "Title must be at least 5 characters."),
@@ -84,10 +83,6 @@ export function NewCaseForm() {
     setIsSubmitting(true);
     
     try {
-        const caseRef = doc(collection(db, "cases"));
-        const newId = caseRef.id;
-        setNewCaseId(newId);
-        
         const submittedFile = values.evidence?.[0];
 
         const newCasePayload: any = {
@@ -120,8 +115,8 @@ export function NewCaseForm() {
             };
         }
 
-        await addCase(newCasePayload, newId);
-
+        const createdCaseId = await addCase(newCasePayload);
+        setNewCaseId(createdCaseId);
         setIsModalOpen(true);
 
     } catch (error) {
@@ -231,7 +226,7 @@ export function NewCaseForm() {
             <AlertDialogHeader>
             <AlertDialogTitle>Case Submitted Successfully</AlertDialogTitle>
             <AlertDialogDescription>
-                We have received your case details and will begin our initial assessment. You will receive a confirmation email shortly, and a case manager will be in touch within 24 hours. Your case ID is ${newCaseId}.
+                We have received your case details and will begin our initial assessment. A case manager will be in touch within 24 hours. Your case ID is ${newCaseId}.
             </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
