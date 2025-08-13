@@ -1,3 +1,4 @@
+
 "use client";
 
 import Image from "next/image";
@@ -37,7 +38,16 @@ const testimonials = [
 
 export function TestimonialsCarousel() {
   return (
-    <section className="py-20 md:py-28 bg-primary/5">
+    <section className="relative py-20 md:py-28">
+       <Image
+        src="https://www.grantthornton.co.uk/globalassets/1.-member-firms/united-kingdom/images/listing-image/910x544-trading.jpg"
+        alt="Financial professionals working"
+        layout="fill"
+        objectFit="cover"
+        className="absolute inset-0 -z-10 opacity-5"
+        data-ai-hint="trading desk"
+      />
+      <div className="absolute inset-0 -z-10 bg-primary/5"></div>
       <div className="container max-w-7xl">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">What Our Clients Say</h2>
