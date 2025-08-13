@@ -12,7 +12,7 @@ import { useAuth } from "@/context/auth-context";
 import { useBlog } from "@/context/blog-context";
 import { useMemo, useState } from "react";
 
-const POSTS_PER_PAGE = 6;
+const POSTS_PER_PAGE = 3;
 
 export default function BlogIndexPage() {
     const { user } = useAuth();
