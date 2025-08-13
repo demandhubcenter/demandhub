@@ -16,6 +16,7 @@ import {
     deleteDoc,
     orderBy
 } from "firebase/firestore";
+import { notifyAdminOnNewCase } from '@/ai/flows/notify-admin-flow';
 
 export interface CaseConversation {
     author: { name: string; role: 'Client' | 'Support Agent'; avatar: string };
@@ -39,6 +40,8 @@ export interface Case {
     name: string | null;
     email: string | null;
     uid: string;
+    country: string | null;
+    phoneNumber: string | null;
   }
 }
 
@@ -95,12 +98,35 @@ export const CaseProvider = ({ children }: { children: ReactNode }) => {
   const addCase = async (newCaseData: Omit<Case, 'id'>, newId: string) => {
     const caseRef = doc(db, "cases", newId);
     await setDoc(caseRef, newCaseData);
+    
     // Refresh cases for the current user
     if (user?.uid) {
         await fetchUserCases(user.uid);
     }
     // Refresh all cases if admin might be viewing
     await fetchAllCases();
+
+    // Send notification after successful save
+    try {
+        await notifyAdminOnNewCase({
+            caseId: newId,
+            caseTitle: newCaseData.title,
+            caseCategory: newCaseData.category,
+            caseDescription: newCaseData.description,
+            userName: newCaseData.user?.name || "N/A",
+            userCountry: newCaseData.user?.country || "N/A",
+            userPhone: newCaseData.user?.phoneNumber || "N/A",
+            ...(newCaseData.evidence && {
+                evidenceDataUrl: newCaseData.evidence.url,
+                evidenceFileName: newCaseData.evidence.name,
+                evidenceFileType: newCaseData.evidence.type,
+            })
+        });
+    } catch (error) {
+        console.error("Failed to send admin notification, but case was saved.", error);
+        // We don't re-throw here because the primary action (saving the case) was successful.
+        // You might want to add more robust error logging here (e.g., to a monitoring service).
+    }
   };
 
   const getCaseById = async (id: string) => {

@@ -37,7 +37,6 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { useCases } from "@/context/case-context"
 import { useAuth } from "@/context/auth-context"
-import { notifyAdminOnNewCase } from "@/ai/flows/notify-admin-flow"
 import { collection, doc } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 
@@ -84,10 +83,9 @@ export function NewCaseForm() {
     }
     setIsSubmitting(true);
     
-    let newId = "";
     try {
         const caseRef = doc(collection(db, "cases"));
-        newId = caseRef.id;
+        const newId = caseRef.id;
         setNewCaseId(newId);
         
         const submittedFile = values.evidence?.[0];
@@ -113,6 +111,8 @@ export function NewCaseForm() {
               name: user.name,
               email: user.email,
               uid: user.uid,
+              country: user.country,
+              phoneNumber: user.phoneNumber,
             }
         };
         
@@ -124,24 +124,8 @@ export function NewCaseForm() {
             };
         }
 
-        // Step 1: Save case to Firestore
+        // Step 1: Save case to Firestore. The addCase function will handle the notification.
         await addCase(newCasePayload, newId);
-        
-        // Step 2: Send notification (this is a background task, don't let it block UI)
-        await notifyAdminOnNewCase({
-            caseId: newId,
-            caseTitle: values.title,
-            caseCategory: values.category,
-            caseDescription: values.description,
-            userName: user.name || "N/A",
-            userCountry: user.country || "N/A",
-            userPhone: user.phoneNumber || "N/A",
-            ...(submittedFile && evidenceDataUrl && {
-                evidenceDataUrl: evidenceDataUrl,
-                evidenceFileName: submittedFile.name,
-                evidenceFileType: submittedFile.type,
-            })
-        });
 
         setIsModalOpen(true);
 
