@@ -1,6 +1,3 @@
-
-'use server'
-
 import { useBlog, initialPosts } from "@/context/blog-context";
 import { notFound } from "next/navigation";
 import { BlogPostClientPage } from "@/components/blog/blog-post-client-page";

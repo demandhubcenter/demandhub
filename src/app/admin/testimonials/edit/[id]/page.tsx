@@ -1,6 +1,3 @@
-
-'use server';
-
 import { useTestimonial, initialTestimonials } from '@/context/testimonial-context';
 import { notFound } from 'next/navigation';
 import { EditTestimonialClientPage } from '@/components/admin/edit-testimonial-client-page';
