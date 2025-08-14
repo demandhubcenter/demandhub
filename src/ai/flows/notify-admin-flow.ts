@@ -9,7 +9,7 @@
 import 'dotenv/config';
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
-
+import TelegramBot from 'node-telegram-bot-api';
 
 const NotifyAdminInputSchema = z.object({
   caseId: z.string().describe("The ID of the new case."),
@@ -41,81 +41,55 @@ const notifyAdminFlow = ai.defineFlow(
 
     if (!botToken || !chatId) {
       console.error("Telegram bot token or chat ID is not configured.");
-      // Forcing an error here so the form doesn't get stuck in a loading state.
       throw new Error("Server configuration error: Telegram is not set up.");
     }
+    
+    // Using 'polling: false' is recommended for server-side bots that only send messages.
+    const bot = new TelegramBot(botToken, { polling: false });
 
     const messageText = `
 🚨 *New Case Submitted* 🚨
 
-*Case ID:* ${input.caseId}
-*Case Title:* ${input.caseTitle}
+*Case ID:* \`${input.caseId}\`
+*Title:* ${input.caseTitle}
 *Category:* ${input.caseCategory}
-
 *User Name:* ${input.userName}
 *Country:* ${input.userCountry}
-*Phone:* ${input.userPhone}
+*Phone:* \`${input.userPhone}\`
 
 *Description:*
-${input.caseDescription.substring(0, 2000)}...
+${input.caseDescription.substring(0, 2000)}
     `;
 
-    // If there is evidence, send it first
-    if (input.evidenceDataUrl && input.evidenceFileName && input.evidenceFileType) {
-        try {
-            const isImage = input.evidenceFileType.startsWith('image/');
-            const endpoint = isImage ? 'sendPhoto' : 'sendDocument';
-            const url = `https://api.telegram.org/bot${botToken}/${endpoint}`;
-            
-            // Convert data URL to buffer
-            const base64Data = input.evidenceDataUrl.split(',')[1];
-            const fileBuffer = Buffer.from(base64Data, 'base64');
-
-            const formData = new FormData();
-            formData.append('chat_id', chatId);
-            // Use Blob to send the file buffer, which is compatible with fetch
-            formData.append(isImage ? 'photo' : 'document', new Blob([fileBuffer]), input.evidenceFileName);
-
-            const fileResponse = await fetch(url, {
-                method: 'POST',
-                body: formData,
-            });
-
-            const fileResponseData = await fileResponse.json();
-            if (!fileResponseData.ok) {
-                console.error("Failed to send Telegram file:", fileResponseData);
-            } else {
-                 console.log("Evidence file sent successfully.");
-            }
-        } catch(error) {
-             console.error("Error sending Telegram file:", error);
-             // Don't re-throw, allow the text message to proceed
-        }
-    }
-
-
-    const textUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
     try {
-      const response = await fetch(textUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          chat_id: chatId,
-          text: messageText,
-          parse_mode: 'Markdown',
-        }),
-      });
+      // Send the text message first
+      await bot.sendMessage(chatId, messageText, { parse_mode: 'Markdown' });
+      console.log("Admin notification text sent successfully.");
 
-      const responseData = await response.json();
-      if (!responseData.ok) {
-        console.error("Failed to send Telegram message:", responseData);
-      } else {
-        console.log("Admin notification sent successfully.");
+      // If there is evidence, send it as a separate message
+      if (input.evidenceDataUrl && input.evidenceFileName && input.evidenceFileType) {
+          const base64Data = input.evidenceDataUrl.split(',')[1];
+          const fileBuffer = Buffer.from(base64Data, 'base64');
+          const isImage = input.evidenceFileType.startsWith('image/');
+          
+          const fileOptions = {
+              filename: input.evidenceFileName,
+              contentType: input.evidenceFileType,
+          };
+
+          if (isImage) {
+              await bot.sendPhoto(chatId, fileBuffer, { caption: `Evidence for case ${input.caseId}` }, fileOptions);
+              console.log("Evidence image sent successfully.");
+          } else {
+              await bot.sendDocument(chatId, fileBuffer, { caption: `Evidence for case ${input.caseId}` }, fileOptions);
+              console.log("Evidence document sent successfully.");
+          }
       }
     } catch (error) {
-      console.error("Error sending Telegram notification:", error);
+      console.error("Failed to send Telegram notification:", error);
+      // We throw an error here to make it clear that the notification failed.
+      // This can be caught by the calling function if needed.
+      throw new Error("Failed to send Telegram notification.");
     }
   }
 );
