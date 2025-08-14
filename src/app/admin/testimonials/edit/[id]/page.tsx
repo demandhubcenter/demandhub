@@ -1,4 +1,4 @@
-import { useTestimonial } from '@/context/testimonial-context';
+
 import { initialTestimonials } from '@/lib/initial-data';
 import { notFound } from 'next/navigation';
 import { EditTestimonialClientPage } from '@/components/admin/edit-testimonial-client-page';
@@ -11,8 +11,9 @@ export async function generateStaticParams() {
 }
 
 async function getTestimonial(id: string) {
-    const { getTestimonialById } = useTestimonial();
-    return getTestimonialById(id);
+    // In a real app, this would fetch from a database.
+    // For this static example, we find it in the initial data.
+    return initialTestimonials.find(t => t.id === id);
 }
 
 export default async function EditTestimonialPage({ params }: { params: { id: string } }) {
