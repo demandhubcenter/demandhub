@@ -7,6 +7,16 @@ const nextConfig: NextConfig = {
   experimental: {
     serverActions: false,
   },
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      // Don't resolve 'async_hooks' on the client
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        async_hooks: false,
+      }
+    }
+    return config
+  },
   allowedDevOrigins: ["6000-firebase-studio-*.cloudworkstations.dev"],
   reactStrictMode: false,
   typescript: {
