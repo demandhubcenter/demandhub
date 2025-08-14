@@ -6,10 +6,15 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
-import { useBlog } from '@/context/blog-context';
+import { useBlog, initialPosts } from '@/context/blog-context';
 import { notFound } from 'next/navigation';
 import React from 'react';
 
+export function generateStaticParams() {
+  return initialPosts.map((post) => ({
+    slug: post.slug,
+  }));
+}
 
 export default function EditPostPage({ params }: { params: { slug: string } }) {
   const resolvedParams = React.use(params);

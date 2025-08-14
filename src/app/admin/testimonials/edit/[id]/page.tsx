@@ -9,7 +9,13 @@ import { ArrowLeft } from 'lucide-react';
 import { useTestimonial } from '@/context/testimonial-context';
 import { notFound } from 'next/navigation';
 import React from 'react';
+import { initialTestimonials } from '@/context/testimonial-context';
 
+export function generateStaticParams() {
+  return initialTestimonials.map((testimonial) => ({
+    id: testimonial.id,
+  }));
+}
 
 export default function EditTestimonialPage({ params }: { params: { id: string } }) {
   const resolvedParams = React.use(params);

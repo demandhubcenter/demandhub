@@ -23,7 +23,7 @@ interface TestimonialContextType {
 const TestimonialContext = createContext<TestimonialContextType | undefined>(undefined);
 
 // Initial Static Data
-const initialTestimonials: Testimonial[] = [
+export const initialTestimonials: Testimonial[] = [
   {
     id: 'rec-1',
     image: { src: "https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=600&h=400&q=80&fit=crop", hint: "relieved person computer" },

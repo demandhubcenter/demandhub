@@ -10,11 +10,16 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import { Facebook, Twitter, Linkedin, Link2, ArrowLeft } from "lucide-react";
-import { useBlog } from "@/context/blog-context";
+import { useBlog, initialPosts } from "@/context/blog-context";
 import { useAuth } from "@/context/auth-context";
 import { notFound, useRouter } from "next/navigation";
 import React, { useState } from "react";
 
+export function generateStaticParams() {
+  return initialPosts.map((post) => ({
+    slug: post.slug,
+  }));
+}
 
 export default function BlogPostPage({ params }: { params: { slug: string } }) {
     const resolvedParams = React.use(params);
