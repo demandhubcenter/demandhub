@@ -5,11 +5,12 @@ const nextConfig = {
   /* config options here */
   webpack: (config, { isServer }) => {
     if (!isServer) {
-      // Don't resolve 'async_hooks' or 'fs' on the client
+      // Don't resolve 'async_hooks' or 'fs' or 'tls' on the client
       config.resolve.fallback = {
         ...config.resolve.fallback,
         async_hooks: false,
         fs: false,
+        tls: false,
       };
     }
     
