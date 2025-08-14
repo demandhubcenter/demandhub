@@ -10,7 +10,7 @@ const nextConfig: NextConfig = {
       config.resolve.fallback = {
         ...config.resolve.fallback,
         async_hooks: false,
-      }
+      };
     }
     
     // Ignore require.extensions warning from handlebars
@@ -23,7 +23,16 @@ const nextConfig: NextConfig = {
       },
     });
 
-    return config
+    return config;
+  },
+  experimental: {
+    turbo: {
+      resolve: {
+        fallback: {
+          async_hooks: false,
+        },
+      },
+    },
   },
   allowedDevOrigins: ["6000-firebase-studio-*.cloudworkstations.dev"],
   reactStrictMode: false,
