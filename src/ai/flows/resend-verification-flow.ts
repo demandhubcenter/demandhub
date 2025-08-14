@@ -1,5 +1,4 @@
 
-'use server';
 /**
  * @fileOverview A flow for resending a verification email.
  *

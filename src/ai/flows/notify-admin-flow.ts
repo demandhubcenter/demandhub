@@ -1,5 +1,4 @@
 
-'use server';
 /**
  * @fileOverview A flow for notifying an admin via Telegram about a new case.
  *

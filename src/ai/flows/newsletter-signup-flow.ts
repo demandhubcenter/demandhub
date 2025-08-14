@@ -1,4 +1,3 @@
-'use server';
 /**
  * @fileOverview A flow for handling newsletter sign-ups.
  *
