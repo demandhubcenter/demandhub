@@ -1,7 +1,6 @@
 
-import type {NextConfig} from 'next';
-
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   output: 'export',
   /* config options here */
   webpack: (config, { isServer }) => {
@@ -10,7 +9,7 @@ const nextConfig: NextConfig = {
       config.resolve.fallback = {
         ...config.resolve.fallback,
         async_hooks: false,
-      }
+      };
     }
     
     // Ignore require.extensions warning from handlebars
@@ -23,7 +22,16 @@ const nextConfig: NextConfig = {
       },
     });
 
-    return config
+    return config;
+  },
+  experimental: {
+    turbo: {
+      resolve: {
+        fallback: {
+          async_hooks: false,
+        },
+      },
+    },
   },
   allowedDevOrigins: ["6000-firebase-studio-*.cloudworkstations.dev"],
   reactStrictMode: false,
@@ -65,9 +73,21 @@ const nextConfig: NextConfig = {
         hostname: 'www.grantthornton.co.uk',
         port: '',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'image.vietnamnews.vn',
+        port: '',
+        pathname: '/**',
+      },
+       {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+        port: '',
+        pathname: '/**',
       }
     ],
   },
 };
 
-export default nextConfig;
+module.exports = nextConfig;

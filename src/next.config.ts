@@ -65,6 +65,18 @@ const nextConfig: NextConfig = {
         hostname: 'www.grantthornton.co.uk',
         port: '',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'image.vietnamnews.vn',
+        port: '',
+        pathname: '/**',
+      },
+       {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+        port: '',
+        pathname: '/**',
       }
     ],
   },
