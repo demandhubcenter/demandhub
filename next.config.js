@@ -24,15 +24,6 @@ const nextConfig = {
 
     return config;
   },
-  experimental: {
-    turbo: {
-      resolve: {
-        fallback: {
-          async_hooks: false,
-        },
-      },
-    },
-  },
   allowedDevOrigins: ["6000-firebase-studio-*.cloudworkstations.dev"],
   reactStrictMode: false,
   typescript: {
