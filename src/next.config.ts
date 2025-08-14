@@ -4,11 +4,6 @@ import type {NextConfig} from 'next';
 const nextConfig: NextConfig = {
   output: 'export',
   /* config options here */
-  experimental: {
-    serverActions: {
-      enabled: false,
-    },
-  },
   webpack: (config, { isServer }) => {
     if (!isServer) {
       // Don't resolve 'async_hooks' on the client
