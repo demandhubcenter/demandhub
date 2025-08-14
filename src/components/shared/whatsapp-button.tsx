@@ -1,9 +1,11 @@
+
 "use client";
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Draggable from 'react-draggable';
 import { useRef } from 'react';
+import { useMediaQuery } from 'react-responsive';
 
 const WhatsAppIcon = () => (
     <svg
@@ -23,20 +25,34 @@ const WhatsAppIcon = () => (
 
 export function WhatsAppButton() {
   const nodeRef = useRef(null);
+  const isDesktop = useMediaQuery({ query: '(min-width: 768px)' });
+
+  const ChatButton = () => (
+     <Button
+        asChild
+        size="icon"
+        className="rounded-full shadow-lg h-16 w-16 bg-[#25D366] hover:bg-[#1EBE57]"
+    >
+        {/* Replace the number with your actual WhatsApp business number */}
+        <Link href="https://wa.me/15551234567" target="_blank" rel="noopener noreferrer">
+        <WhatsAppIcon />
+        <span className="sr-only">Chat on WhatsApp</span>
+        </Link>
+    </Button>
+  );
+
+  if (!isDesktop) {
+    return (
+         <div className="fixed bottom-4 left-4 z-50">
+            <ChatButton />
+        </div>
+    )
+  }
+
   return (
     <Draggable nodeRef={nodeRef}>
         <div ref={nodeRef} className="fixed bottom-4 left-4 z-50 cursor-move">
-        <Button
-            asChild
-            size="icon"
-            className="rounded-full shadow-lg h-16 w-16 bg-[#25D366] hover:bg-[#1EBE57]"
-        >
-            {/* Replace the number with your actual WhatsApp business number */}
-            <Link href="https://wa.me/15551234567" target="_blank" rel="noopener noreferrer">
-            <WhatsAppIcon />
-            <span className="sr-only">Chat on WhatsApp</span>
-            </Link>
-        </Button>
+            <ChatButton />
         </div>
     </Draggable>
   );
