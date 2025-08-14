@@ -1,8 +1,9 @@
-import { useBlog, initialPosts } from "@/context/blog-context";
+import { useBlog } from "@/context/blog-context";
+import { initialPosts } from "@/lib/initial-data";
 import { notFound } from "next/navigation";
 import { BlogPostClientPage } from "@/components/blog/blog-post-client-page";
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
   // In a real app, this would fetch slugs from a database
   return initialPosts.map((post) => ({
     slug: post.slug,

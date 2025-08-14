@@ -1,9 +1,10 @@
-import { useTestimonial, initialTestimonials } from '@/context/testimonial-context';
+import { useTestimonial } from '@/context/testimonial-context';
+import { initialTestimonials } from '@/lib/initial-data';
 import { notFound } from 'next/navigation';
 import { EditTestimonialClientPage } from '@/components/admin/edit-testimonial-client-page';
 
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
   return initialTestimonials.map((testimonial) => ({
     id: testimonial.id,
   }));

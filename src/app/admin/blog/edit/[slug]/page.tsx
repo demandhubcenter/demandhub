@@ -1,8 +1,9 @@
-import { useBlog, initialPosts } from '@/context/blog-context';
+import { useBlog } from '@/context/blog-context';
+import { initialPosts } from '@/lib/initial-data';
 import { notFound } from 'next/navigation';
 import { EditBlogPostClientPage } from '@/components/admin/edit-blog-post-client-page';
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
   return initialPosts.map((post) => ({
     slug: post.slug,
   }));
