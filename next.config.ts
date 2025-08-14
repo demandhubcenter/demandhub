@@ -15,6 +15,17 @@ const nextConfig: NextConfig = {
         async_hooks: false,
       }
     }
+    
+    // Ignore require.extensions warning from handlebars
+    config.module.rules.push({
+      test: /node_modules\/handlebars\/lib\/index\.js$/,
+      loader: 'string-replace-loader',
+      options: {
+        search: 'require.extensions',
+        replace: 'null',
+      },
+    });
+
     return config
   },
   allowedDevOrigins: ["6000-firebase-studio-*.cloudworkstations.dev"],
