@@ -7,7 +7,8 @@ import * as z from "zod"
 import { useRouter } from "next/navigation"
 import { useToast } from "@/hooks/use-toast"
 import { useBlog } from "@/context/blog-context"
-import { type BlogPost, initialAuthors, type PostAuthor } from "@/context/blog-context"
+import { type BlogPost, type PostAuthor } from "@/context/blog-context"
+import { initialAuthors } from "@/lib/initial-data"
 import { Button } from "@/components/ui/button"
 import {
   Form,
@@ -303,3 +304,5 @@ export function BlogPostForm({ existingPost }: BlogPostFormProps) {
     </Form>
   )
 }
+
+    
