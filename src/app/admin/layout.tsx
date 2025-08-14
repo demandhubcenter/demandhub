@@ -11,6 +11,8 @@ import { AdminSidebar } from '@/components/admin/sidebar';
 import { TestimonialProvider } from '@/context/testimonial-context';
 import { CaseProvider } from '@/context/case-context';
 import { SidebarProvider, Sidebar } from '@/components/ui/sidebar';
+import { useMediaQuery } from 'react-responsive';
+import { MobileHeader } from '@/components/layout/mobile-header';
 
 export default function AdminLayout({
   children,
@@ -20,6 +22,7 @@ export default function AdminLayout({
   const { isAdmin } = useAdminAuth();
   const router = useRouter();
   const [authChecked, setAuthChecked] = React.useState(false);
+  const isDesktop = useMediaQuery({ query: '(min-width: 768px)' });
 
   useEffect(() => {
     // A slight delay to ensure auth context is fully loaded
@@ -69,6 +72,7 @@ export default function AdminLayout({
               <AdminSidebar />
             </Sidebar>
             <main className="flex-1 p-4 sm:p-8 bg-primary/5 min-h-screen">
+               {!isDesktop && <MobileHeader />}
               {children}
             </main>
            </div>
