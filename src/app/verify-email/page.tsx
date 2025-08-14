@@ -7,8 +7,9 @@ import { useToast } from "@/hooks/use-toast";
 import { MailCheck } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/context/auth-context";
-import { resendVerificationEmail } from "@/ai/flows/resend-verification-flow";
+// import { resendVerificationEmail } from "@/ai/flows/resend-verification-flow";
 import { auth } from "@/lib/firebase";
+import { sendEmailVerification } from "firebase/auth";
 
 export default function VerifyEmailPage() {
     const { toast } = useToast();
@@ -19,10 +20,10 @@ export default function VerifyEmailPage() {
   const handleResend = async () => {
     setIsLoading(true);
     
-    if (!currentUser?.email) {
+    if (!currentUser) {
         toast({
             title: "Error",
-            description: "Could not find an email address to send verification to. Please try signing in again.",
+            description: "Could not find an active user session. Please try signing in again.",
             variant: "destructive",
         });
         setIsLoading(false);
@@ -30,19 +31,12 @@ export default function VerifyEmailPage() {
     }
 
     try {
-        const result = await resendVerificationEmail({ email: currentUser.email });
-        if (result.success) {
-             toast({
-                title: "Link Sent",
-                description: result.message,
-            });
-        } else {
-            toast({
-                title: "Error",
-                description: result.message || "Failed to resend verification link.",
-                variant: "destructive",
-            });
-        }
+        // The flow is removed to prevent build errors. Fallback to direct SDK call.
+        await sendEmailVerification(currentUser);
+        toast({
+            title: "Link Sent",
+            description: `A new verification link has been sent to ${currentUser.email}.`,
+        });
     } catch (error: any) {
         toast({
             title: "Error",
