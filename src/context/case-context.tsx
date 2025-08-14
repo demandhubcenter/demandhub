@@ -4,7 +4,7 @@
 
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { useAuth } from './auth-context';
-import { sendAdminNotification } from '@/app/actions';
+import { notifyAdminOnNewCase } from '@/ai/flows/notify-admin-flow';
 
 export interface CaseConversation {
     author: { name: string; role: 'Client' | 'Support Agent'; avatar: string };
@@ -111,7 +111,7 @@ export const CaseProvider = ({ children }: { children: ReactNode }) => {
 
     // Trigger notification in the background
     if (newCaseData.user) {
-         sendAdminNotification({
+         notifyAdminOnNewCase({
             caseId: newId,
             caseTitle: newCaseData.title,
             caseCategory: newCaseData.category,
