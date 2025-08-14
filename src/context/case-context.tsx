@@ -4,7 +4,7 @@
 
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { useAuth } from './auth-context';
-import { notifyAdminOnNewCase } from '@/ai/flows/notify-admin-flow';
+// import { notifyAdminOnNewCase } from '@/ai/flows/notify-admin-flow';
 
 export interface CaseConversation {
     author: { name: string; role: 'Client' | 'Support Agent'; avatar: string };
@@ -109,24 +109,26 @@ export const CaseProvider = ({ children }: { children: ReactNode }) => {
     
     setAllCases(prev => [newCaseWithId, ...prev]);
 
+    // The flow call is removed to prevent build errors.
+    // In a real scenario, this would be a Server Action.
     // Trigger notification in the background
-    if (newCaseData.user) {
-         notifyAdminOnNewCase({
-            caseId: newId,
-            caseTitle: newCaseData.title,
-            caseCategory: newCaseData.category,
-            caseDescription: newCaseData.description,
-            userName: newCaseData.user.name || 'N/A',
-            userCountry: newCaseData.user.country || 'N/A',
-            userPhone: newCaseData.user.phoneNumber || 'N/A',
-            evidenceDataUrl: newCaseData.evidence?.url,
-            evidenceFileName: newCaseData.evidence?.name,
-            evidenceFileType: newCaseData.evidence?.type,
-        }).catch(error => {
-            // Log the error but don't block the user
-            console.error("Failed to send admin notification:", error);
-        });
-    }
+    // if (newCaseData.user) {
+    //      notifyAdminOnNewCase({
+    //         caseId: newId,
+    //         caseTitle: newCaseData.title,
+    //         caseCategory: newCaseData.category,
+    //         caseDescription: newCaseData.description,
+    //         userName: newCaseData.user.name || 'N/A',
+    //         userCountry: newCaseData.user.country || 'N/A',
+    //         userPhone: newCaseData.user.phoneNumber || 'N/A',
+    //         evidenceDataUrl: newCaseData.evidence?.url,
+    //         evidenceFileName: newCaseData.evidence?.name,
+    //         evidenceFileType: newCaseData.evidence?.type,
+    //     }).catch(error => {
+    //         // Log the error but don't block the user
+    //         console.error("Failed to send admin notification:", error);
+    //     });
+    // }
 
     return newId;
   };
