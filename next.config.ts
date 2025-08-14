@@ -4,6 +4,9 @@ import type {NextConfig} from 'next';
 const nextConfig: NextConfig = {
   output: 'export',
   /* config options here */
+  experimental: {
+    serverActions: false,
+  },
   allowedDevOrigins: ["6000-firebase-studio-*.cloudworkstations.dev"],
   reactStrictMode: false,
   typescript: {
