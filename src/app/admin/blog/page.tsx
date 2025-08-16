@@ -1,6 +1,7 @@
 
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -30,8 +31,15 @@ import { Badge } from "@/components/ui/badge";
 
 
 export default function AdminBlogPage() {
-    const { posts, deletePost } = useBlog();
+    const { posts, deletePost, fetchPosts } = useBlog();
     const router = useRouter();
+
+    useEffect(() => {
+        fetchPosts();
+        const handleFocus = () => fetchPosts();
+        window.addEventListener('focus', handleFocus);
+        return () => window.removeEventListener('focus', handleFocus);
+    }, [fetchPosts]);
 
     const handleEdit = (slug: string) => {
         router.push(`/admin/blog/edit/${slug}`);

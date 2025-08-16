@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import {
   Table,
   TableHeader,
@@ -34,10 +34,27 @@ export default function AdminCasesPage() {
     const router = useRouter();
     const { toast } = useToast();
 
-    useEffect(() => {
-        // Ensure the latest cases are fetched when the component mounts
+    // Use useCallback to memoize the fetch function
+    const memoizedFetchAllCases = useCallback(() => {
         fetchAllCases();
     }, [fetchAllCases]);
+
+    useEffect(() => {
+        // Initial fetch when component mounts
+        memoizedFetchAllCases();
+
+        // Refetch when the window gains focus
+        const handleFocus = () => {
+            memoizedFetchAllCases();
+        };
+
+        window.addEventListener('focus', handleFocus);
+
+        // Cleanup the event listener when the component unmounts
+        return () => {
+            window.removeEventListener('focus', handleFocus);
+        };
+    }, [memoizedFetchAllCases]);
 
     const handleViewCase = (caseItem: Case) => {
         setSelectedCase(caseItem);

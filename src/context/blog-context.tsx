@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback } from 'react';
 import { initialAuthors, initialPosts, type BlogPost, type PostComment, type PostAuthor } from '@/lib/initial-data';
 
 
@@ -14,6 +14,7 @@ interface BlogContextType {
     addCommentToPost: (slug: string, comment: Omit<PostComment, 'id' | 'date'>) => void;
     deleteCommentFromPost: (slug: string, commentId: string) => void;
     updateCommentInPost: (slug: string, commentId: string, commentData: Partial<PostComment>) => void;
+    fetchPosts: () => void;
 }
 
 const BlogContext = createContext<BlogContextType | undefined>(undefined);
@@ -37,6 +38,17 @@ export const BlogProvider = ({ children }: { children: ReactNode }) => {
         console.error("Could not save blog posts to localStorage", error);
     }
   }, [posts]);
+  
+  const fetchPosts = useCallback(() => {
+    try {
+        if (typeof window === 'undefined') return;
+        const item = window.localStorage.getItem('blogPosts');
+        setPosts(item ? JSON.parse(item) : initialPosts);
+    } catch (error) {
+        console.warn("Could not parse blog posts from localStorage", error);
+        setPosts(initialPosts);
+    }
+  }, []);
 
   const getPostBySlug = (slug: string) => {
     return posts.find(p => p.slug === slug);
@@ -99,7 +111,7 @@ export const BlogProvider = ({ children }: { children: ReactNode }) => {
       );
   }
 
-  const value = { posts, getPostBySlug, addPost, updatePost, deletePost, addCommentToPost, deleteCommentFromPost, updateCommentInPost };
+  const value = { posts, getPostBySlug, addPost, updatePost, deletePost, addCommentToPost, deleteCommentFromPost, updateCommentInPost, fetchPosts };
 
   return <BlogContext.Provider value={value}>{children}</BlogContext.Provider>;
 };

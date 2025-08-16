@@ -27,7 +27,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { EditCommentDialog } from "@/components/admin/edit-comment-dialog";
 
 // Combine PostComment with post context for the table
@@ -37,11 +37,20 @@ export type CommentWithContext = PostComment & {
 };
 
 export default function AdminCommentsPage() {
-    const { posts, deleteCommentFromPost, updateCommentInPost } = useBlog();
+    const { posts, deleteCommentFromPost, updateCommentInPost, fetchPosts } = useBlog();
     const { toast } = useToast();
     const [commentToEdit, setCommentToEdit] = useState<CommentWithContext | null>(null);
     const [editingText, setEditingText] = useState("");
     const [editingDate, setEditingDate] = useState("");
+
+    // Effect to fetch posts on mount and when window gains focus
+    useEffect(() => {
+        fetchPosts(); // Initial fetch
+        const handleFocus = () => fetchPosts();
+        window.addEventListener('focus', handleFocus);
+        return () => window.removeEventListener('focus', handleFocus);
+    }, [fetchPosts]);
+
 
     // Flatten comments from all posts
     const allComments: CommentWithContext[] = posts.flatMap(post => 
