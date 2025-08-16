@@ -10,6 +10,7 @@ import { WhatsAppButton } from '@/components/shared/whatsapp-button';
 import { ThemeProvider } from '@/context/theme-provider';
 import { BlogProvider } from '@/context/blog-context';
 import { TestimonialProvider } from '@/context/testimonial-context';
+import { AdminAuthProvider } from '@/context/admin-auth-context';
 
 export const metadata: Metadata = {
   title: 'DemandHub - Digital Asset Recovery',
@@ -36,15 +37,17 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <AuthProvider>
-            <BlogProvider>
-                <TestimonialProvider>
-                    <Header />
-                    <main className="flex-1">{children}</main>
-                    <Footer />
-                    <Toaster />
-                    <WhatsAppButton />
-                </TestimonialProvider>
-            </BlogProvider>
+            <AdminAuthProvider>
+                <BlogProvider>
+                    <TestimonialProvider>
+                        <Header />
+                        <main className="flex-1">{children}</main>
+                        <Footer />
+                        <Toaster />
+                        <WhatsAppButton />
+                    </TestimonialProvider>
+                </BlogProvider>
+            </AdminAuthProvider>
           </AuthProvider>
         </ThemeProvider>
         <Script id="tawk-to-script" strategy="lazyOnload">

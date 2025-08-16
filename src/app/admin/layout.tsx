@@ -13,6 +13,7 @@ import { CaseProvider } from '@/context/case-context';
 import { SidebarProvider, Sidebar } from '@/components/ui/sidebar';
 import { useMediaQuery } from 'react-responsive';
 import { MobileHeader } from '@/components/layout/mobile-header';
+import { BlogProvider } from '@/context/blog-context';
 
 export default function AdminLayout({
   children,
@@ -65,19 +66,21 @@ export default function AdminLayout({
 
   return (
      <SidebarProvider>
-      <TestimonialProvider>
-        <CaseProvider>
-           <div className="flex">
-            <Sidebar side="left">
-              <AdminSidebar />
-            </Sidebar>
-            <main className="flex-1 p-4 sm:p-8 bg-primary/5 min-h-screen">
-               {!isDesktop && <MobileHeader />}
-              {children}
-            </main>
-           </div>
-        </CaseProvider>
-      </TestimonialProvider>
+      <BlogProvider>
+        <TestimonialProvider>
+          <CaseProvider>
+            <div className="flex">
+              <Sidebar side="left">
+                <AdminSidebar />
+              </Sidebar>
+              <main className="flex-1 p-4 sm:p-8 bg-primary/5 min-h-screen">
+                {!isDesktop && <MobileHeader />}
+                {children}
+              </main>
+            </div>
+          </CaseProvider>
+        </TestimonialProvider>
+      </BlogProvider>
     </SidebarProvider>
   );
 }
