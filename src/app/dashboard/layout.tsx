@@ -1,15 +1,37 @@
 
 "use client";
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import { useRouter } from 'next/navigation';
 import { DashboardSidebar } from "@/components/dashboard/sidebar";
 import { CaseProvider } from "@/context/case-context";
 import { useAuth } from '@/context/auth-context';
 import { Skeleton } from '@/components/ui/skeleton';
-import { SidebarProvider, Sidebar } from '@/components/ui/sidebar';
-import { MobileHeader } from '@/components/layout/mobile-header';
+import { PanelLeft } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+
+function MobileHeader() {
+    return (
+        <header className="md:hidden flex items-center h-14 px-4 border-b bg-background sticky top-0 z-40">
+            <Sheet>
+                <SheetTrigger asChild>
+                    <Button variant="outline" size="icon">
+                        <PanelLeft className="h-6 w-6" />
+                        <span className="sr-only">Toggle Menu</span>
+                    </Button>
+                </SheetTrigger>
+                <SheetContent side="left" className="p-0 w-72">
+                    <DashboardSidebar />
+                </SheetContent>
+            </Sheet>
+            <div className="flex-1 text-center">
+                <span className="text-lg font-semibold">Dashboard</span>
+            </div>
+        </header>
+    );
+}
 
 export default function DashboardLayout({
   children,
@@ -57,18 +79,18 @@ export default function DashboardLayout({
   }
 
   return (
-    <SidebarProvider>
-      <CaseProvider>
-        <div className="flex">
-          <Sidebar side="left">
+    <CaseProvider>
+      <div className="flex min-h-screen">
+        <aside className="w-64 flex-shrink-0 border-r bg-background p-4 hidden md:flex md:flex-col">
             <DashboardSidebar />
-          </Sidebar>
-          <main className="flex-1 p-4 sm:p-8 bg-primary/5 min-h-screen">
-             {!isDesktop && <MobileHeader />}
-            {children}
-          </main>
+        </aside>
+         <div className="flex-1 flex flex-col">
+            <MobileHeader />
+            <main className="flex-1 p-4 sm:p-8 bg-primary/5">
+                {children}
+            </main>
         </div>
-      </CaseProvider>
-    </SidebarProvider>
+      </div>
+    </CaseProvider>
   );
 }
